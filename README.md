@@ -19,6 +19,14 @@ seasonal-kitchen/
 - Swagger/OpenAPI
 - JUnit 5, Testcontainers
 
+프론트엔드 연동에 필요한 API 계약 문서는 `backend/docs/`에서 확인할 수 있습니다.
+
+- `backend/docs/03-api-contract.md`
+- `backend/docs/api-examples.md`
+- `backend/docs/frontend-screen-api-coverage.md`
+- `backend/docs/frontend-required-fields.md`
+- `backend/docs/frontend-integration-verification.md`
+
 ```powershell
 cd backend
 docker compose up -d postgres

@@ -27,7 +27,8 @@ CODEx_HANDOFF.md
 # Internal agent/task planning docs not meant for judging
 backend/AGENTS.md
 backend/README-codex-prep.md
-backend/docs/
+backend/docs/codex-prompt-template.md
+backend/docs/tasks/
 
 # Logs and runtime dumps
 *.log
