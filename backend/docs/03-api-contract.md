@@ -99,21 +99,22 @@ npx @openapitools/openapi-generator-cli generate \
 ### Auth
 
 ```text
-POST   /api/v1/auth/oauth/{provider}
-POST   /api/v1/auth/refresh
-POST   /api/v1/auth/logout
+POST   /api/v1/dev/auth/token
 ```
+
+OAuth login, refresh, and logout endpoints are deferred. The dev token endpoint is temporary and must remain limited to `local`, `dev`, and `test` profiles.
 
 ### Users
 
 ```text
 GET    /api/v1/users/me
 PATCH  /api/v1/users/me
+GET    /api/v1/users/me/summary
 PUT    /api/v1/users/me/preferences
 GET    /api/v1/users/me/pantry
 POST   /api/v1/users/me/pantry
-PATCH  /api/v1/users/me/pantry/{pantryItemId}
-DELETE /api/v1/users/me/pantry/{pantryItemId}
+PATCH  /api/v1/users/me/pantry/{itemId}
+DELETE /api/v1/users/me/pantry/{itemId}
 ```
 
 ### Home and Search
@@ -196,18 +197,7 @@ POST   /api/v1/events
 ### Creator and Admin
 
 ```text
-POST   /api/v1/creators/applications
-GET    /api/v1/creators/me/reels
-POST   /api/v1/creators/me/reels
-PATCH  /api/v1/creators/me/reels/{reelId}
-
-GET    /api/v1/admin/ingredients
-POST   /api/v1/admin/ingredients
-POST   /api/v1/admin/recipes
-POST   /api/v1/admin/reels
-PATCH  /api/v1/admin/reels/{reelId}/status
-GET    /api/v1/admin/import-jobs
-POST   /api/v1/admin/import-jobs/kamis
+Deferred. No creator/admin controller is implemented in the current backend.
 ```
 
 ## 6. 핵심 DTO 예시
@@ -246,12 +236,7 @@ public record PriceSummaryResponse(
 public record CreateShoppingPlanRequest(
     Integer days,
     Integer people,
-    BigDecimal budget,
-    List<String> preferences,
-    List<Long> pantryIngredientIds,
-    List<Long> excludedIngredientIds,
-    List<String> allergyCodes,
-    RecommendationPriority priority
+    BigDecimal budget
 ) {}
 ```
 
@@ -260,13 +245,21 @@ public record CreateShoppingPlanRequest(
 ```java
 public record ShoppingPlanResponse(
     Long planId,
-    String summary,
+    Long sessionId,
+    int days,
+    int people,
+    BigDecimal budget,
     BigDecimal estimatedTotal,
-    BigDecimal expectedSavingRate,
+    String status,
+    String summary,
+    Integer expectedSavingRate,
+    BigDecimal expectedSavingAmount,
     List<MealResponse> meals,
     List<ShoppingItemResponse> items,
-    List<RecommendationReasonResponse> reasons,
-    List<SubstitutionResponse> substitutions
+    List<String> reasons,
+    List<String> substitutions,
+    List<MessageResponse> messages,
+    List<String> quickPrompts
 ) {}
 ```
 
@@ -294,6 +287,5 @@ public record ShoppingPlanResponse(
 | 레시피 | `GET /api/v1/recipes/{recipeId}` |
 | 릴스 | `GET /api/v1/reels` |
 | AI 결과 | `POST /api/v1/recommendations/plans` |
-| 마이페이지 | `GET /api/v1/users/me` |
+| 마이페이지 | `GET /api/v1/users/me/summary` |
 | 알림 | `GET /api/v1/notifications` |
-
