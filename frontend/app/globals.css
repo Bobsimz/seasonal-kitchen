@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== Global resets + Korean type ===== */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+/* G마켓 산스 — 온보딩 제목 전용 */
+@font-face {
+  font-family: 'Gmarket Sans';
+  src: url('https://hangeul.pstatic.net/hangeul_static/webfont/GmarketSans/GmarketSansBold.woff2') format('woff2'),
+       url('https://hangeul.pstatic.net/hangeul_static/webfont/GmarketSans/GmarketSansBold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Gmarket Sans';
+  src: url('https://hangeul.pstatic.net/hangeul_static/webfont/GmarketSans/GmarketSansMedium.woff2') format('woff2'),
+       url('https://hangeul.pstatic.net/hangeul_static/webfont/GmarketSans/GmarketSansMedium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f0eee9;
+  color: #0f1a14;
+}
+button { font-family: inherit; }
+
+/* hide scrollbars inside the device frames */
+.phone-scroll { scrollbar-width: none; }
+.phone-scroll::-webkit-scrollbar { display: none; }
+
+/* Stretch-mode override: in the canvas review we want the entire screen
+   visible at once. Neutralise inline `overflow: auto` on vertical
+   scrollers so content flows into the Phone shell rather than being
+   clipped to a scroll viewport. We target only the shorthand
+   `overflow: auto` — horizontal carousels using `overflowX: 'auto'` are
+   left alone so cards still lay out in a horizontally-scrolling row.
+   `max-height: none` defeats the AI-sheet's 78% cap. */
+.phone-scroll[style*="overflow: auto"] {
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+/* Clip-mode (mobile-length) wrapper — opposite of stretch. Restores the
+   actual 844px viewport so floating bottom CTAs land at PHONE_H instead
+   of the bottom of an unfurled tall canvas. Used as a sibling artboard
+   next to the stretch view for screens whose value lives in their FAB. */
+.dc-phone-clip { position: relative; }
+.dc-phone-clip .phone-shell {
+  min-height: 844px !important;
+  height: 844px !important;
+  max-height: 844px !important;
+}
+.dc-phone-clip .phone-shell > div[style*="flex: 1"] {
+  min-height: 0 !important;
+}
+.dc-phone-clip .phone-scroll[style*="overflow: auto"] {
+  overflow: auto !important;
+  max-height: 100% !important;
+  min-height: 0 !important;
+}
+
+/* image placeholder */
+.ph {
+  background: linear-gradient(135deg, #eef2ea 0%, #dde6d6 100%);
+  position: relative;
+  overflow: hidden;
+}
+.ph::after {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(45deg,
+      transparent 0 8px,
+      rgba(255,255,255,0.35) 8px 9px);
+  pointer-events: none;
+}
+.ph-veg {
+  background: linear-gradient(135deg, #e8f1de 0%, #c9dfb3 100%);
+}
+.ph-dark {
+  background: linear-gradient(135deg, #1a3324 0%, #0b1d13 100%);
+}
+
+/* tap micro-interaction */
+.tap { transition: transform 0.12s ease, opacity 0.12s ease; cursor: pointer; }
+.tap:active { transform: scale(0.97); opacity: 0.85; }

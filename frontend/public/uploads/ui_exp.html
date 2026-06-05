@@ -1,0 +1,1791 @@
+<style>
+  :root {
+    --color-background-primary: #FCFBF7;
+    --color-background-secondary: #F1EFE8;
+    --color-background-tertiary: #F8F6F0;
+    --color-text-primary: #2A2A28;
+    --color-text-secondary: #6E6D68;
+    --color-border-tertiary: #E5E2D8;
+    --color-border-secondary: #C9C5B8;
+    --primary: #3B6D11;
+    --primary-light: #EAF3DE;
+  }
+
+  body {
+    background: #EFEDE5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+    margin: 0;
+    padding: 24px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    min-height: 100vh;
+  }
+
+  .proto-nav {
+    display: flex;
+    gap: 4px;
+    background: var(--color-background-primary);
+    padding: 4px;
+    border-radius: 22px;
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .proto-nav button {
+    background: none;
+    border: none;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    border-radius: 18px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .proto-nav button.active {
+    background: var(--primary);
+    color: var(--primary-light);
+  }
+
+  .phone {
+    width: 360px;
+    background: var(--color-background-secondary);
+    border-radius: 28px;
+    padding: 12px;
+    border: 0.5px solid var(--color-border-tertiary);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+  }
+
+  .screen {
+    background: var(--color-background-primary);
+    border-radius: 18px;
+    overflow: hidden;
+    min-height: 740px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .screen-view {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    min-height: 740px;
+  }
+
+  .screen-view.active {
+    display: flex;
+  }
+
+  /* === 공통 status bar === */
+  .sbar {
+    padding: 10px 20px 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-background-primary);
+  }
+
+  .sbar-t {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .sbar-i {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+
+  input,
+  button {
+    font-family: inherit;
+  }
+
+  input[type="number"],
+  input[type="text"] {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: var(--color-text-primary);
+    outline: none;
+  }
+
+  input:focus {
+    border-color: var(--primary);
+  }
+
+  /* ============ 메인 화면 ============ */
+  .m-header {
+    padding: 8px 20px 12px;
+  }
+
+  .m-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+  }
+
+  .m-app-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .m-app-subtitle {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+
+  .m-header-badge {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .m-section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.05em;
+    padding: 0 20px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .m-trend-strip {
+    padding: 0 20px;
+    margin-bottom: 16px;
+  }
+
+  .m-trend-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-right: 6px;
+  }
+
+  .m-trend-tag .hot {
+    color: #D85A30;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .m-card-list {
+    padding: 0 20px;
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px;
+  }
+
+  .m-item-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+  }
+
+  .m-item-card:hover {
+    border-color: var(--color-border-secondary);
+  }
+
+  .m-item-card:active {
+    transform: scale(0.99);
+  }
+
+  .m-item-img {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    background: var(--color-background-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .m-item-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .m-item-row1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 3px;
+  }
+
+  .m-item-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .m-item-price {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .m-item-row2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .m-item-badges {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+
+  .badge-green {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .badge-amber {
+    background: #FAEEDA;
+    color: #854F0B;
+  }
+
+  .badge-coral {
+    background: #FAECE7;
+    color: #993C1D;
+  }
+
+  .badge-blue {
+    background: #E6F1FB;
+    color: #185FA5;
+  }
+
+  .trust-bar {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    margin-top: 6px;
+  }
+
+  .trust-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .trust-label {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    margin-left: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .trend-indicator {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+  }
+
+  .trend-up {
+    color: #D85A30;
+  }
+
+  .trend-down {
+    color: var(--primary);
+  }
+
+  .kamis-badge {
+    font-size: 10px;
+    font-weight: 500;
+    background: #E6F1FB;
+    color: #185FA5;
+    padding: 1px 6px;
+    border-radius: 6px;
+  }
+
+  .kamis-badge-gray {
+    font-size: 10px;
+    font-weight: 500;
+    background: #F1EFE8;
+    color: #5F5E5A;
+    padding: 1px 6px;
+    border-radius: 6px;
+  }
+
+  .chatbot-btn {
+    position: absolute;
+    bottom: 80px;
+    right: 16px;
+    width: 50px;
+    height: 50px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    color: var(--primary-light);
+    z-index: 5;
+  }
+
+  /* ============ 하단 네비 ============ */
+  .bottom-nav {
+    background: var(--color-background-primary);
+    border-top: 0.5px solid var(--color-border-tertiary);
+    padding: 8px 0 12px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 4px 12px;
+    background: none;
+    border: none;
+  }
+
+  .nav-item .nav-icon {
+    font-size: 18px;
+    color: var(--color-text-secondary);
+  }
+
+  .nav-item.active .nav-icon {
+    color: var(--primary);
+  }
+
+  .nav-label {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+  }
+
+  .nav-item.active .nav-label {
+    color: var(--primary);
+    font-weight: 500;
+  }
+
+  /* ============ 세부 화면 ============ */
+  .d-header {
+    background: var(--color-background-primary);
+    padding: 10px 20px 14px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .d-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .hdr-back {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    padding: 0;
+    font-size: 20px;
+  }
+
+  .d-title-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .d-emoji {
+    font-size: 36px;
+  }
+
+  .d-name {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .d-tag-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .d-badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .db-green {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .db-coral {
+    background: #FAECE7;
+    color: #993C1D;
+  }
+
+  .db-amber {
+    background: #FAEEDA;
+    color: #854F0B;
+  }
+
+  .d-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 24px;
+  }
+
+  .d-card {
+    background: var(--color-background-primary);
+    border-radius: 14px;
+    border: 0.5px solid var(--color-border-tertiary);
+    padding: 14px 16px;
+  }
+
+  .d-card-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .price-big {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .price-unit {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+  }
+
+  .price-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--primary);
+    background: var(--primary-light);
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 8px;
+  }
+
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .chart-area {
+    height: 80px;
+    margin: 4px 0 8px;
+  }
+
+  .chart-bar-wrap {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 100%;
+  }
+
+  .c-bar {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+  }
+
+  .c-bar-label {
+    font-size: 9px;
+    color: var(--color-text-secondary);
+    text-align: center;
+    position: absolute;
+    bottom: -16px;
+    width: 100%;
+    white-space: nowrap;
+  }
+
+  .chart-ref {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+    gap: 10px;
+  }
+
+  .chart-ref-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--color-text-secondary);
+  }
+
+  .chart-ref-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .stat-cell {
+    background: var(--color-background-secondary);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-bottom: 3px;
+  }
+
+  .stat-val {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .stat-sub {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    margin-top: 2px;
+  }
+
+  .trust-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .trust-text {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+
+  .place-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .place-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .place-rank {
+    min-width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .pr1 {
+    background: #FAEEDA;
+    color: #854F0B;
+  }
+
+  .pr2 {
+    background: #F1EFE8;
+    color: #444441;
+  }
+
+  .pr3 {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .pr4 {
+    background: #E6F1FB;
+    color: #185FA5;
+  }
+
+  .place-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .place-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .place-meta {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-top: 2px;
+  }
+
+  .place-price {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .place-dist {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    text-align: right;
+  }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .menu-card {
+    background: var(--color-background-secondary);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    border: 0.5px solid transparent;
+  }
+
+  .menu-card:hover {
+    background: var(--color-background-primary);
+    border-color: var(--color-border-secondary);
+  }
+
+  .menu-emoji {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .menu-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .menu-diff {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-top: 2px;
+  }
+
+  .tab-row {
+    display: flex;
+    gap: 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    margin-bottom: 12px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 7px 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+
+  .tab-btn.on {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+  }
+
+  .cta-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px;
+    font-size: 13px;
+    border-radius: 10px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .cta-btn:hover {
+    background: var(--color-background-tertiary);
+  }
+
+  /* ============ 가격 등록 화면 ============ */
+  .r-hdr {
+    background: var(--color-background-primary);
+    padding: 8px 20px 14px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hdr-title {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .r-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 24px;
+  }
+
+  .card {
+    background: var(--color-background-primary);
+    border-radius: 14px;
+    border: 0.5px solid var(--color-border-tertiary);
+    padding: 14px 16px;
+  }
+
+  .clabel {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .item-sel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .isel-btn {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 10px;
+    padding: 9px 10px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+  }
+
+  .isel-btn.selected {
+    background: var(--primary-light);
+    border-color: var(--primary);
+  }
+
+  .isel-em {
+    font-size: 18px;
+  }
+
+  .isel-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .isel-price {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+
+  .price-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .price-input-wrap input {
+    flex: 1;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .price-unit-badge {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+
+  .kamis-compare {
+    background: var(--color-background-secondary);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .kc-left {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+
+  .kc-right {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .diff-badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 6px;
+  }
+
+  .diff-low {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .diff-high {
+    background: #FAECE7;
+    color: #993C1D;
+  }
+
+  .diff-same {
+    background: #F1EFE8;
+    color: #5F5E5A;
+  }
+
+  .place-input-wrap {
+    display: flex;
+    gap: 6px;
+  }
+
+  .place-input-wrap input {
+    flex: 1;
+  }
+
+  .place-input-wrap button {
+    padding: 0 12px;
+    font-size: 12px;
+    white-space: nowrap;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .place-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 7px;
+  }
+
+  .ptag {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+
+  .ptag.selected {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 500;
+  }
+
+  .quality-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .q-btn {
+    flex: 1;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: 10px;
+    padding: 8px 4px;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .q-btn.selected {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 500;
+  }
+
+  .contrib-box {
+    background: var(--color-background-secondary);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .contrib-box .ico {
+    font-size: 16px;
+    color: var(--primary);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .contrib-text {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  .contrib-text strong {
+    color: var(--color-text-primary);
+    font-weight: 500;
+  }
+
+  .point-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+
+  .point-badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: #FAEEDA;
+    color: #854F0B;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--primary);
+    color: var(--primary-light);
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 2px;
+  }
+
+  .submit-btn:hover {
+    background: #2F570D;
+  }
+
+  .recent-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .recent-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .r-em {
+    font-size: 20px;
+  }
+
+  .r-body-recent {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .r-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .r-meta {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+
+  .r-right {
+    text-align: right;
+  }
+
+  .r-price {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .r-diff {
+    font-size: 11px;
+  }
+
+  .verified-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: inline-block;
+    margin-right: 3px;
+  }
+
+  /* ============ 영수증 등록 카드 (신규) ============ */
+  .receipt-card {
+    background: linear-gradient(135deg, #3B6D11 0%, #4D8C19 100%);
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: var(--primary-light);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(59, 109, 17, 0.18);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .receipt-card::after {
+    content: "";
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .receipt-card:hover {
+    transform: translateY(-1px);
+  }
+
+  .receipt-card:active {
+    transform: scale(0.99);
+  }
+
+  .receipt-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .receipt-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .receipt-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .receipt-pill {
+    font-size: 9px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.03em;
+  }
+
+  .receipt-sub {
+    font-size: 11px;
+    opacity: 0.88;
+    line-height: 1.4;
+  }
+
+  .receipt-arrow {
+    font-size: 18px;
+    opacity: 0.8;
+  }
+
+  .or-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 6px;
+  }
+
+  .or-divider hr {
+    flex: 1;
+    border: none;
+    border-top: 0.5px solid var(--color-border-tertiary);
+    margin: 0;
+  }
+
+  .or-divider span {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+  }
+
+  /* 토스트 */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(42, 42, 40, 0.92);
+    color: #FCFBF7;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    opacity: 0;
+    transition: all 0.25s;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+
+<h2 class="sr-only" style="position:absolute;left:-9999px;">제철 상회 — 메인, 세부, 가격 등록(영수증 등록 추가) 통합 프로토타입</h2>
+
+<div class="proto-nav" role="tablist" aria-label="화면 전환">
+  <button id="navMain" class="active" onclick="showScreen('main')">홈</button>
+  <button id="navDetail" onclick="showScreen('detail')">재료 세부</button>
+  <button id="navRegister" onclick="showScreen('register')">가격 등록</button>
+</div>
+
+<div class="phone">
+  <div class="screen">
+
+    <!-- ============================= 화면 1: 메인 ============================= -->
+    <div class="screen-view active" id="screen-main">
+      <div class="sbar">
+        <span class="sbar-t">9:41</span>
+        <div class="sbar-i"><span>🛜</span><span>🔋</span></div>
+      </div>
+
+      <div class="m-header">
+        <div class="m-header-top">
+          <div>
+            <div class="m-app-title">제철 상회</div>
+            <div class="m-app-subtitle">5월 제철 재료 · 서울 마포구</div>
+          </div>
+          <span class="m-header-badge">🌿 5월 제철</span>
+        </div>
+      </div>
+
+      <div class="m-trend-strip">
+        <span class="m-trend-tag">🔥 봄동비빔밥 <span class="hot">HOT</span></span>
+        <span class="m-trend-tag">📈 열무냉면</span>
+        <span class="m-trend-tag">취나물무침</span>
+      </div>
+
+      <div class="m-section-label">지금 추천 재료</div>
+
+      <div class="m-card-list">
+        <div class="m-item-card" onclick="showScreen('detail')">
+          <div class="m-item-img">🥬</div>
+          <div class="m-item-body">
+            <div class="m-item-row1">
+              <span class="m-item-name">열무</span>
+              <span class="m-item-price">₩1,200<span
+                  style="font-size:11px; font-weight:400; color:var(--color-text-secondary);">/단</span></span>
+            </div>
+            <div class="m-item-row2">
+              <div class="m-item-badges">
+                <span class="badge badge-green">공급 과잉</span>
+                <span class="badge badge-coral">🔥 트렌드↑</span>
+              </div>
+              <div class="trend-indicator trend-down">📉 평년 -15%</div>
+            </div>
+            <div class="trust-bar">
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <span class="trust-label">KAMIS 공식 <span class="kamis-badge">★★★★★</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-item-card" onclick="toast('쑥갓 상세 페이지로 이동')">
+          <div class="m-item-img">🌿</div>
+          <div class="m-item-body">
+            <div class="m-item-row1">
+              <span class="m-item-name">쑥갓</span>
+              <span class="m-item-price">₩980<span
+                  style="font-size:11px; font-weight:400; color:var(--color-text-secondary);">/단</span></span>
+            </div>
+            <div class="m-item-row2">
+              <div class="m-item-badges">
+                <span class="badge badge-green">구매 적기</span>
+                <span class="badge badge-amber">검색↑ 22%</span>
+              </div>
+              <div class="trend-indicator trend-down">📉 평년 -8%</div>
+            </div>
+            <div class="trust-bar">
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <span class="trust-label">KAMIS 공식 <span class="kamis-badge">★★★★★</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-item-card" onclick="toast('취나물 상세 페이지로 이동')">
+          <div class="m-item-img">🍃</div>
+          <div class="m-item-body">
+            <div class="m-item-row1">
+              <span class="m-item-name">취나물</span>
+              <span class="m-item-price">₩1,500<span
+                  style="font-size:11px; font-weight:400; color:var(--color-text-secondary);">/단</span></span>
+            </div>
+            <div class="m-item-row2">
+              <div class="m-item-badges"><span class="badge badge-blue">온라인 추정</span></div>
+              <div class="trend-indicator" style="color: var(--color-text-secondary);">— 평년 보통</div>
+            </div>
+            <div class="trust-bar">
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:#B4B2A9;"></div>
+              <div class="trust-dot" style="background:#B4B2A9;"></div>
+              <span class="trust-label">AI 추정 <span class="kamis-badge-gray">★★★☆☆</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-item-card" onclick="toast('딸기 상세 페이지로 이동')">
+          <div class="m-item-img">🍓</div>
+          <div class="m-item-body">
+            <div class="m-item-row1">
+              <span class="m-item-name">딸기</span>
+              <span class="m-item-price">₩8,500<span
+                  style="font-size:11px; font-weight:400; color:var(--color-text-secondary);">/팩</span></span>
+            </div>
+            <div class="m-item-row2">
+              <div class="m-item-badges"><span class="badge badge-amber">제철 막바지</span></div>
+              <div class="trend-indicator trend-up">📈 평년 +12%</div>
+            </div>
+            <div class="trust-bar">
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:#B4B2A9;"></div>
+              <span class="trust-label">서울 물가정보 <span class="kamis-badge">★★★★☆</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="chatbot-btn" onclick="toast('AI 셰프 모드 실행')" aria-label="AI 챗봇 열기">💬</button>
+
+      <div class="bottom-nav">
+        <button class="nav-item active"><span class="nav-icon">🏠</span><span class="nav-label">홈</span></button>
+        <button class="nav-item" onclick="showScreen('register')"><span class="nav-icon">＋</span><span
+            class="nav-label">가격 등록</span></button>
+        <button class="nav-item" onclick="toast('내 주변')"><span class="nav-icon">📍</span><span class="nav-label">내
+            주변</span></button>
+        <button class="nav-item" onclick="toast('마이페이지')"><span class="nav-icon">👤</span><span
+            class="nav-label">마이페이지</span></button>
+      </div>
+    </div>
+
+    <!-- ============================= 화면 2: 세부 ============================= -->
+    <div class="screen-view" id="screen-detail">
+      <div class="sbar">
+        <span class="sbar-t">9:41</span>
+        <div class="sbar-i"><span>🛜</span><span>🔋</span></div>
+      </div>
+
+      <div class="d-header">
+        <div class="d-nav">
+          <button class="hdr-back" onclick="showScreen('main')" aria-label="뒤로가기">←</button>
+          <span style="font-size:14px; color:var(--color-text-secondary);">제철 재료</span>
+        </div>
+        <div class="d-title-row">
+          <span class="d-emoji">🥬</span>
+          <span class="d-name">열무</span>
+        </div>
+        <div class="d-tag-row">
+          <span class="d-badge db-green">공급 과잉</span>
+          <span class="d-badge db-coral">🔥 트렌드 상승</span>
+          <span class="d-badge db-amber">구매 적기</span>
+        </div>
+      </div>
+
+      <div class="d-content">
+        <div class="d-card">
+          <div class="d-card-title">📊 가격 동향</div>
+          <div class="price-row">
+            <span class="price-big">₩1,200</span>
+            <span class="price-unit">/단</span>
+            <span class="price-change">📉 평년 -15%</span>
+          </div>
+
+          <div class="chart-area">
+            <div class="chart-bar-wrap">
+              <div class="c-bar" style="height:60%; background:#C0DD97;"><span class="c-bar-label">1월</span></div>
+              <div class="c-bar" style="height:55%; background:#C0DD97;"><span class="c-bar-label">2월</span></div>
+              <div class="c-bar" style="height:65%; background:#C0DD97;"><span class="c-bar-label">3월</span></div>
+              <div class="c-bar" style="height:75%; background:#C0DD97;"><span class="c-bar-label">4월</span></div>
+              <div class="c-bar" style="height:50%; background:var(--primary); position:relative;">
+                <span class="c-bar-label" style="color:var(--primary); font-weight:500;">5월</span>
+                <span
+                  style="position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-size:9px; font-weight:500; color:var(--primary); white-space:nowrap;">▼
+                  최저</span>
+              </div>
+              <div class="c-bar" style="height:80%; background:#D3D1C7;"><span class="c-bar-label">6월</span></div>
+              <div class="c-bar" style="height:90%; background:#D3D1C7;"><span class="c-bar-label">7월</span></div>
+            </div>
+          </div>
+          <div class="chart-ref">
+            <div class="chart-ref-item">
+              <div class="chart-ref-dot" style="background:var(--primary);"></div>현재
+            </div>
+            <div class="chart-ref-item">
+              <div class="chart-ref-dot" style="background:#C0DD97;"></div>실측
+            </div>
+            <div class="chart-ref-item">
+              <div class="chart-ref-dot" style="background:#D3D1C7;"></div>예측
+            </div>
+          </div>
+
+          <div class="stat-grid" style="margin-top:12px;">
+            <div class="stat-cell">
+              <div class="stat-label">전월 대비</div>
+              <div class="stat-val" style="color:var(--primary);">▼ 8%</div>
+              <div class="stat-sub">₩1,300 → ₩1,200</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">네이버 검색</div>
+              <div class="stat-val" style="color:#D85A30;">▲ 22%</div>
+              <div class="stat-sub">3주 전 대비</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">공급 상태</div>
+              <div class="stat-val">과잉</div>
+              <div class="stat-sub">출하량 평년 +18%</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">AI 판단</div>
+              <div class="stat-val" style="color:var(--primary);">구매 적기</div>
+              <div class="stat-sub">가격↓ + 트렌드↑</div>
+            </div>
+          </div>
+
+          <div class="trust-row">
+            <div style="display:flex; gap:3px;">
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+              <div class="trust-dot" style="background:var(--primary);"></div>
+            </div>
+            <span class="trust-text">KAMIS 공식 시세 · 오늘 기준 · <span style="color:#185FA5;">★★★★★</span></span>
+          </div>
+        </div>
+
+        <div class="d-card">
+          <div class="d-card-title">📍 내 주변 구매처</div>
+          <div class="tab-row">
+            <button class="tab-btn on">거리순</button>
+            <button class="tab-btn">가격순</button>
+            <button class="tab-btn">온라인</button>
+          </div>
+
+          <div class="place-row">
+            <div class="place-rank pr1">1</div>
+            <div class="place-body">
+              <div class="place-name">망원시장</div>
+              <div class="place-meta">도보 8분 · 매일 09:00~21:00</div>
+            </div>
+            <div>
+              <div class="place-price">₩800~1,200</div>
+              <div class="place-dist">직선 0.6km</div>
+            </div>
+          </div>
+
+          <div class="place-row">
+            <div class="place-rank pr2">2</div>
+            <div class="place-body">
+              <div class="place-name">마포농수산물시장</div>
+              <div class="place-meta">도보 12분 · 매일 07:00~22:00</div>
+            </div>
+            <div>
+              <div class="place-price">₩1,000~1,500</div>
+              <div class="place-dist">직선 1.1km</div>
+            </div>
+          </div>
+
+          <div class="place-row">
+            <div class="place-rank pr3">3</div>
+            <div class="place-body">
+              <div class="place-name">홈플러스 합정점</div>
+              <div class="place-meta">도보 15분 · 24시간</div>
+            </div>
+            <div>
+              <div class="place-price">₩1,290</div>
+              <div class="place-dist">직선 1.4km · 서울물가정보</div>
+            </div>
+          </div>
+
+          <div class="place-row">
+            <div class="place-rank pr4">4</div>
+            <div class="place-body">
+              <div class="place-name">쿠팡 로켓프레시</div>
+              <div class="place-meta">새벽배송 · 내일 오전 도착</div>
+            </div>
+            <div>
+              <div class="place-price">₩1,490</div>
+              <div class="place-dist">네이버쇼핑 기준</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-card">
+          <div class="d-card-title">👨‍🍳 이 재료로 만들 수 있는 메뉴</div>
+          <div class="menu-grid">
+            <div class="menu-card" onclick="toast('열무냉면 레시피')">
+              <div class="menu-emoji">🍜</div>
+              <div class="menu-name">열무냉면</div>
+              <div class="menu-diff">보통 난이도</div>
+            </div>
+            <div class="menu-card" onclick="toast('열무김치 레시피')">
+              <div class="menu-emoji">🥗</div>
+              <div class="menu-name">열무김치</div>
+              <div class="menu-diff">초보 가능</div>
+            </div>
+            <div class="menu-card" onclick="toast('열무비빔밥 레시피')">
+              <div class="menu-emoji">🍚</div>
+              <div class="menu-name">열무비빔밥</div>
+              <div class="menu-diff">초보 가능</div>
+            </div>
+            <div class="menu-card" onclick="toast('열무된장국 레시피')">
+              <div class="menu-emoji">🍲</div>
+              <div class="menu-name">열무된장국</div>
+              <div class="menu-diff">초보 가능</div>
+            </div>
+          </div>
+          <button class="cta-btn" onclick="toast('냉장고 재료 기반 추천')">냉장고 재료로 레시피 추천받기 ↗</button>
+        </div>
+
+        <button class="submit-btn" onclick="showScreen('register')">이 재료 실구매가 등록하기</button>
+      </div>
+    </div>
+
+    <!-- ============================= 화면 3: 가격 등록 ============================= -->
+    <div class="screen-view" id="screen-register">
+      <div class="sbar">
+        <span class="sbar-t">9:41</span>
+        <div class="sbar-i"><span>🛜</span><span>🔋</span></div>
+      </div>
+
+      <div class="r-hdr">
+        <button class="hdr-back" onclick="showScreen('main')" aria-label="뒤로">←</button>
+        <span class="hdr-title">실구매가 등록</span>
+      </div>
+
+      <div class="r-body">
+
+        <!-- 🧾 영수증 등록 카드 (신규 추가) -->
+        <div class="receipt-card" onclick="toast('영수증 촬영 / 갤러리에서 선택')">
+          <div class="receipt-icon">🧾</div>
+          <div class="receipt-body">
+            <div class="receipt-title">영수증으로 한 번에 등록 <span class="receipt-pill">OCR · 신규</span></div>
+            <div class="receipt-sub">사진 한 장이면 품목·가격·매장 자동 입력. 여러 재료를 동시에 기여할 수 있어요.</div>
+          </div>
+          <div class="receipt-arrow">→</div>
+        </div>
+
+        <div class="or-divider">
+          <hr><span>또는 직접 입력하기</span>
+          <hr>
+        </div>
+
+        <div class="card">
+          <div class="clabel">🛒 어떤 재료를 샀나요?</div>
+          <div class="item-sel">
+            <div class="isel-btn selected" onclick="selectItem(this)">
+              <span class="isel-em">🥬</span>
+              <div>
+                <div class="isel-name">열무</div>
+                <div class="isel-price">KAMIS ₩1,200</div>
+              </div>
+            </div>
+            <div class="isel-btn" onclick="selectItem(this)">
+              <span class="isel-em">🌿</span>
+              <div>
+                <div class="isel-name">쑥갓</div>
+                <div class="isel-price">KAMIS ₩980</div>
+              </div>
+            </div>
+            <div class="isel-btn" onclick="selectItem(this)">
+              <span class="isel-em">🍃</span>
+              <div>
+                <div class="isel-name">취나물</div>
+                <div class="isel-price">KAMIS 미집계</div>
+              </div>
+            </div>
+            <div class="isel-btn" onclick="selectItem(this)">
+              <span class="isel-em">🍓</span>
+              <div>
+                <div class="isel-name">딸기</div>
+                <div class="isel-price">KAMIS ₩8,500</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="clabel">💰 실제로 얼마에 샀나요?</div>
+          <div class="price-input-wrap">
+            <input type="number" placeholder="직접 입력" value="900" id="priceInput" oninput="updateDiff()" />
+            <span class="price-unit-badge">원 / 단</span>
+          </div>
+          <div class="kamis-compare">
+            <div class="kc-left">
+              <div style="margin-bottom:2px;">KAMIS 공식 기준가</div>
+              <div style="font-size:11px;">오늘 소매 기준 · 서울</div>
+            </div>
+            <div style="display:flex; align-items:center;">
+              <span class="kc-right" id="kamisPrice">₩1,200</span>
+              <span class="diff-badge diff-low" id="diffBadge">▼ 25% 저렴</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="clabel">📍 어디서 샀나요?</div>
+          <div class="place-input-wrap">
+            <input type="text" placeholder="장소 직접 입력" id="placeInput" value="망원시장" />
+            <button onclick="toast('현위치 사용')">현위치</button>
+          </div>
+          <div class="place-tags">
+            <span class="ptag selected" onclick="selectPlace(this)">망원시장</span>
+            <span class="ptag" onclick="selectPlace(this)">마포농수산물시장</span>
+            <span class="ptag" onclick="selectPlace(this)">홈플러스</span>
+            <span class="ptag" onclick="selectPlace(this)">이마트</span>
+            <span class="ptag" onclick="selectPlace(this)">쿠팡</span>
+            <span class="ptag" onclick="selectPlace(this)">마켓컬리</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="clabel">⭐ 신선도는 어땠나요?</div>
+          <div class="quality-row">
+            <div class="q-btn" onclick="selectQ(this)">아쉬움</div>
+            <div class="q-btn" onclick="selectQ(this)">보통</div>
+            <div class="q-btn selected" onclick="selectQ(this)">좋음</div>
+            <div class="q-btn" onclick="selectQ(this)">매우 좋음</div>
+          </div>
+        </div>
+
+        <div class="contrib-box">
+          <span class="ico">💾</span>
+          <div class="contrib-text">
+            내가 등록한 가격은 <strong>제철 상회 DB</strong>에 기여돼요. KAMIS가 집계 못하는 <strong>전통시장·소형마트 실시간 시세</strong>를 채워나가는 데이터가 됩니다.
+            <div class="point-row">
+              <span class="point-badge">+10P 적립 예정</span>
+              <span class="point-badge">이번 달 3회 등록</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="submit-btn" onclick="toast('가격 등록 완료 · +10P 적립')">가격 등록하기</button>
+
+        <div class="card">
+          <div class="clabel">🕐 최근 이웃 등록 가격</div>
+
+          <div class="recent-row">
+            <span class="r-em">🥬</span>
+            <div class="r-body-recent">
+              <div class="r-name">열무</div>
+              <div class="r-meta"><span class="verified-dot"></span>망원시장 · 23분 전</div>
+            </div>
+            <div class="r-right">
+              <div class="r-price">₩900</div>
+              <div class="r-diff" style="color:var(--primary);">KAMIS -25%</div>
+            </div>
+          </div>
+
+          <div class="recent-row">
+            <span class="r-em">🥬</span>
+            <div class="r-body-recent">
+              <div class="r-name">열무</div>
+              <div class="r-meta"><span class="verified-dot"></span>마포농수산물시장 · 2시간 전</div>
+            </div>
+            <div class="r-right">
+              <div class="r-price">₩1,000</div>
+              <div class="r-diff" style="color:var(--primary);">KAMIS -17%</div>
+            </div>
+          </div>
+
+          <div class="recent-row">
+            <span class="r-em">🌿</span>
+            <div class="r-body-recent">
+              <div class="r-name">쑥갓</div>
+              <div class="r-meta"><span class="verified-dot"></span>홈플러스 합정 · 5시간 전</div>
+            </div>
+            <div class="r-right">
+              <div class="r-price">₩1,290</div>
+              <div class="r-diff" style="color:#D85A30;">KAMIS +32%</div>
+            </div>
+          </div>
+
+          <button class="cta-btn" onclick="toast('마포구 전체 등록 내역')">마포구 전체 등록 내역 보기 ↗</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function showScreen(name) {
+    document.querySelectorAll('.screen-view').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    document.querySelectorAll('.proto-nav button').forEach(b => b.classList.remove('active'));
+    const navMap = { main: 'navMain', detail: 'navDetail', register: 'navRegister' };
+    document.getElementById(navMap[name]).classList.add('active');
+    // 스크롤 초기화
+    document.querySelectorAll('.screen-view.active .m-card-list, .screen-view.active .d-content, .screen-view.active .r-body').forEach(el => el.scrollTop = 0);
+  }
+
+  function selectItem(el) {
+    document.querySelectorAll('#screen-register .isel-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function updateDiff() {
+    const input = document.getElementById('priceInput');
+    const badge = document.getElementById('diffBadge');
+    const val = parseInt(input.value) || 0;
+    const kamis = 1200;
+    if (!val) { badge.textContent = ''; return; }
+    const diff = Math.round(((val - kamis) / kamis) * 100);
+    if (diff < -5) {
+      badge.textContent = '▼ ' + Math.abs(diff) + '% 저렴';
+      badge.className = 'diff-badge diff-low';
+    } else if (diff > 5) {
+      badge.textContent = '▲ ' + Math.abs(diff) + '% 비쌈';
+      badge.className = 'diff-badge diff-high';
+    } else {
+      badge.textContent = '≈ 기준가 수준';
+      badge.className = 'diff-badge diff-same';
+    }
+  }
+
+  function selectPlace(el) {
+    document.querySelectorAll('#screen-register .ptag').forEach(t => t.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('placeInput').value = el.textContent;
+  }
+
+  function selectQ(el) {
+    document.querySelectorAll('#screen-register .q-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  let toastTimer;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+</script>

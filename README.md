@@ -1,0 +1,52 @@
+# 제철식탁 Seasonal Kitchen
+
+제철 식재료, 가격 흐름, 레시피, 숏폼 콘텐츠, AI 장보기 추천을 연결하는 해커톤 프로젝트입니다.
+
+## Repository Structure
+
+```text
+seasonal-kitchen/
+├── openspec/  # 현재 구현 기준 도메인/API spec 및 변경안
+├── backend/   # Spring Boot API server
+└── frontend/  # Next.js prototype UI
+```
+
+## Backend
+
+- Spring Boot 3, Java 21
+- PostgreSQL, Flyway
+- Spring Security, JWT
+- Swagger/OpenAPI
+- JUnit 5, Testcontainers
+
+```powershell
+cd backend
+docker compose up -d postgres
+.\gradlew test
+.\gradlew bootRun
+```
+
+Swagger:
+
+- `http://localhost:8080/swagger-ui.html`
+- `http://localhost:8080/v3/api-docs`
+
+## Frontend
+
+- Next.js prototype UI
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+## Specs
+
+`openspec/`에는 현재 구현된 동작을 기준으로 정리한 한글 명세 문서가 들어 있습니다. 인증, 사용자, 식재료, 가격, 레시피, 릴스, 장보기, AI 추천, 알림, 분석, 프론트엔드 연동 범위를 다룹니다.
+
+백엔드 명세는 `openspec/specs/` 아래에서 `backend-` prefix를 사용합니다. 예를 들면 `backend-auth`, `backend-user`, `backend-ai-chef`입니다.
+
+프론트엔드 연동 명세는 `frontend-` prefix를 사용합니다.
+
+아직 구현하지 않은 변경안은 `openspec/changes/` 아래에서 관리합니다.

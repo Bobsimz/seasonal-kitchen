@@ -1,0 +1,1 @@
+package com.seasonaldining.shopping.repository; import com.seasonaldining.shopping.entity.ShoppingPlan; import org.springframework.data.jpa.repository.JpaRepository; import java.util.Optional; public interface ShoppingPlanRepository extends JpaRepository<ShoppingPlan,Long>{Optional<ShoppingPlan> findByIdAndUserId(Long id,Long userId);}

@@ -1,0 +1,157 @@
+package com.seasonaldining.common.config;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.examples.Example;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class OpenApiConfig {
+
+    @Bean
+    public OpenAPI seasonalDiningOpenApi() {
+        return new OpenAPI()
+                .components(frontendDemoExamples())
+                .info(new Info()
+                        .title("Seasonal Dining Backend API")
+                        .description("Seasonal Dining backend API documentation. Frontend screen demo examples are available under OpenAPI components.examples.")
+                        .version("v1"))
+                .addServersItem(new Server()
+                        .url("http://localhost:8080")
+                        .description("Local development server"));
+    }
+
+    private Components frontendDemoExamples() {
+        return new Components()
+                .addExamples("FrontendHomeResponse", example("""
+                        {
+                          "success": true,
+                          "data": {
+                            "seasonTitle": "이번 주 제철 추천",
+                            "seasonSubtitle": "봄동과 무 가격이 안정적입니다.",
+                            "hero": {"title": "봄동 비빔밥", "ingredientName": "봄동", "imageUrl": "https://example.com/bomdong.png"},
+                            "ingredients": [{"id": 1, "name": "봄동", "price": 4500, "tags": ["제철", "추천"]}],
+                            "recipes": [{"id": 1, "title": "봄동 비빔밥", "likeCount": 12, "tags": ["EASY", "20분"]}],
+                            "reels": [{"id": 1, "title": "봄동 비빔밥 1분", "creatorName": "제철키친", "viewCount": 1200}],
+                            "trendingKeywords": ["봄동", "무생채"],
+                            "unreadNotificationCount": 2
+                          },
+                          "error": null
+                        }
+                        """))
+                .addExamples("FrontendIngredientDetailResponse", example("""
+                        {
+                          "success": true,
+                          "data": {
+                            "id": 1,
+                            "name": "봄동",
+                            "seasonMonths": [3, 4, 5],
+                            "nutrition": {"calories": 22, "carbohydrate": 4.3, "sugar": 1.2, "fiber": 2.0, "protein": 1.5, "fat": 0.2, "vitamins": [{"name": "비타민C", "value": "28mg"}]},
+                            "careTips": ["잎이 선명한 것을 고릅니다."],
+                            "storageTips": [{"storageType": "냉장", "description": "신문지에 싸서 보관합니다.", "icon": "fridge"}],
+                            "compareStoreCount": 2
+                          },
+                          "error": null
+                        }
+                        """))
+                .addExamples("FrontendIngredientOffersResponse", example("""
+                        {
+                          "success": true,
+                          "data": [
+                            {"storeName": "마켓컬리", "deliveryLabel": "샛별배송", "price": 4300, "priceRangeMin": 4200, "priceRangeMax": 4500, "discountRate": 10, "productUrl": "https://example.com/kurly", "badge": "최저가"}
+                          ],
+                          "error": null
+                        }
+                        """))
+                .addExamples("FrontendRecipeDetailResponse", example("""
+                        {
+                          "success": true,
+                          "data": {
+                            "id": 1,
+                            "title": "봄동 비빔밥",
+                            "estimatedTotal": 6700,
+                            "creatorName": "제철키친",
+                            "likeCount": 12,
+                            "tags": ["EASY", "20분"],
+                            "ingredients": [{"ingredientName": "봄동", "estimatedPrice": 4500, "priceTrendDirection": "STABLE"}],
+                            "relatedReels": [{"id": 1, "title": "봄동 비빔밥 1분"}]
+                          },
+                          "error": null
+                        }
+                        """))
+                .addExamples("FrontendReelsResponse", example("""
+                        {
+                          "success": true,
+                          "data": {
+                            "items": [
+                              {"id": 1, "recipeId": 1, "creatorName": "제철키친", "videoUrl": "https://example.com/demo.mp4", "thumbnailUrl": "https://example.com/thumb.png", "title": "봄동 비빔밥 1분", "ingredientTags": ["봄동"], "likeCount": 12, "commentCount": 3, "saveCount": 4, "viewCount": 1200, "durationSeconds": 54, "liked": false, "saved": false}
+                            ],
+                            "page": 0,
+                            "size": 20,
+                            "totalElements": 1,
+                            "hasNext": false
+                          },
+                          "error": null
+                        }
+                        """))
+                .addExamples("FrontendShoppingPlanResponse", example("""
+                        {
+                          "success": true,
+                          "data": {
+                            "planId": 1,
+                            "summary": "3일치 제철 식재료 중심 장보기 계획입니다.",
+                            "expectedSavingRate": 12,
+                            "expectedSavingAmount": 2500,
+                            "meals": [{"title": "추천 식단 1", "mealType": "DINNER"}],
+                            "items": [{"itemId": 1, "ingredientId": 1, "ingredientName": "봄동", "quantity": 1, "unit": "봉", "estimatedPrice": 4300, "selected": true, "platform": "마켓컬리", "tag": "최저가"}],
+                            "reasons": ["DB 가격 후보만 사용했습니다."],
+                            "substitutions": ["대체 식재료는 상세 화면에서 확인할 수 있습니다."],
+                            "messages": [{"role": "ASSISTANT", "content": "데모 장보기 계획을 준비했습니다."}],
+                            "quickPrompts": ["예산을 낮춰줘"]
+                          },
+                          "error": null
+                        }
+                        """))
+                .addExamples("FrontendStoreLinksResponse", example("""
+                        {
+                          "success": true,
+                          "data": {
+                            "savingAmount": 2500,
+                            "storeGroups": [{"storeName": "마켓컬리", "deliveryLabel": "샛별배송", "totalPrice": 6400, "externalCheckoutUrl": "https://example.com/kurly", "items": [{"ingredientName": "봄동", "estimatedPrice": 4300}]}]
+                          },
+                          "error": null
+                        }
+                        """))
+                .addExamples("FrontendMyPageSummaryResponse", example("""
+                        {
+                          "success": true,
+                          "data": {
+                            "profile": {"id": 1, "nickname": "제철데모", "profileImageUrl": "https://example.com/demo-profile.png"},
+                            "stats": {"monthlySaving": 0, "favoriteCount": 1, "activeAlertCount": 1, "pantryCount": 1, "recentOrderCount": 0},
+                            "preferences": {"householdSize": 2, "spicyAvoid": true, "priority": "LOW_PRICE"},
+                            "allergyCodes": ["EGG", "MILK"],
+                            "personalizedIngredients": [{"id": 1, "name": "봄동", "tags": ["추천", "채소"]}],
+                            "menuRows": [{"key": "favorites", "label": "찜한 콘텐츠", "count": 1}]
+                          },
+                          "error": null
+                        }
+                        """))
+                .addExamples("FrontendNotificationsResponse", example("""
+                        {
+                          "success": true,
+                          "data": {
+                            "items": [{"id": 1, "type": "PRICE_DROP", "category": "INGREDIENT", "title": "무 가격 하락", "subtitle": "무 가격이 설정 가격에 가까워졌습니다.", "icon": "price-down", "severity": "SUCCESS", "relativeTime": "방금 전", "actionTargetType": "INGREDIENT"}],
+                            "tabCounts": {"total": 2, "recipe": 1, "ingredient": 1}
+                          },
+                          "error": null
+                        }
+                        """));
+    }
+
+    private Example example(String value) {
+        return new Example().value(value);
+    }
+}

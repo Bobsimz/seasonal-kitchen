@@ -1,0 +1,188 @@
+package com.seasonaldining.recipe.service;
+
+import com.seasonaldining.common.exception.BusinessException;
+import com.seasonaldining.common.exception.ErrorCode;
+import com.seasonaldining.common.response.ListResponse;
+import com.seasonaldining.ingredient.entity.Ingredient;
+import com.seasonaldining.ingredient.repository.IngredientRepository;
+import com.seasonaldining.price.entity.PriceSnapshot;
+import com.seasonaldining.price.repository.PriceSnapshotRepository;
+import com.seasonaldining.recipe.dto.response.RecipeCardResponse;
+import com.seasonaldining.recipe.dto.response.RecipeDetailResponse;
+import com.seasonaldining.recipe.dto.response.RecipeIngredientResponse;
+import com.seasonaldining.recipe.dto.response.RecipeStepResponse;
+import com.seasonaldining.recipe.entity.Recipe;
+import com.seasonaldining.recipe.entity.RecipeIngredient;
+import com.seasonaldining.recipe.entity.RecipeStep;
+import com.seasonaldining.recipe.repository.RecipeIngredientRepository;
+import com.seasonaldining.recipe.repository.RecipeRepository;
+import com.seasonaldining.recipe.repository.RecipeStepRepository;
+import com.seasonaldining.reel.entity.ReelReaction;
+import com.seasonaldining.reel.repository.CreatorRepository;
+import com.seasonaldining.reel.repository.ReelReactionRepository;
+import com.seasonaldining.reel.repository.ReelRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional(readOnly = true)
+public class RecipeService {
+
+    private static final String PUBLISHED = "PUBLISHED";
+
+    private final RecipeRepository recipeRepository;
+    private final RecipeIngredientRepository recipeIngredientRepository;
+    private final IngredientRepository ingredientRepository;
+    private final RecipeStepRepository recipeStepRepository;
+    private final PriceSnapshotRepository priceSnapshotRepository;
+    private final ReelRepository reelRepository;
+    private final CreatorRepository creatorRepository;
+    private final ReelReactionRepository reelReactionRepository;
+
+    public RecipeService(
+            RecipeRepository recipeRepository,
+            RecipeIngredientRepository recipeIngredientRepository,
+            IngredientRepository ingredientRepository,
+            RecipeStepRepository recipeStepRepository,
+            PriceSnapshotRepository priceSnapshotRepository,
+            ReelRepository reelRepository,
+            CreatorRepository creatorRepository,
+            ReelReactionRepository reelReactionRepository
+    ) {
+        this.recipeRepository = recipeRepository;
+        this.recipeIngredientRepository = recipeIngredientRepository;
+        this.ingredientRepository = ingredientRepository;
+        this.recipeStepRepository = recipeStepRepository;
+        this.priceSnapshotRepository = priceSnapshotRepository;
+        this.reelRepository = reelRepository;
+        this.creatorRepository = creatorRepository;
+        this.reelReactionRepository = reelReactionRepository;
+    }
+
+    public List<RecipeStepResponse> getRecipeSteps(Long recipeId) {
+        getPublishedRecipeOrThrow(recipeId);
+        return recipeStepRepository.findByRecipeIdOrderByStepNumberAsc(recipeId).stream()
+                .map(this::toStepResponse)
+                .toList();
+    }
+
+    public RecipeDetailResponse getRecipeDetail(Long recipeId) {
+        Recipe recipe = getPublishedRecipeOrThrow(recipeId);
+        List<RecipeIngredient> recipeIngredients = recipeIngredientRepository.findByRecipeIdOrderByIdAsc(recipeId);
+        Map<Long, Ingredient> ingredients = ingredientRepository.findAllById(
+                        recipeIngredients.stream().map(RecipeIngredient::getIngredientId).toList()
+                ).stream()
+                .collect(Collectors.toMap(Ingredient::getId, Function.identity()));
+
+        List<RecipeIngredientResponse> ingredientResponses = recipeIngredients.stream()
+                .map(recipeIngredient -> toIngredientResponse(recipeIngredient, ingredients.get(recipeIngredient.getIngredientId())))
+                .toList();
+
+        return new RecipeDetailResponse(
+                recipe.getId(),
+                recipe.getTitle(),
+                recipe.getDescription(),
+                recipe.getImageUrl(),
+                recipe.getDifficulty(),
+                recipe.getMinutes(),
+                recipe.getServings(),
+                ingredientResponses,
+                ingredientResponses.stream()
+                        .map(RecipeIngredientResponse::estimatedPrice)
+                        .filter(Objects::nonNull)
+                        .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add),
+                List.of(recipe.getDifficulty(), recipe.getMinutes() + "분"),
+                null,
+                0,
+                relatedReels(recipe.getId())
+        );
+    }
+
+    private Recipe getPublishedRecipeOrThrow(Long recipeId) {
+        return recipeRepository.findByIdAndStatus(recipeId, PUBLISHED)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RECIPE_NOT_FOUND));
+    }
+
+    private RecipeIngredientResponse toIngredientResponse(RecipeIngredient recipeIngredient, Ingredient ingredient) {
+        return new RecipeIngredientResponse(
+                recipeIngredient.getIngredientId(),
+                ingredient == null ? null : ingredient.getName(),
+                recipeIngredient.getQuantity(),
+                recipeIngredient.getUnit(),
+                recipeIngredient.isOptional(),
+                ingredient == null ? null : ingredient.getImageUrl(),
+                latestPrice(recipeIngredient.getIngredientId()),
+                null
+        );
+    }
+
+    private RecipeStepResponse toStepResponse(RecipeStep recipeStep) {
+        return new RecipeStepResponse(
+                recipeStep.getStepNumber(),
+                recipeStep.getDescription(),
+                recipeStep.getMinutes(),
+                recipeStep.getImageUrl(),
+                null,
+                recipeStep.getMinutes()
+        );
+    }
+
+    public ListResponse<RecipeCardResponse> getRecipes(Pageable pageable) {
+        Page<Recipe> recipePage = recipeRepository.findByStatus(PUBLISHED, pageable);
+        List<RecipeCardResponse> items = recipePage.getContent().stream()
+                .map(this::toCardResponse)
+                .toList();
+
+        return new ListResponse<>(
+                items,
+                recipePage.getNumber(),
+                recipePage.getSize(),
+                recipePage.getTotalElements(),
+                recipePage.hasNext()
+        );
+    }
+
+    private RecipeCardResponse toCardResponse(Recipe recipe) {
+        return new RecipeCardResponse(
+                recipe.getId(),
+                recipe.getTitle(),
+                recipe.getDescription(),
+                recipe.getImageUrl(),
+                recipe.getDifficulty(),
+                recipe.getMinutes(),
+                recipe.getServings(),
+                0,
+                0,
+                null,
+                List.of(recipe.getDifficulty(), recipe.getMinutes() + "분"),
+                false
+        );
+    }
+
+    private java.math.BigDecimal latestPrice(Long ingredientId) {
+        List<PriceSnapshot> snapshots = priceSnapshotRepository.findByIngredientIdOrderByObservedDateAsc(ingredientId);
+        return snapshots.isEmpty() ? null : snapshots.get(snapshots.size() - 1).getPrice();
+    }
+
+    private List<RecipeDetailResponse.RelatedReelResponse> relatedReels(Long recipeId) {
+        return reelRepository.findTop3ByRecipeIdAndStatusOrderByPublishedAtDesc(recipeId, PUBLISHED).stream()
+                .map(reel -> new RecipeDetailResponse.RelatedReelResponse(
+                        reel.getId(),
+                        reel.getTitle(),
+                        reel.getThumbnailUrl(),
+                        creatorRepository.findById(reel.getCreatorId()).map(c -> c.getDisplayName()).orElse(null),
+                        reelReactionRepository.countByReelIdAndReactionType(reel.getId(), ReelReaction.LIKE),
+                        reel.getDurationSeconds(),
+                        reel.getPublishedAt()
+                ))
+                .toList();
+    }
+}
