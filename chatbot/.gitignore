@@ -1,0 +1,28 @@
+# 환경 변수
+.env
+.env.*
+
+# Python 캐시
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# 가상환경
+.venv/
+venv/
+
+# 데이터 파일 (대용량)
+data/
+
+# 스크립트
+scripts/
+
+# 모델 가중치 (대용량)
+models/
+
+# 로그 / 테스트
+*.log
+.pytest_cache/
+
+# macOS
+.DS_Store
