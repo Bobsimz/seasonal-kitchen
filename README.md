@@ -34,6 +34,19 @@ docker compose up -d postgres
 .\gradlew bootRun
 ```
 
+Supabase PostgreSQL을 사용할 때는 비밀값을 커밋하지 말고 환경변수로 실행합니다.
+
+```powershell
+cd backend
+$env:SPRING_PROFILES_ACTIVE="supabase"
+$env:SUPABASE_DB_URL="jdbc:postgresql://db.<project-ref>.supabase.co:5432/postgres?sslmode=require"
+$env:SUPABASE_DB_USERNAME="postgres"
+$env:SUPABASE_DB_PASSWORD="<database-password>"
+.\gradlew bootRun
+```
+
+Supabase transaction pooler를 쓰는 경우 JDBC URL 끝에 `prepareThreshold=0`을 함께 둡니다.
+
 Swagger:
 
 - `http://localhost:8080/swagger-ui.html`

@@ -37,6 +37,26 @@
 | AI | LLM API, JSON Schema 기반 구조화 응답 |
 | 테스트 | JUnit 5, Testcontainers |
 
+## Supabase DB
+
+Supabase는 PostgreSQL이므로 JPA/Flyway 코드는 그대로 사용합니다. 원격 Supabase DB로 실행할 때는 `supabase` 프로필을 사용합니다.
+
+```powershell
+$env:SPRING_PROFILES_ACTIVE="supabase"
+$env:SUPABASE_DB_URL="jdbc:postgresql://db.<project-ref>.supabase.co:5432/postgres?sslmode=require"
+$env:SUPABASE_DB_USERNAME="postgres"
+$env:SUPABASE_DB_PASSWORD="<database-password>"
+.\gradlew bootRun
+```
+
+Transaction pooler URL을 사용할 경우:
+
+```powershell
+$env:SUPABASE_DB_URL="jdbc:postgresql://aws-0-<region>.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0"
+```
+
+`supabase` 프로필은 demo seed를 기본 비활성화합니다. 필요할 때만 `DEMO_SEED_ENABLED=true`를 명시합니다.
+
 ## 개발 원칙
 
 1. Entity를 API 응답으로 직접 반환하지 않습니다.
