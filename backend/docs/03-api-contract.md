@@ -173,7 +173,6 @@ DELETE /api/v1/price-alerts/{alertId}
 
 ```text
 POST   /api/v1/recommendations/plans
-POST   /api/v1/recommendations/plans/{planId}/messages
 GET    /api/v1/recommendations/plans/{planId}
 GET    /api/v1/shopping-plans/{planId}
 PATCH  /api/v1/shopping-plans/{planId}/items/{itemId}
@@ -257,9 +256,7 @@ public record ShoppingPlanResponse(
     List<MealResponse> meals,
     List<ShoppingItemResponse> items,
     List<String> reasons,
-    List<String> substitutions,
-    List<MessageResponse> messages,
-    List<String> quickPrompts
+    List<String> substitutions
 ) {}
 ```
 

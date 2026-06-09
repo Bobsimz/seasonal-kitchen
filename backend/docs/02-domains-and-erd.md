@@ -14,7 +14,7 @@
 | `reel` | 영상, 크리에이터, 태그, 좋아요, 댓글, 저장 |
 | `favorite` | 찜한 식재료와 저장 레시피 |
 | `shopping` | 장보기 목록, 예상 비용, 구매처 이동 |
-| `recommendation` | 추천 점수, AI 채팅, 구조화 추천 결과 |
+| `recommendation` | 추천 세션, 장보기 계획 생성, 구조화 추천 결과 |
 | `notification` | 가격 하락, 제철 시작, 레시피 추천 알림 |
 | `analytics` | 검색, 조회, 완주율, 구매처 이동 로그 |
 | `creator` | 크리에이터 등록과 콘텐츠 관리 |
@@ -97,7 +97,6 @@ erDiagram
 | 테이블 | 주요 컬럼 |
 | --- | --- |
 | `recommendation_sessions` | `id`, `user_id`, `status`, `request_json`, `created_at` |
-| `recommendation_messages` | `id`, `session_id`, `role`, `content`, `created_at` |
 | `shopping_plans` | `id`, `user_id`, `session_id`, `days`, `people`, `budget`, `estimated_total`, `status` |
 | `shopping_plan_meals` | `id`, `plan_id`, `recipe_id`, `meal_date`, `meal_type` |
 | `shopping_plan_items` | `id`, `plan_id`, `ingredient_id`, `quantity`, `unit`, `estimated_price`, `selected` |
@@ -122,4 +121,3 @@ erDiagram
 - 릴스 영상 자체는 DB가 아니라 Object Storage에 저장합니다.
 - `favorites`는 `target_type`으로 식재료와 레시피 저장을 통합할 수 있습니다.
 - 사용자 행동 로그는 핵심 트랜잭션과 분리하여 비동기로 적재합니다.
-

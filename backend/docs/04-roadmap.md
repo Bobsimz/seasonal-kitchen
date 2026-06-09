@@ -86,7 +86,6 @@
 - 대체 식재료 추천 구현
 - AI 구조화 응답 연동
 - 장보기 목록과 예상 비용 계산 구현
-- 추천 수정 대화 구현
 - 외부 구매처 이동 링크 생성
 
 완료 기준:
@@ -146,4 +145,3 @@ OpenAPI TypeScript client 생성
 | 추천 worker | AI 응답 시간이 길어 비동기 작업 관리가 필요함 |
 | analytics pipeline | 행동 로그량이 핵심 DB 부하를 증가시킴 |
 | media processing | 영상 인코딩 작업이 별도 자원을 요구함 |
-

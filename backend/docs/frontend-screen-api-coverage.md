@@ -36,7 +36,7 @@ This document does not evaluate frontend code quality and does not require front
 | Ingredient search result | `/` artboard `list-ing-res` | `components/screens-detail.jsx` `ScreenListSearchResult` | Search filtered list | 봄동 ingredient result count and cards | Inline filtered arrays | `GET /api/v1/ingredients?query=봄동` or search API | Ingredients list exists; search exists flat | Query/filter support if absent | same as list | P1 | `T81-ingredient-detail-screen-fields.md` |
 | Ingredient detail | `/` artboard `detail` | `components/screens-detail.jsx` `ScreenDetail` | Hero/detail summary | ingredient name, image, season months, price, trend, buying signal, nutrition, substitute ingredients, cleaning/storage tips | Static JSX and arrays | `GET /api/v1/ingredients/{ingredientId}`, `/prices`, `/substitutes` | Covered | None | Real season calendar and trend labels remain deferred | P0 | None |
 | Price compare | `/` artboard `compare` | `components/screens-detail.jsx` `ScreenCompare` | Store/platform price comparison | store name, delivery text, price range, original price, discount, tag, logo, alert threshold | Inline `platforms` | `GET /api/v1/ingredients/{ingredientId}/offers` | Covered | None | `alertTargetPrice` belongs to price-alert state, not store offers | P0 | None |
-| AI chat | `/` artboard `ai-b` | `components/screens-ai.jsx` `ScreenAIChatB` | Chat and quick prompts | assistant messages, user request, quick prompt cards | Static JSX | `POST /api/v1/recommendations/plans`, `POST /messages` | Partially covered | None | `suggestedConditions` and rich assistant card payload deferred | P0 | None |
+| AI recommendation setup | `/` artboard `ai-b` | `components/screens-ai.jsx` `ScreenAIChatB` | Recommendation prompt/setup | user request and plan creation trigger | Static JSX | `POST /api/v1/recommendations/plans` | Covered | None | rich assistant card payload deferred | P0 | None |
 | AI recommendation result | `/` artboard `ai-result` | `components/screens-ai.jsx` `ScreenAIResult` | Plan result and cart | summary, expected savings, selected recipes, cart items, platform split, total | Inline `CART_ITEMS` | `POST /api/v1/recommendations/plans`, `GET /api/v1/shopping-plans/{planId}` | Covered; store split is separate endpoint | None | Rich LLM card payload deferred | P0 | None |
 | Reels feed | `/` artboard `reels` | `components/screens-reels.jsx` `ScreenReels` | Vertical reels | video/thumbnail, creator, title, ingredients tags, likes, comments, saves, view event | Static JSX | `GET /api/v1/reels`, like/comment/view APIs | Covered | None | `saved` remains default false until save domain is added | P0 | None |
 | Recipe detail | `/` artboard `recipe` | `components/screens-reels.jsx` `ScreenRecipeDetail` | Recipe detail from reel | title, image, duration, difficulty, servings, ingredients with prices, related reels, creator/likes | Static JSX arrays | `GET /api/v1/recipes/{recipeId}`, `/steps`, `/ingredients/{id}/recipes` | Covered | None | Optional tips/creator can be null | P0 | None |
@@ -61,7 +61,7 @@ This document does not evaluate frontend code quality and does not require front
 - `GET/POST/PATCH/DELETE /api/v1/users/me/pantry`: exist.
 - `GET/POST/DELETE /api/v1/favorites`: exist.
 - `GET/POST/PATCH/DELETE /api/v1/price-alerts`: exist.
-- `POST /api/v1/recommendations/plans`, `GET /api/v1/recommendations/plans/{planId}`, `POST /api/v1/recommendations/plans/{planId}/messages`: exist with typed shopping response, messages, and quick prompts.
+- `POST /api/v1/recommendations/plans`, `GET /api/v1/recommendations/plans/{planId}`: exist with typed shopping response.
 - `GET /api/v1/shopping-plans/{planId}`, `PATCH /api/v1/shopping-plans/{planId}/items/{itemId}`, `GET /api/v1/shopping-plans/{planId}/store-links`: exist.
 - `GET /api/v1/notifications`, `PATCH /api/v1/notifications/{notificationId}/read`, `PATCH /api/v1/notifications/read-all`: exist with `data.items + data.tabCounts`.
 - `POST /api/v1/events`: exists.
@@ -69,7 +69,7 @@ This document does not evaluate frontend code quality and does not require front
 ## Missing APIs
 
 - OAuth endpoints: `POST /api/v1/auth/oauth/{provider}`, `POST /api/v1/auth/refresh`, `POST /api/v1/auth/logout`
-- Optional catalogs: `GET /api/v1/allergies`, `GET /api/v1/recommendations/quick-prompts`
+- Optional catalogs: `GET /api/v1/allergies`
 
 ## Seed/Demo Data Requirements
 

@@ -14,7 +14,7 @@
 
 - **GIVEN** 인증된 사용자에게 속한 장보기 계획이 존재한다
 - **WHEN** `GET /api/v1/shopping-plans/{planId}`를 호출한다
-- **THEN** 시스템은 식단, 장보기 항목, 예상 총액, 절약 정보, 메시지, 빠른 프롬프트를 포함한 `ShoppingPlanResponse`를 반환해야 한다
+- **THEN** 시스템은 식단, 장보기 항목, 예상 총액, 절약 정보를 포함한 `ShoppingPlanResponse`를 반환해야 한다
 
 ### Requirement: 장보기 항목 선택 변경
 
@@ -48,7 +48,6 @@
 - `shopping_plan_meals`
 - `shopping_plan_items`
 - `recommendation_sessions`
-- `recommendation_messages`
 - `recipes`
 - `ingredients`
 - `store_offers`
