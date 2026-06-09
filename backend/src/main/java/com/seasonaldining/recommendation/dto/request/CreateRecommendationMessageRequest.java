@@ -1,1 +1,0 @@
-package com.seasonaldining.recommendation.dto.request; import jakarta.validation.constraints.NotBlank; import io.swagger.v3.oas.annotations.media.Schema; public record CreateRecommendationMessageRequest(@Schema(example="매운 음식은 빼줘") @NotBlank String content){}

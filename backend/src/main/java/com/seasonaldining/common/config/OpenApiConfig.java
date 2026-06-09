@@ -108,9 +108,7 @@ public class OpenApiConfig {
                             "meals": [{"title": "추천 식단 1", "mealType": "DINNER"}],
                             "items": [{"itemId": 1, "ingredientId": 1, "ingredientName": "봄동", "quantity": 1, "unit": "봉", "estimatedPrice": 4300, "selected": true, "platform": "마켓컬리", "tag": "최저가"}],
                             "reasons": ["DB 가격 후보만 사용했습니다."],
-                            "substitutions": ["대체 식재료는 상세 화면에서 확인할 수 있습니다."],
-                            "messages": [{"role": "ASSISTANT", "content": "데모 장보기 계획을 준비했습니다."}],
-                            "quickPrompts": ["예산을 낮춰줘"]
+                            "substitutions": ["대체 식재료는 상세 화면에서 확인할 수 있습니다."]
                           },
                           "error": null
                         }

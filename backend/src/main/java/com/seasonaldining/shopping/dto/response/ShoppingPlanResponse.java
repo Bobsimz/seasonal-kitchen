@@ -20,9 +20,7 @@ public record ShoppingPlanResponse(
         List<MealResponse> meals,
         List<ShoppingPlanItemResponse> items,
         List<String> reasons,
-        List<String> substitutions,
-        List<MessageResponse> messages,
-        List<String> quickPrompts
+        List<String> substitutions
 ) {
 
     @Schema(description = "추천 식단 카드")
@@ -34,11 +32,4 @@ public record ShoppingPlanResponse(
     ) {
     }
 
-    @Schema(description = "추천 메시지")
-    public record MessageResponse(
-            @Schema(example = "1") Long messageId,
-            @Schema(example = "ASSISTANT") String role,
-            @Schema(example = "예산에 맞춰 제철 식재료를 골랐습니다.") String content
-    ) {
-    }
 }

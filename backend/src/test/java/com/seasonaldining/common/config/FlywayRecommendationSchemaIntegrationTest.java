@@ -3,5 +3,5 @@ import org.junit.jupiter.api.Test; import org.springframework.beans.factory.anno
 @SpringBootTest @Testcontainers class FlywayRecommendationSchemaIntegrationTest{
  @Container static final PostgreSQLContainer<?> DB=new PostgreSQLContainer<>("postgres:16").withDatabaseName("test").withUsername("seasonal").withPassword("seasonal");
  @DynamicPropertySource static void ds(DynamicPropertyRegistry r){r.add("spring.datasource.url",DB::getJdbcUrl);r.add("spring.datasource.username",DB::getUsername);r.add("spring.datasource.password",DB::getPassword);}
- @Autowired JdbcTemplate jdbc; @Test void createsTables(){for(String t:new String[]{"recommendation_sessions","recommendation_messages","shopping_plans","shopping_plan_meals","shopping_plan_items"})assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_name='"+t+"'",Integer.class)).isEqualTo(1);}
+ @Autowired JdbcTemplate jdbc; @Test void createsTables(){for(String t:new String[]{"recommendation_sessions","shopping_plans","shopping_plan_meals","shopping_plan_items"})assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM information_schema.tables WHERE table_name='"+t+"'",Integer.class)).isEqualTo(1);}
 }

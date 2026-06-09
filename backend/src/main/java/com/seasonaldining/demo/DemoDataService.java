@@ -22,9 +22,7 @@ import com.seasonaldining.recipe.entity.RecipeStep;
 import com.seasonaldining.recipe.repository.RecipeIngredientRepository;
 import com.seasonaldining.recipe.repository.RecipeRepository;
 import com.seasonaldining.recipe.repository.RecipeStepRepository;
-import com.seasonaldining.recommendation.entity.RecommendationMessage;
 import com.seasonaldining.recommendation.entity.RecommendationSession;
-import com.seasonaldining.recommendation.repository.RecommendationMessageRepository;
 import com.seasonaldining.recommendation.repository.RecommendationSessionRepository;
 import com.seasonaldining.reel.entity.Creator;
 import com.seasonaldining.reel.entity.Reel;
@@ -80,7 +78,6 @@ public class DemoDataService {
     private final PriceAlertRepository priceAlerts;
     private final NotificationRepository notifications;
     private final RecommendationSessionRepository sessions;
-    private final RecommendationMessageRepository messages;
     private final ShoppingPlanRepository shoppingPlans;
     private final ShoppingPlanItemRepository shoppingItems;
 
@@ -105,7 +102,6 @@ public class DemoDataService {
             PriceAlertRepository priceAlerts,
             NotificationRepository notifications,
             RecommendationSessionRepository sessions,
-            RecommendationMessageRepository messages,
             ShoppingPlanRepository shoppingPlans,
             ShoppingPlanItemRepository shoppingItems
     ) {
@@ -129,7 +125,6 @@ public class DemoDataService {
         this.priceAlerts = priceAlerts;
         this.notifications = notifications;
         this.sessions = sessions;
-        this.messages = messages;
         this.shoppingPlans = shoppingPlans;
         this.shoppingItems = shoppingItems;
     }
@@ -289,7 +284,6 @@ public class DemoDataService {
         }
         if (shoppingPlans.findAll().stream().noneMatch(plan -> Objects.equals(plan.getUserId(), user.getId()))) {
             RecommendationSession session = sessions.save(new RecommendationSession(user.getId(), "{\"days\":3,\"people\":2,\"budget\":30000}"));
-            messages.save(new RecommendationMessage(session.getId(), "ASSISTANT", "데모 장보기 계획을 준비했습니다."));
             ShoppingPlan plan = shoppingPlans.save(new ShoppingPlan(user.getId(), session.getId(), 3, 2, BigDecimal.valueOf(30000)));
             shoppingItems.save(new ShoppingPlanItem(plan.getId(), bomdong.getId(), BigDecimal.ONE, "봉", BigDecimal.valueOf(4300)));
             shoppingItems.save(new ShoppingPlanItem(plan.getId(), radish.getId(), BigDecimal.ONE, "개", BigDecimal.valueOf(2100)));

@@ -71,7 +71,7 @@ class RecommendationControllerTest {
     }
 
     @Test
-    void createsPlanWithScreenReadyItemsAndMessages() throws Exception {
+    void createsPlanWithScreenReadyItems() throws Exception {
         User user = users.save(new User("plan@example.com", "계획", null, "ACTIVE"));
         seedShoppingCandidates();
 
@@ -88,9 +88,7 @@ class RecommendationControllerTest {
                 .andExpect(jsonPath("$.data.items[0].ingredientName").value("봄동"))
                 .andExpect(jsonPath("$.data.items[0].estimatedPrice").value(4300.00))
                 .andExpect(jsonPath("$.data.items[0].platform").value("마켓컬리"))
-                .andExpect(jsonPath("$.data.reasons.length()").value(2))
-                .andExpect(jsonPath("$.data.messages[0].role").value("ASSISTANT"))
-                .andExpect(jsonPath("$.data.quickPrompts.length()").value(3));
+                .andExpect(jsonPath("$.data.reasons.length()").value(2));
     }
 
     @Test
@@ -114,23 +112,7 @@ class RecommendationControllerTest {
         mvc.perform(get("/api/v1/shopping-plans/{id}", planId).header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.planId").value(planId))
-                .andExpect(jsonPath("$.data.items[0].ingredientName").value("봄동"))
-                .andExpect(jsonPath("$.data.messages.length()").value(1));
-    }
-
-    @Test
-    void addsRecommendationMessageForOwnedPlan() throws Exception {
-        User user = users.save(new User("plan@example.com", "계획", null, "ACTIVE"));
-        seedShoppingCandidates();
-        String token = token(user);
-        Long planId = createPlan(token);
-
-        mvc.perform(post("/api/v1/recommendations/plans/{planId}/messages", planId)
-                        .header("Authorization", token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"content\":\"채소 위주로 바꿔줘\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.role").value("ASSISTANT"));
+                .andExpect(jsonPath("$.data.items[0].ingredientName").value("봄동"));
     }
 
     @Test

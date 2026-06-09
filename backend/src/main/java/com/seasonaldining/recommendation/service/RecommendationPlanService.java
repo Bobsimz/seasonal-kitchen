@@ -9,9 +9,7 @@ import com.seasonaldining.ingredient.repository.IngredientRepository;
 import com.seasonaldining.price.entity.PriceSnapshot;
 import com.seasonaldining.price.repository.PriceSnapshotRepository;
 import com.seasonaldining.recommendation.dto.request.CreateShoppingPlanRequest;
-import com.seasonaldining.recommendation.entity.RecommendationMessage;
 import com.seasonaldining.recommendation.entity.RecommendationSession;
-import com.seasonaldining.recommendation.repository.RecommendationMessageRepository;
 import com.seasonaldining.recommendation.repository.RecommendationSessionRepository;
 import com.seasonaldining.shopping.dto.response.ShoppingPlanItemResponse;
 import com.seasonaldining.shopping.dto.response.ShoppingPlanResponse;
@@ -42,7 +40,6 @@ import java.util.stream.Collectors;
 public class RecommendationPlanService {
 
     private final RecommendationSessionRepository sessions;
-    private final RecommendationMessageRepository messages;
     private final ShoppingPlanRepository plans;
     private final ShoppingPlanItemRepository items;
     private final IngredientRepository ingredients;
@@ -53,7 +50,6 @@ public class RecommendationPlanService {
 
     public RecommendationPlanService(
             RecommendationSessionRepository sessions,
-            RecommendationMessageRepository messages,
             ShoppingPlanRepository plans,
             ShoppingPlanItemRepository items,
             IngredientRepository ingredients,
@@ -63,7 +59,6 @@ public class RecommendationPlanService {
             ObjectMapper mapper
     ) {
         this.sessions = sessions;
-        this.messages = messages;
         this.plans = plans;
         this.items = items;
         this.ingredients = ingredients;
@@ -80,11 +75,6 @@ public class RecommendationPlanService {
             ShoppingPlan plan = plans.save(new ShoppingPlan(userId, session.getId(), request.days(), request.people(), request.budget()));
             List<ShoppingPlanItem> createdItems = createItemsFromDatabasePrices(plan);
             plan.setEstimatedTotal(sumEstimatedPrices(createdItems));
-            messages.save(new RecommendationMessage(
-                    session.getId(),
-                    "ASSISTANT",
-                    "DB에 등록된 제철 식재료와 가격 후보만 사용해 장보기 계획을 만들었습니다."
-            ));
             return response(plan);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(e);
@@ -151,10 +141,6 @@ public class RecommendationPlanService {
                     return toItemResponse(item, ingredientMap.get(item.getIngredientId()), offer, store);
                 })
                 .toList();
-        List<ShoppingPlanResponse.MessageResponse> messageResponses = messages.findBySessionIdOrderByIdAsc(plan.getSessionId()).stream()
-                .map(message -> new ShoppingPlanResponse.MessageResponse(message.getId(), message.getRole(), message.getContent()))
-                .toList();
-
         return new ShoppingPlanResponse(
                 plan.getId(),
                 plan.getSessionId(),
@@ -169,9 +155,7 @@ public class RecommendationPlanService {
                 defaultMeals(plan),
                 itemResponses,
                 List.of("가격 후보는 DB에 저장된 공개 평균가와 스토어 오퍼만 사용했습니다.", "선택 해제한 항목은 스토어 링크 합계에서 제외됩니다."),
-                List.of("대체 식재료는 등록된 substitute 데이터가 있는 경우 상세 화면에서 확인할 수 있습니다."),
-                messageResponses,
-                List.of("예산을 낮춰줘", "채소 위주로 바꿔줘", "매운 메뉴는 빼줘")
+                List.of("대체 식재료는 등록된 substitute 데이터가 있는 경우 상세 화면에서 확인할 수 있습니다.")
         );
     }
 
