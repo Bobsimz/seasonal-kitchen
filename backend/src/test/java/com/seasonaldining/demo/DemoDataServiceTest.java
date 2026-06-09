@@ -3,7 +3,6 @@ package com.seasonaldining.demo;
 import com.seasonaldining.ingredient.repository.IngredientRepository;
 import com.seasonaldining.recipe.repository.RecipeRepository;
 import com.seasonaldining.reel.repository.ReelRepository;
-import com.seasonaldining.shopping.repository.ShoppingPlanRepository;
 import com.seasonaldining.store.repository.StoreOfferRepository;
 import com.seasonaldining.support.UserDataCleaner;
 import com.seasonaldining.user.repository.UserRepository;
@@ -39,9 +38,6 @@ class DemoDataServiceTest {
     private StoreOfferRepository storeOffers;
 
     @Autowired
-    private ShoppingPlanRepository shoppingPlans;
-
-    @Autowired
     private JdbcTemplate jdbc;
 
     @BeforeEach
@@ -64,7 +60,6 @@ class DemoDataServiceTest {
         long recipeCount = recipes.count();
         long reelCount = reels.count();
         long offerCount = storeOffers.count();
-        long shoppingPlanCount = shoppingPlans.count();
 
         demoDataService.seed();
 
@@ -73,12 +68,10 @@ class DemoDataServiceTest {
         assertThat(recipes.count()).isEqualTo(recipeCount);
         assertThat(reels.count()).isEqualTo(reelCount);
         assertThat(storeOffers.count()).isEqualTo(offerCount);
-        assertThat(shoppingPlans.count()).isEqualTo(shoppingPlanCount);
         assertThat(users.findByEmail(DemoDataService.DEMO_USER_EMAIL)).isPresent();
         assertThat(ingredientCount).isGreaterThanOrEqualTo(5);
         assertThat(recipeCount).isGreaterThanOrEqualTo(2);
         assertThat(reelCount).isGreaterThanOrEqualTo(2);
         assertThat(offerCount).isGreaterThanOrEqualTo(7);
-        assertThat(shoppingPlanCount).isGreaterThanOrEqualTo(1);
     }
 }

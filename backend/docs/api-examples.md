@@ -129,22 +129,7 @@ Actual DTOs should be kept synchronized with Swagger/OpenAPI.
 }
 ```
 
-## POST `/api/v1/recommendations/plans`
-
-### Request
-
-```json
-{
-  "days": 3,
-  "people": 2,
-  "budget": 30000,
-  "preferences": ["간단한 조리", "매운 음식 제외"],
-  "pantryIngredientIds": [1, 3],
-  "excludedIngredientIds": [9],
-  "allergyCodes": ["PEANUT"],
-  "priority": "LOW_PRICE"
-}
-```
+## GET `/api/v1/products/{productId}`
 
 ### Response
 
@@ -152,36 +137,49 @@ Actual DTOs should be kept synchronized with Swagger/OpenAPI.
 {
   "success": true,
   "data": {
-    "planId": 10,
-    "summary": "가격이 하락한 제철 식재료 중심으로 3일 식단을 구성했습니다.",
-    "estimatedTotal": 27600,
-    "expectedSavingRate": 15.2,
-    "meals": [
+    "id": 10,
+    "ingredientId": 1,
+    "ingredientName": "무",
+    "category": "채소",
+    "title": "아삭한 제주 무 3kg",
+    "description": "수확 직후 선별한 제주 무입니다.",
+    "price": 8900,
+    "unit": "3kg",
+    "sellerName": "제주농장",
+    "origin": "제주",
+    "status": "PUBLISHED",
+    "images": ["https://example.com/radish-product.png"],
+    "relatedRecipes": [
       {
-        "date": "2026-06-01",
-        "mealType": "DINNER",
-        "recipeId": 100,
-        "recipeTitle": "무조림"
+        "id": 100,
+        "title": "무조림",
+        "imageUrl": "https://example.com/radish-recipe.png"
       }
-    ],
-    "items": [
-      {
-        "itemId": 1,
-        "ingredientId": 1,
-        "ingredientName": "무",
-        "quantity": 1,
-        "unit": "개",
-        "estimatedPrice": 1980,
-        "selected": true
-      }
-    ],
-    "reasons": [
-      {
-        "type": "PRICE_DROP",
-        "message": "무 가격이 최근 1주일 기준 하락했습니다."
-      }
-    ],
-    "substitutions": []
+    ]
+  },
+  "error": null,
+  "traceId": "01J..."
+}
+```
+
+## POST `/api/v1/seller/products/price-recommendation`
+
+### Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "recommendedPrice": 8900,
+    "minPrice": 8200,
+    "maxPrice": 9400,
+    "explanation": "현재 시세, 투자금, 임금, 물가상승률을 반영한 판매 추천가입니다.",
+    "assumptions": {
+      "marketPriceObservedDate": "2026-06-01",
+      "inflationRate": 2.8,
+      "laborCost": 120000
+    },
+    "confidence": "MEDIUM"
   },
   "error": null,
   "traceId": "01J..."

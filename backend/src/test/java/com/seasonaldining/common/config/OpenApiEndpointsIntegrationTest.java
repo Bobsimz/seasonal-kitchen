@@ -82,13 +82,6 @@ class OpenApiEndpointsIntegrationTest {
     }
 
     @Test
-    void openApiDocsContainFrontendIntegrationShoppingEndpoints() throws Exception {
-        mockMvc.perform(get("/v3/api-docs"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("\"/api/v1/shopping-plans/{planId}/store-links\"")));
-    }
-
-    @Test
     void openApiDocsContainFrontendDemoExamples() throws Exception {
         mockMvc.perform(get("/v3/api-docs"))
                 .andExpect(status().isOk())
@@ -96,8 +89,6 @@ class OpenApiEndpointsIntegrationTest {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("seasonTitle")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("FrontendIngredientOffersResponse")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("deliveryLabel")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("FrontendShoppingPlanResponse")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("expectedSavingAmount")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("FrontendMyPageSummaryResponse")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("allergyCodes")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("FrontendNotificationsResponse")))

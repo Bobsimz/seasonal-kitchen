@@ -1,1 +1,0 @@
-package com.seasonaldining.shopping.dto.request; import jakarta.validation.constraints.NotNull; import io.swagger.v3.oas.annotations.media.Schema; public record UpdateShoppingPlanItemRequest(@Schema(example="true") @NotNull Boolean selected){}

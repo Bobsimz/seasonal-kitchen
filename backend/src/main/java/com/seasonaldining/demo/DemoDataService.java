@@ -22,16 +22,10 @@ import com.seasonaldining.recipe.entity.RecipeStep;
 import com.seasonaldining.recipe.repository.RecipeIngredientRepository;
 import com.seasonaldining.recipe.repository.RecipeRepository;
 import com.seasonaldining.recipe.repository.RecipeStepRepository;
-import com.seasonaldining.recommendation.entity.RecommendationSession;
-import com.seasonaldining.recommendation.repository.RecommendationSessionRepository;
 import com.seasonaldining.reel.entity.Creator;
 import com.seasonaldining.reel.entity.Reel;
 import com.seasonaldining.reel.repository.CreatorRepository;
 import com.seasonaldining.reel.repository.ReelRepository;
-import com.seasonaldining.shopping.entity.ShoppingPlan;
-import com.seasonaldining.shopping.entity.ShoppingPlanItem;
-import com.seasonaldining.shopping.repository.ShoppingPlanItemRepository;
-import com.seasonaldining.shopping.repository.ShoppingPlanRepository;
 import com.seasonaldining.store.entity.Store;
 import com.seasonaldining.store.entity.StoreOffer;
 import com.seasonaldining.store.repository.StoreOfferRepository;
@@ -77,9 +71,6 @@ public class DemoDataService {
     private final FavoriteRepository favorites;
     private final PriceAlertRepository priceAlerts;
     private final NotificationRepository notifications;
-    private final RecommendationSessionRepository sessions;
-    private final ShoppingPlanRepository shoppingPlans;
-    private final ShoppingPlanItemRepository shoppingItems;
 
     public DemoDataService(
             IngredientRepository ingredients,
@@ -100,10 +91,7 @@ public class DemoDataService {
             PantryItemRepository pantryItems,
             FavoriteRepository favorites,
             PriceAlertRepository priceAlerts,
-            NotificationRepository notifications,
-            RecommendationSessionRepository sessions,
-            ShoppingPlanRepository shoppingPlans,
-            ShoppingPlanItemRepository shoppingItems
+            NotificationRepository notifications
     ) {
         this.ingredients = ingredients;
         this.prices = prices;
@@ -124,9 +112,6 @@ public class DemoDataService {
         this.favorites = favorites;
         this.priceAlerts = priceAlerts;
         this.notifications = notifications;
-        this.sessions = sessions;
-        this.shoppingPlans = shoppingPlans;
-        this.shoppingItems = shoppingItems;
     }
 
     @Transactional
@@ -281,13 +266,6 @@ public class DemoDataService {
         if (notifications.findByUserIdOrderByIdDesc(user.getId()).isEmpty()) {
             notifications.save(new Notification(user.getId(), "PRICE_DROP", "무 가격 하락", "무 가격이 설정 가격에 가까워졌습니다."));
             notifications.save(new Notification(user.getId(), "RECIPE_RECOMMENDATION", "봄동 비빔밥 추천", "오늘 저녁 메뉴로 봄동 비빔밥을 추천합니다."));
-        }
-        if (shoppingPlans.findAll().stream().noneMatch(plan -> Objects.equals(plan.getUserId(), user.getId()))) {
-            RecommendationSession session = sessions.save(new RecommendationSession(user.getId(), "{\"days\":3,\"people\":2,\"budget\":30000}"));
-            ShoppingPlan plan = shoppingPlans.save(new ShoppingPlan(user.getId(), session.getId(), 3, 2, BigDecimal.valueOf(30000)));
-            shoppingItems.save(new ShoppingPlanItem(plan.getId(), bomdong.getId(), BigDecimal.ONE, "봉", BigDecimal.valueOf(4300)));
-            shoppingItems.save(new ShoppingPlanItem(plan.getId(), radish.getId(), BigDecimal.ONE, "개", BigDecimal.valueOf(2100)));
-            plan.setEstimatedTotal(BigDecimal.valueOf(6400));
         }
     }
 }

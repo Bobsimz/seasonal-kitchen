@@ -38,7 +38,7 @@ This change captures the new direction before implementation so backend, fronten
 
 - Affected frontend: navigation tabs, headers, search screen, product tab, information tab, seller listing page, product detail page.
 - Affected backend domains: new `product` and seller listing domains, existing `ingredient`, `recipe`, `search`, `user`, and `price` domains.
-- Affected specs/docs: existing AI chef, price, home/search, frontend integration, and user specs need follow-up updates after this change is approved.
+- Affected specs/docs: existing AI chef and shopping specs are removed; price, home/search, frontend integration, and user specs need follow-up updates after this change is approved.
 - Affected persistence: likely new product, seller/listing, product image, inventory, and user lifestyle preference tables.
 - Affected APIs: product list/detail, seller listing create/update, AI seller price recommendation, AI promotional copy assist, product search category, cart/header-related read APIs.
 - Deferred decisions: seller registration template, seller identity/auth flow, payment/order scope, cart persistence, product moderation, exact AI output shape and required pricing inputs.

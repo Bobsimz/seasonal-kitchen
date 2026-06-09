@@ -52,7 +52,8 @@ src/main/java/com/seasonaldining/
   reel/
   favorite/
   shopping/
-  recommendation/
+  product/
+  seller/
   notification/
   analytics/
   creator/
@@ -155,4 +156,3 @@ flowchart TD
 - 관리자 API는 별도 권한을 요구합니다.
 - 모든 외부 API 호출은 timeout, retry, circuit breaker 정책을 둡니다.
 - 응답 오류에는 요청 추적용 `traceId`를 포함합니다.
-

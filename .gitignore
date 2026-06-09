@@ -30,6 +30,9 @@ backend/README-codex-prep.md
 backend/docs/codex-prompt-template.md
 backend/docs/tasks/
 
+# Large local source datasets
+backend/src/main/resources/data/
+
 # Logs and runtime dumps
 *.log
 npm-debug.log*

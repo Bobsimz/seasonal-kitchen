@@ -97,32 +97,6 @@ public class OpenApiConfig {
                           "error": null
                         }
                         """))
-                .addExamples("FrontendShoppingPlanResponse", example("""
-                        {
-                          "success": true,
-                          "data": {
-                            "planId": 1,
-                            "summary": "3일치 제철 식재료 중심 장보기 계획입니다.",
-                            "expectedSavingRate": 12,
-                            "expectedSavingAmount": 2500,
-                            "meals": [{"title": "추천 식단 1", "mealType": "DINNER"}],
-                            "items": [{"itemId": 1, "ingredientId": 1, "ingredientName": "봄동", "quantity": 1, "unit": "봉", "estimatedPrice": 4300, "selected": true, "platform": "마켓컬리", "tag": "최저가"}],
-                            "reasons": ["DB 가격 후보만 사용했습니다."],
-                            "substitutions": ["대체 식재료는 상세 화면에서 확인할 수 있습니다."]
-                          },
-                          "error": null
-                        }
-                        """))
-                .addExamples("FrontendStoreLinksResponse", example("""
-                        {
-                          "success": true,
-                          "data": {
-                            "savingAmount": 2500,
-                            "storeGroups": [{"storeName": "마켓컬리", "deliveryLabel": "샛별배송", "totalPrice": 6400, "externalCheckoutUrl": "https://example.com/kurly", "items": [{"ingredientName": "봄동", "estimatedPrice": 4300}]}]
-                          },
-                          "error": null
-                        }
-                        """))
                 .addExamples("FrontendMyPageSummaryResponse", example("""
                         {
                           "success": true,

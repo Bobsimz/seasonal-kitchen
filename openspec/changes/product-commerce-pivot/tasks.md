@@ -2,7 +2,7 @@
 
 - [ ] 1.1 Define MVP seller identity: regular user seller, farm profile, or admin-created seller.
 - [ ] 1.2 Define minimum product registration fields.
-- [ ] 1.3 Decide whether product registration requires linked `ingredientId`.
+- [x] 1.3 Product registration requires linked `ingredientId`.
 - [ ] 1.4 Decide product status lifecycle: draft, pending review, published, hidden, sold out.
 - [ ] 1.5 Decide whether cart is frontend-local or backend-persisted for MVP.
 - [ ] 1.6 Define required inputs for seller AI price recommendation: seed/cultivar cost, investment, market price, inflation, labor cost, yield, stock volume, and margin policy.
@@ -16,7 +16,7 @@
 - [ ] 2.4 Modify `backend-user` for lifestyle/consumption preference fields.
 - [ ] 2.5 Modify `backend-price` to remove price trend screen requirements and retain prediction capability.
 - [ ] 2.6 Modify `frontend-integration` for product tab, information tab, header icon rules, and AI chef removal.
-- [ ] 2.7 Archive or rewrite `backend-ai-chef` once the team confirms no remaining recommendation API is needed.
+- [x] 2.7 Remove `backend-ai-chef` and `backend-shopping` baseline specs from the active MVP spec set.
 
 ## 3. Backend Implementation Candidates
 
@@ -28,6 +28,7 @@
 - [ ] 3.6 Add AI promotional copy endpoint with editable generated output.
 - [ ] 3.7 Add product category to unified search.
 - [ ] 3.8 Add lifestyle preference fields to user preference APIs.
+- [ ] 3.9 Add related ingredient and related recipe references to product detail responses.
 
 ## 4. Frontend Implementation Candidates
 

@@ -13,8 +13,7 @@
 | `recipe` | 레시피, 재료, 조리 순서, 대체 재료 |
 | `reel` | 영상, 크리에이터, 태그, 좋아요, 댓글, 저장 |
 | `favorite` | 찜한 식재료와 저장 레시피 |
-| `shopping` | 장보기 목록, 예상 비용, 구매처 이동 |
-| `recommendation` | 추천 세션, 장보기 계획 생성, 구조화 추천 결과 |
+| `product` | 판매 상품, 상품 상세, 판매자 등록 |
 | `notification` | 가격 하락, 제철 시작, 레시피 추천 알림 |
 | `analytics` | 검색, 조회, 완주율, 구매처 이동 로그 |
 | `creator` | 크리에이터 등록과 콘텐츠 관리 |
@@ -31,7 +30,7 @@ erDiagram
     USERS ||--o{ PANTRY_ITEMS : owns
     USERS ||--o{ FAVORITES : creates
     USERS ||--o{ PRICE_ALERTS : configures
-    USERS ||--o{ SHOPPING_PLANS : requests
+    USERS ||--o{ PRODUCTS : sells
     USERS ||--o{ NOTIFICATIONS : receives
     USERS ||--o{ USER_EVENTS : generates
 
@@ -51,7 +50,8 @@ erDiagram
     REELS ||--o{ REEL_REACTIONS : receives
 
     STORES ||--o{ STORE_OFFERS : provides
-    SHOPPING_PLANS ||--o{ SHOPPING_PLAN_ITEMS : contains
+    INGREDIENTS ||--o{ PRODUCTS : categorizes
+    PRODUCTS ||--o{ PRODUCT_IMAGES : has
 ```
 
 ## 3. 테이블 설계
@@ -92,14 +92,12 @@ erDiagram
 | `reel_reactions` | `id`, `reel_id`, `user_id`, `reaction_type` |
 | `reel_comments` | `id`, `reel_id`, `user_id`, `content`, `status`, `created_at` |
 
-### 장보기와 추천
+### 상품
 
 | 테이블 | 주요 컬럼 |
 | --- | --- |
-| `recommendation_sessions` | `id`, `user_id`, `status`, `request_json`, `created_at` |
-| `shopping_plans` | `id`, `user_id`, `session_id`, `days`, `people`, `budget`, `estimated_total`, `status` |
-| `shopping_plan_meals` | `id`, `plan_id`, `recipe_id`, `meal_date`, `meal_type` |
-| `shopping_plan_items` | `id`, `plan_id`, `ingredient_id`, `quantity`, `unit`, `estimated_price`, `selected` |
+| `products` | `id`, `seller_id`, `ingredient_id`, `title`, `description`, `price`, `unit`, `stock_quantity`, `origin`, `status` |
+| `product_images` | `id`, `product_id`, `image_url`, `sort_order` |
 
 ### 개인화, 알림, 운영
 
@@ -117,7 +115,7 @@ erDiagram
 
 - 가격은 덮어쓰지 않고 `price_snapshots`에 이력으로 누적합니다.
 - 공공 평균 가격과 구매처 상품 가격은 별도 테이블로 분리합니다.
-- 추천 요청 원문과 결과를 저장하여 재현 가능하게 만듭니다.
+- 상품은 반드시 표준 식재료를 참조하며 상품 카테고리는 연결된 식재료 카테고리를 따릅니다.
 - 릴스 영상 자체는 DB가 아니라 Object Storage에 저장합니다.
 - `favorites`는 `target_type`으로 식재료와 레시피 저장을 통합할 수 있습니다.
 - 사용자 행동 로그는 핵심 트랜잭션과 분리하여 비동기로 적재합니다.

@@ -36,14 +36,15 @@ This document does not evaluate frontend code quality and does not require front
 | Ingredient search result | `/` artboard `list-ing-res` | `components/screens-detail.jsx` `ScreenListSearchResult` | Search filtered list | 봄동 ingredient result count and cards | Inline filtered arrays | `GET /api/v1/ingredients?query=봄동` or search API | Ingredients list exists; search exists flat | Query/filter support if absent | same as list | P1 | `T81-ingredient-detail-screen-fields.md` |
 | Ingredient detail | `/` artboard `detail` | `components/screens-detail.jsx` `ScreenDetail` | Hero/detail summary | ingredient name, image, season months, price, trend, buying signal, nutrition, substitute ingredients, cleaning/storage tips | Static JSX and arrays | `GET /api/v1/ingredients/{ingredientId}`, `/prices`, `/substitutes` | Covered | None | Real season calendar and trend labels remain deferred | P0 | None |
 | Price compare | `/` artboard `compare` | `components/screens-detail.jsx` `ScreenCompare` | Store/platform price comparison | store name, delivery text, price range, original price, discount, tag, logo, alert threshold | Inline `platforms` | `GET /api/v1/ingredients/{ingredientId}/offers` | Covered | None | `alertTargetPrice` belongs to price-alert state, not store offers | P0 | None |
-| AI recommendation setup | `/` artboard `ai-b` | `components/screens-ai.jsx` `ScreenAIChatB` | Recommendation prompt/setup | user request and plan creation trigger | Static JSX | `POST /api/v1/recommendations/plans` | Covered | None | rich assistant card payload deferred | P0 | None |
-| AI recommendation result | `/` artboard `ai-result` | `components/screens-ai.jsx` `ScreenAIResult` | Plan result and cart | summary, expected savings, selected recipes, cart items, platform split, total | Inline `CART_ITEMS` | `POST /api/v1/recommendations/plans`, `GET /api/v1/shopping-plans/{planId}` | Covered; store split is separate endpoint | None | Rich LLM card payload deferred | P0 | None |
+| Product tab | TBD | TBD | Product discovery | product cards, seller, price, unit, origin, category | Not designed yet | `GET /api/v1/products` | Missing | Product list endpoint | Product card DTO | P0 | Product catalog implementation |
+| Product detail | TBD | TBD | Product detail | product images, linked ingredient, related recipes, seller, stock/status, price | Not designed yet | `GET /api/v1/products/{productId}` | Missing | Product detail endpoint | Product detail DTO | P0 | Product catalog implementation |
+| Seller listing | TBD | TBD | Product registration | product fields, AI price recommendation, AI promotional copy | Not designed yet | seller product and seller AI APIs | Missing | Seller listing endpoints | Registration and AI DTOs | P0 | Seller listing implementation |
 | Reels feed | `/` artboard `reels` | `components/screens-reels.jsx` `ScreenReels` | Vertical reels | video/thumbnail, creator, title, ingredients tags, likes, comments, saves, view event | Static JSX | `GET /api/v1/reels`, like/comment/view APIs | Covered | None | `saved` remains default false until save domain is added | P0 | None |
 | Recipe detail | `/` artboard `recipe` | `components/screens-reels.jsx` `ScreenRecipeDetail` | Recipe detail from reel | title, image, duration, difficulty, servings, ingredients with prices, related reels, creator/likes | Static JSX arrays | `GET /api/v1/recipes/{recipeId}`, `/steps`, `/ingredients/{id}/recipes` | Covered | None | Optional tips/creator can be null | P0 | None |
 | Recipe steps | `/` artboard `steps` | `components/screens-reels.jsx` `ScreenRecipeSteps` | Cooking steps | step index, text, progress dots, timer-like UI | Static JSX | `GET /api/v1/recipes/{recipeId}/steps` | Existing | None | optional `timerMinutes`, `imageUrl`, `tip`, `isCurrent` handled client-side | P1 | `T82-recipe-detail-screen-fields.md` |
 | My page | `/` artboard `mypage` | `components/screens-misc.jsx` `ScreenMyPage` | Profile summary | nickname/avatar, savings/stat cards, watched/favorite/alert counts, personalized seasonal list | Static JSX arrays | `GET /api/v1/users/me/summary` plus existing user APIs | Covered | None | Real order/saving calculation deferred | P0 | None |
 | Alerts | `/` artboard `alerts` | `components/screens-misc.jsx` `ScreenAlerts` | Notification tabs and grouped list | tabs with counts, date groups, icon/color, title, subtitle, relative time, unread marker | Inline `groups` | `GET /api/v1/notifications` | Covered with `data.items + data.tabCounts` | None | Date group labels are client-derived | P0 | None |
-| Checkout | Imported but not in main artboards | `components/screens-misc.jsx` `ScreenCheckout` | Platform split checkout | store groups, item names/prices, savings, external app CTA | Inline arrays | `GET /api/v1/shopping-plans/{planId}/store-links` | Covered | None | Real checkout completion deferred | P1 | None |
+| Cart / checkout | TBD | TBD | Cart and checkout | selected products, quantities, seller/product totals | Not designed yet | TBD | Missing | Cart/checkout decision pending | Cart persistence decision | P1 | Product commerce planning |
 
 ## Already Covered APIs
 
@@ -61,8 +62,7 @@ This document does not evaluate frontend code quality and does not require front
 - `GET/POST/PATCH/DELETE /api/v1/users/me/pantry`: exist.
 - `GET/POST/DELETE /api/v1/favorites`: exist.
 - `GET/POST/PATCH/DELETE /api/v1/price-alerts`: exist.
-- `POST /api/v1/recommendations/plans`, `GET /api/v1/recommendations/plans/{planId}`: exist with typed shopping response.
-- `GET /api/v1/shopping-plans/{planId}`, `PATCH /api/v1/shopping-plans/{planId}/items/{itemId}`, `GET /api/v1/shopping-plans/{planId}/store-links`: exist.
+- Product and seller listing APIs are not implemented yet and replace the prior AI recommendation/shopping plan direction.
 - `GET /api/v1/notifications`, `PATCH /api/v1/notifications/{notificationId}/read`, `PATCH /api/v1/notifications/read-all`: exist with `data.items + data.tabCounts`.
 - `POST /api/v1/events`: exists.
 
@@ -80,7 +80,7 @@ The visible prototype needs enough demo data to avoid empty screens:
 - Reels: 봄동 비빔밥 1분, 배추전 황금레시피, 깍두기 모음, 시금치 페스토
 - Store offers: 쿠팡, 마켓컬리, 오아시스, 네이버 장보기, 이마트몰
 - User data: demo user, preferences, allergies, pantry, favorites, price alerts, notifications
-- Shopping plan: 5-day/2-person plan with 9 cart items and store split
+- Products: product listings linked to ingredients, with seller, price, unit, origin, stock/status, and related recipe coverage
 
 ## Assumptions
 

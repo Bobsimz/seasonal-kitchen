@@ -85,8 +85,8 @@ npx @openapitools/openapi-generator-cli generate \
 08. Recipes
 09. Reels
 10. Favorites
-11. Shopping Plans
-12. AI Recommendations
+11. Products
+12. Seller Listings
 13. Notifications
 14. Analytics
 15. Creators
@@ -169,14 +169,15 @@ PATCH  /api/v1/price-alerts/{alertId}
 DELETE /api/v1/price-alerts/{alertId}
 ```
 
-### AI Recommendations and Shopping
+### Products and Seller Listings
 
 ```text
-POST   /api/v1/recommendations/plans
-GET    /api/v1/recommendations/plans/{planId}
-GET    /api/v1/shopping-plans/{planId}
-PATCH  /api/v1/shopping-plans/{planId}/items/{itemId}
-GET    /api/v1/shopping-plans/{planId}/store-links
+GET    /api/v1/products
+GET    /api/v1/products/{productId}
+POST   /api/v1/seller/products
+PATCH  /api/v1/seller/products/{productId}
+POST   /api/v1/seller/products/price-recommendation
+POST   /api/v1/seller/products/promotional-copy
 ```
 
 ### Notifications
@@ -229,34 +230,21 @@ public record PriceSummaryResponse(
 ) {}
 ```
 
-### CreateShoppingPlanRequest
+### ProductCardResponse
 
 ```java
-public record CreateShoppingPlanRequest(
-    Integer days,
-    Integer people,
-    BigDecimal budget
-) {}
-```
-
-### ShoppingPlanResponse
-
-```java
-public record ShoppingPlanResponse(
-    Long planId,
-    Long sessionId,
-    int days,
-    int people,
-    BigDecimal budget,
-    BigDecimal estimatedTotal,
-    String status,
-    String summary,
-    Integer expectedSavingRate,
-    BigDecimal expectedSavingAmount,
-    List<MealResponse> meals,
-    List<ShoppingItemResponse> items,
-    List<String> reasons,
-    List<String> substitutions
+public record ProductCardResponse(
+    Long id,
+    Long ingredientId,
+    String ingredientName,
+    String category,
+    String title,
+    BigDecimal price,
+    String unit,
+    String thumbnailUrl,
+    String sellerName,
+    String origin,
+    String status
 ) {}
 ```
 
@@ -283,6 +271,7 @@ public record ShoppingPlanResponse(
 | 검색 | `GET /api/v1/search` |
 | 레시피 | `GET /api/v1/recipes/{recipeId}` |
 | 릴스 | `GET /api/v1/reels` |
-| AI 결과 | `POST /api/v1/recommendations/plans` |
+| 상품 | `GET /api/v1/products` |
+| 판매 등록 | `POST /api/v1/seller/products` |
 | 마이페이지 | `GET /api/v1/users/me/summary` |
 | 알림 | `GET /api/v1/notifications` |

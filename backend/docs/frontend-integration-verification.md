@@ -21,8 +21,9 @@ Scope:
 | Ingredient list | `GET /api/v1/ingredients` | partially covered | list response shape, `id`, `name`, `imageUrl`, `category`, `price`, `seasonal`, `buyingSignal`, `tags` | `displayUnit`, `trendDirection`, `priceChangeLabel`, `freshnessLabel` | Demo seed creates ingredients and prices | Visible: `/api/v1/ingredients` | Display labels intentionally deferred to avoid premature business rules. |
 | Ingredient detail | `GET /api/v1/ingredients/{ingredientId}`, `/prices`, `/substitutes` | covered | `seasonMonths`, `nutrition`, `careTips`, `storageTips`, `substitutes.price`, `substitutes.unit`, `substitutes.priceDeltaLabel`, `compareStoreCount` | `seasonMonths` currently empty when no season table exists; `priceDeltaLabel` may be null | Demo seed creates nutrition/care/storage for 봄동 | Visible: `/api/v1/ingredients/{ingredientId}`; example `FrontendIngredientDetailResponse` | Actual season calendar integration intentionally deferred until season domain. |
 | Price compare | `GET /api/v1/ingredients/{ingredientId}/offers` | covered | `storeName`, `storeType`, `logoUrl`, `logoText`, `brandColor`, `deliveryLabel`, `price`, `priceRangeMin`, `priceRangeMax`, `originalPrice`, `discountRate`, `badge`, `productUrl`, `observedAt` | `alertTargetPrice` | Demo seed creates seven store offers across five stores | Visible: `/api/v1/ingredients/{ingredientId}/offers`; example `FrontendIngredientOffersResponse` | `alertTargetPrice` belongs to user price-alert state and is intentionally not duplicated in store offers. |
-| AI recommendation setup | `POST /api/v1/recommendations/plans` | covered | `planId`, `sessionId`, `status`, `summary`, typed `items` | rich LLM card payload | Demo user has shopping plan; create API can generate plan from DB prices | Visible: `/api/v1/recommendations/plans` | Chatbot flow is out of current product scope. |
-| AI recommendation result | `POST /api/v1/recommendations/plans`, `GET /api/v1/shopping-plans/{planId}` | covered | `summary`, `expectedSavingRate`, `expectedSavingAmount`, `meals`, typed `items`, `reasons`, `substitutions` | `storeGroups` is separate endpoint | Demo seed creates shopping plan and items | Visible: `/api/v1/shopping-plans/{planId}`; example `FrontendShoppingPlanResponse` | Store split is intentionally separated into `/store-links`. |
+| Product tab | `GET /api/v1/products` | not implemented | none | product cards, seller summary, price/unit, thumbnail, category from ingredient | Demo product data not available | Not visible yet | Replaces prior AI recommendation entry point in the new product direction. |
+| Product detail | `GET /api/v1/products/{productId}` | not implemented | none | product detail, linked ingredient, related recipes, seller summary, images, stock/status | Demo product data not available | Not visible yet | Product must reference an ingredient; related recipes should derive from that ingredient. |
+| Seller listing AI | `POST /api/v1/seller/products/price-recommendation`, `POST /api/v1/seller/products/promotional-copy` | not implemented | none | price recommendation, transparent assumptions, editable promotional copy | Demo seller/listing data not available | Not visible yet | AI chef/recommendation flow is retired; AI scope moves to seller pricing and product copy. |
 | Reels feed | `GET /api/v1/reels`, `GET /api/v1/reels/{reelId}`, reel actions | covered | `id`, `recipeId`, `creatorId`, `creatorName`, `creatorAvatarUrl`, `videoUrl`, `thumbnailUrl`, `title`, `description`, `ingredientTags`, `likeCount`, `commentCount`, `saveCount`, `viewCount`, `durationSeconds`, `liked`, `saved`, `publishedAt` | none blocking | Demo seed creates reels and creator | Visible: reel endpoints; example `FrontendReelsResponse` | `saved` is currently default false unless save domain is later added. |
 | Recipe detail from reel | `GET /api/v1/recipes/{recipeId}`, `/steps`, `/ingredients/{ingredientId}/recipes` | covered | `estimatedTotal`, ingredient `estimatedPrice`, `ingredientImageUrl`, `priceTrendDirection`, `tags`, `creatorName`, `likeCount`, `relatedReels`, steps `timerMinutes`, `tip` | `tip` may be null; creator may be null for non-demo recipes | Demo seed creates recipes, ingredients, steps, related reels | Visible: recipe endpoints | Missing optional values are nullable and serialization-safe. |
 | My page | `GET /api/v1/users/me/summary` plus existing user APIs | covered | `profile`, `stats.monthlySaving`, `favoriteCount`, `activeAlertCount`, `pantryCount`, `recentOrderCount`, `preferences`, `allergyCodes`, `personalizedIngredients`, `menuRows` | real order/saving calculation | Demo user has preference, allergies, pantry, favorite, alert | Visible: `/api/v1/users/me/summary`; example `FrontendMyPageSummaryResponse` | `monthlySaving` and `recentOrderCount` are zero until order/settlement domains exist. |
@@ -39,7 +40,7 @@ Implemented:
 - Store offers: store identity, delivery, price range, discount, badge, product URL, observed time.
 - Recipe cards/details: social metadata placeholders, tags, seasonal flag, estimated total, ingredient price fields, related reels.
 - Reels: feed/detail/action DTOs and counts.
-- AI shopping: typed items, meals, reasons, substitutions, saving amount/rate.
+- Products: product list/detail, linked ingredient, related recipes, seller price recommendation, promotional copy.
 - My page: aggregate summary, preference state, allergy codes, counts, personalized ingredients.
 - Notifications: category/icon/severity/subtitle/relative time/action target/tab counts.
 
@@ -48,7 +49,7 @@ Intentionally deferred:
 - Season-domain fields: real `seasonMonths`, `seasonScore`, `trendDirection`, `priceChangeLabel`, `freshnessLabel`, `badgeText`, and `weeklySeason` remain heuristic/null/empty until the season and trend rules are implemented.
 - Orders/savings: real `monthlySaving`, `recentOrderCount`, and checkout purchase completion are deferred because no order/payment domain exists.
 - Promotion/admin data: promotion-like notification management and store campaigns are deferred to Phase 7 or later.
-- LLM rich cards: rich AI recommendation card payloads are deferred because real LLM integration is out of scope.
+- Seller AI: price recommendation and promotional copy generation are deferred until product registration fields and AI output schemas are finalized.
 - Notification grouping labels: date labels such as today/yesterday/this week should be derived by frontend from `createdAt` or `relativeTime`.
 
 ## API Compatibility Verification
@@ -77,9 +78,7 @@ The OpenAPI test suite verifies visibility for:
 - `POST /api/v1/reels/{reelId}/likes`
 - `GET /api/v1/reels/{reelId}/comments`
 - `POST /api/v1/reels/{reelId}/view-events`
-- `POST /api/v1/recommendations/plans`
-- `GET /api/v1/shopping-plans/{planId}`
-- `GET /api/v1/shopping-plans/{planId}/store-links`
+- Product and seller listing APIs are not implemented yet.
 - `GET /api/v1/users/me/summary`
 - `GET /api/v1/notifications`
 - `POST /api/v1/dev/auth/token`
@@ -91,8 +90,6 @@ OpenAPI components include frontend demo examples:
 - `FrontendIngredientOffersResponse`
 - `FrontendRecipeDetailResponse`
 - `FrontendReelsResponse`
-- `FrontendShoppingPlanResponse`
-- `FrontendStoreLinksResponse`
 - `FrontendMyPageSummaryResponse`
 - `FrontendNotificationsResponse`
 
@@ -112,7 +109,7 @@ Demo seed is idempotent and creates data for:
 - Price compare: seven store offers across five stores.
 - Recipe list/detail/steps: 봄동 비빔밥 and 무생채 with ingredients/steps.
 - Reels feed/detail: two published reels and creator metadata.
-- AI shopping result: demo user, recommendation session, shopping plan/items.
+- Product data: not yet available until product/listing domain is implemented.
 - My page: demo user preference, allergies, pantry, favorite, price alert.
 - Notifications: ingredient and recipe notifications.
 

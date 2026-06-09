@@ -1,6 +1,6 @@
 # 제철식탁 Seasonal Kitchen
 
-제철 식재료, 가격 흐름, 레시피, 숏폼 콘텐츠, AI 장보기 추천을 연결하는 해커톤 프로젝트입니다.
+제철 식재료 정보, 레시피, 숏폼 콘텐츠, 농산물 상품 탐색과 판매 등록을 연결하는 해커톤 프로젝트입니다.
 
 ## Repository Structure
 
@@ -66,7 +66,7 @@ npm run dev
 
 `openspec/`에는 현재 구현된 동작을 기준으로 정리한 한글 명세 문서가 들어 있습니다. 인증, 사용자, 식재료, 가격, 레시피, 릴스, 장보기, AI 추천, 알림, 분석, 프론트엔드 연동 범위를 다룹니다.
 
-백엔드 명세는 `openspec/specs/` 아래에서 `backend-` prefix를 사용합니다. 예를 들면 `backend-auth`, `backend-user`, `backend-ai-chef`입니다.
+백엔드 명세는 `openspec/specs/` 아래에서 `backend-` prefix를 사용합니다. 예를 들면 `backend-auth`, `backend-user`, `backend-ingredient`입니다.
 
 프론트엔드 연동 명세는 `frontend-` prefix를 사용합니다.
 

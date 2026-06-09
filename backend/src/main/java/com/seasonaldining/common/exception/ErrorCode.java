@@ -14,9 +14,6 @@ public enum ErrorCode {
     FAVORITE_NOT_FOUND(HttpStatus.NOT_FOUND, "FAVORITE_NOT_FOUND", "찜 정보를 찾을 수 없습니다."),
     PRICE_ALERT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRICE_ALERT_NOT_FOUND", "가격 알림을 찾을 수 없습니다."),
     NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION_NOT_FOUND", "알림을 찾을 수 없습니다."),
-    SHOPPING_PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "SHOPPING_PLAN_NOT_FOUND", "장보기 계획을 찾을 수 없습니다."),
-    SHOPPING_PLAN_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "SHOPPING_PLAN_ITEM_NOT_FOUND", "장보기 항목을 찾을 수 없습니다."),
-    RECOMMENDATION_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "RECOMMENDATION_SESSION_NOT_FOUND", "추천 세션을 찾을 수 없습니다."),
     REEL_NOT_FOUND(HttpStatus.NOT_FOUND, "REEL_NOT_FOUND", "릴스를 찾을 수 없습니다."),
     REEL_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "REEL_COMMENT_NOT_FOUND", "릴스 댓글을 찾을 수 없습니다."),
     RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "RECIPE_NOT_FOUND", "레시피를 찾을 수 없습니다.");

@@ -57,14 +57,15 @@ All error responses must follow the common error response format defined in `doc
 | `CREATOR_NOT_FOUND` | 404 | 크리에이터를 찾을 수 없습니다. |
 | `CREATOR_APPLICATION_ALREADY_EXISTS` | 409 | 이미 크리에이터 신청이 존재합니다. |
 
-## Favorite / Notification / Recommendation
+## Favorite / Notification / Product
 
 | Code | HTTP Status | Message |
 | --- | ---: | --- |
 | `FAVORITE_NOT_FOUND` | 404 | 찜 정보를 찾을 수 없습니다. |
 | `PRICE_ALERT_NOT_FOUND` | 404 | 가격 알림을 찾을 수 없습니다. |
 | `NOTIFICATION_NOT_FOUND` | 404 | 알림을 찾을 수 없습니다. |
-| `RECOMMENDATION_SESSION_NOT_FOUND` | 404 | 추천 세션을 찾을 수 없습니다. |
-| `RECOMMENDATION_VALIDATION_FAILED` | 502 | AI 추천 결과 검증에 실패했습니다. |
-| `SHOPPING_PLAN_NOT_FOUND` | 404 | 장보기 계획을 찾을 수 없습니다. |
-| `SHOPPING_PLAN_ITEM_NOT_FOUND` | 404 | 장보기 항목을 찾을 수 없습니다. |
+| `PRODUCT_NOT_FOUND` | 404 | 상품을 찾을 수 없습니다. |
+| `PRODUCT_INGREDIENT_REQUIRED` | 400 | 상품은 연결된 식재료가 필요합니다. |
+| `SELLER_PRODUCT_NOT_FOUND` | 404 | 판매자 상품을 찾을 수 없습니다. |
+| `SELLER_AI_PRICE_INPUT_REQUIRED` | 400 | 가격 추천에 필요한 입력값이 부족합니다. |
+| `SELLER_AI_COPY_INPUT_REQUIRED` | 400 | 홍보글 작성에 필요한 상품 정보가 부족합니다. |
