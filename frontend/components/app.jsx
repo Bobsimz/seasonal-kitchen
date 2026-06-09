@@ -8,10 +8,11 @@ import { TweaksPanel, TweakSection, TweakRadio, useTweaks } from './tweaks-panel
 import { ScreenSplash, ScreenOnboard, ScreenOnboard2, ScreenOnboard3, ScreenSignup, ScreenSignupSurvey } from './screens-onboarding';
 import { OnboardingFlow, HomeFlow, CatalogFlow, AiFlow, ReelsFlow } from './flow-arrows';
 import { ScreenHomeB, ScreenHomeSearch, ScreenHomeSearchResult } from './screens-home';
-import { ScreenList, ScreenRecipeList, ScreenListSearchResult, ScreenRecipeListSearchResult, ScreenDetail, ScreenCompare } from './screens-detail';
+import { ScreenList, ScreenRecipeList, ScreenListSearchResult, ScreenRecipeListSearchResult, ScreenProducerList, ScreenProducerListSearchResult, ScreenDetail, ScreenCompare } from './screens-detail';
 import { ScreenAIChatB, ScreenAIResult } from './screens-ai';
 import { ScreenReels, ScreenRecipeDetail, ScreenRecipeSteps } from './screens-reels';
 import { ScreenMyPage, ScreenAlerts } from './screens-misc';
+import { ScreenCart, ScreenPurchase, ScreenFarmUpload, ScreenProducerDetail } from './screens-farm';
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "green": "spring",
@@ -30,7 +31,7 @@ export function App() {
     <React.Fragment>
       <DesignCanvas
         title="제철식탁 — 모바일 앱 프로토타입"
-        subtitle="제철 + AI + 가격비교 · iOS 기준 · Fresh Green"
+        subtitle="제철 + AI + 농가 연결 · iOS 기준 · Fresh Green"
       >
         <DCSection id="entry" title="01 · 진입 & 온보딩" subtitle="앱 첫 실행 → 3장 온보딩 → 가입 흐름">
           <DCArtboard id="splash"    label="01 Splash"              width={W} height={H}><ScreenSplash    t={t}/></DCArtboard>
@@ -49,18 +50,21 @@ export function App() {
           <HomeFlow />
         </DCSection>
 
-        <DCSection id="catalog" title="03 · 식재료 & 레시피 탐색" subtitle="리스트 탭은 식재료 ⇄ 레시피 토글로 둘 다 탐색 · 상세 · 가격비교 · 결제 연동">
+        <DCSection id="catalog" title="03 · 식재료 & 레시피 & 농가 탐색" subtitle="리스트 탭은 식재료 ⇄ 레시피 ⇄ 농가 토글로 탐색 · 상세 · 농가 비교 · 직거래 연동">
           <DCArtboard id="list-rec"     label="10 리스트 · 레시피"            width={W} height={H}><ScreenRecipeList             t={t}/></DCArtboard>
           <DCArtboard id="list-rec-res" label="11 리스트 · 레시피 검색 (봄동)" width={W} height={H}><ScreenRecipeListSearchResult t={t}/></DCArtboard>
           <DCArtboard id="list-ing"     label="12 리스트 · 식재료"            width={W} height={H}><ScreenList                   t={t}/></DCArtboard>
           <DCArtboard id="list-ing-res" label="13 리스트 · 식재료 검색 (봄동)" width={W} height={H}><ScreenListSearchResult       t={t}/></DCArtboard>
+          <DCArtboard id="list-prod"     label="13a 리스트 · 농가"            width={W} height={H}><ScreenProducerList             t={t}/></DCArtboard>
+          <DCArtboard id="list-prod-res" label="13b 리스트 · 농가 검색 (봄동)" width={W} height={H}><ScreenProducerListSearchResult t={t}/></DCArtboard>
           <DCArtboard id="detail"       label="14 식재료 상세 (무)"           width={W} height={H}><ScreenDetail                 t={t}/></DCArtboard>
           <DCArtboard id="detail-mob"   label="14′ 식재료 상세 · 모바일"      width={W} height={H}><div className="dc-phone-clip"><ScreenDetail t={t}/></div></DCArtboard>
-          <DCArtboard id="compare"      label="15 가격 비교"                  width={W} height={H}><ScreenCompare                t={t}/></DCArtboard>
+          <DCArtboard id="compare"      label="15 농가 비교"                  width={W} height={H}><ScreenCompare                t={t}/></DCArtboard>
+          <DCArtboard id="producer-detail" label="15a 농가 상세 (경북영천 권민성)" width={W} height={H}><ScreenProducerDetail t={t}/></DCArtboard>
           <CatalogFlow />
         </DCSection>
 
-        <DCSection id="ai" title="04 · AI 장보기" subtitle="GPT 스타일 챗 + 카드 응답 · 결과는 상황에 따라 장바구니 카드로 정리">
+        <DCSection id="ai" title="04 · AI 장보기" subtitle="GPT 스타일 챗 + 카드 응답 · 결과는 제철 농가 추천으로 정리">
           <DCArtboard id="ai-b"     label="16 AI 챗"             width={W} height={H}><ScreenAIChatB   t={t}/></DCArtboard>
           <DCArtboard id="ai-b-mob" label="16′ AI 챗 · 모바일"   width={W} height={H}><div className="dc-phone-clip"><ScreenAIChatB t={t}/></div></DCArtboard>
           <DCArtboard id="ai-result"    label="17 AI 추천 결과"           width={W} height={H}><ScreenAIResult t={t}/></DCArtboard>
@@ -79,6 +83,12 @@ export function App() {
         <DCSection id="me" title="06 · 마이 & 알림" subtitle="개인화 · 가격 하락 알림 · 주문 내역">
           <DCArtboard id="mypage"   label="21 마이페이지"         width={W} height={H}><ScreenMyPage    t={t}/></DCArtboard>
           <DCArtboard id="alerts"   label="22 알림"               width={W} height={H}><ScreenAlerts    t={t}/></DCArtboard>
+        </DCSection>
+
+        <DCSection id="farm" title="07 · 농가 연결 & 주문" subtitle="농가에서 바로 구매 · 장바구니 · 생산자 상품 등록">
+          <DCArtboard id="cart"        label="23 장바구니"        width={W} height={H}><ScreenCart       t={t}/></DCArtboard>
+          <DCArtboard id="purchase"    label="24 구매하기"        width={W} height={H}><ScreenPurchase   t={t}/></DCArtboard>
+          <DCArtboard id="farm-upload" label="25 농가 상품 등록"   width={W} height={H}><ScreenFarmUpload t={t}/></DCArtboard>
         </DCSection>
       </DesignCanvas>
 

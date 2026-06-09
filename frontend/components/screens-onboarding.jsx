@@ -3,6 +3,8 @@
 import React from "react";
 import { Phone, PHONE_H, AppHeader, Chip, priceRange } from "./phone";
 import { DISH_IMG, vegImg } from "./mock-images";
+import { PRODUCERS } from "./producers-data";
+import { ProducerFeatureCard } from "./producer-card";
 
 // 온보딩 제목 전용 폰트 (본문은 Pretendard 유지)
 const TITLE_FONT =
@@ -107,9 +109,9 @@ export function ScreenOnboard({ t }) {
             color: t.text,
           }}
         >
-          제철에 가장 싱싱한 재료,
+          제철 식재료를 직접 키우는
           <br />
-          <span style={{ color: t.primary }}>가장 알뜰한 가격</span>에
+          <span style={{ color: t.primary }}>다양한 농가</span>를 만나요
         </div>
         <div
           style={{
@@ -119,8 +121,8 @@ export function ScreenOnboard({ t }) {
             lineHeight: 1.55,
           }}
         >
-          AI가 매주 가격을 비교해 구매 적기를 알려드려요. <br />
-          쿠팡, 마켓컬리, 전통시장까지 한 번에.
+          저렴이부터 프리미엄·유기농까지, <br />
+          내 기호에 맞는 농가의 재료를 골라보세요.
         </div>
 
         {/* Hero stack of veg cards — centered scatter in a fixed-size stage */}
@@ -136,34 +138,10 @@ export function ScreenOnboard({ t }) {
         >
           <div style={{ position: "relative", width: 304, height: 358 }}>
             {[
-              {
-                name: "무",
-                sub: "제철 · -15%",
-                x: 0,
-                y: 0,
-                rot: -7,
-              },
-              {
-                name: "배추",
-                sub: "구매 적기",
-                x: 170,
-                y: 18,
-                rot: 6,
-              },
-              {
-                name: "시금치",
-                sub: "신선",
-                x: 4,
-                y: 198,
-                rot: 5,
-              },
-              {
-                name: "감귤",
-                sub: "인기 ↑",
-                x: 168,
-                y: 212,
-                rot: -6,
-              },
+              { p: PRODUCERS[2], x: 0, y: 0, rot: -7 }, // value · 김상도
+              { p: PRODUCERS[3], x: 170, y: 18, rot: 6 }, // premium · 박정후
+              { p: PRODUCERS[4], x: 4, y: 198, rot: 5 }, // organic · 이수향
+              { p: PRODUCERS[0], x: 168, y: 212, rot: -6 }, // premium · 권민성
             ].map((c, i) => (
               <div
                 key={i}
@@ -172,38 +150,9 @@ export function ScreenOnboard({ t }) {
                   left: c.x,
                   top: c.y,
                   transform: `rotate(${c.rot}deg)`,
-                  width: 134,
-                  padding: 12,
-                  borderRadius: 18,
-                  background: "#fff",
-                  boxShadow: "0 8px 28px rgba(20,40,30,0.12)",
-                  border: `1px solid ${t.borderSoft}`,
                 }}
               >
-                <div
-                  style={{
-                    height: 96,
-                    borderRadius: 12,
-                    marginBottom: 8,
-                    overflow: "hidden",
-                    backgroundImage: `url(${vegImg(c.name)})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                />
-                <div style={{ fontSize: 13, fontWeight: 700, color: t.text }}>
-                  {c.name}
-                </div>
-                <div
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 600,
-                    color: t.primary,
-                    marginTop: 2,
-                  }}
-                >
-                  {c.sub}
-                </div>
+                <ProducerFeatureCard producer={c.p} t={t} width={134} />
               </div>
             ))}
           </div>

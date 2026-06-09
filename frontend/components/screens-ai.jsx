@@ -4,7 +4,14 @@
 // + 결과 화면
 
 import React from "react";
-import { Phone, AppHeader, BottomTabBar, VegPlaceholder, Chip, priceRange } from "./phone";
+import {
+  Phone,
+  AppHeader,
+  BottomTabBar,
+  VegPlaceholder,
+  Chip,
+  priceExact,
+} from "./phone";
 import { DISH_IMG, FACE_IMG } from "./mock-images";
 
 // ─────────────────────────────────────────────────────────────
@@ -646,15 +653,21 @@ export function ScreenAIStepA2({ t }) {
 // AI Result — 추천 결과 (식재료 카드)
 // ─────────────────────────────────────────────────────────────
 const CART_ITEMS = [
-  { name: "봄동", q: "1단", price: 2400, plat: "쿠팡", tag: "제철적기" },
-  { name: "배추", q: "1포기", price: 2890, plat: "쿠팡", tag: "과잉" },
-  { name: "당근", q: "300g", price: 1990, plat: "컬리", tag: "" },
-  { name: "대파", q: "1단", price: 3500, plat: "컬리", tag: "⚠ 가격↑" },
-  { name: "계란", q: "15구", price: 5900, plat: "쿠팡", tag: "" },
-  { name: "돼지고기 앞다리", q: "500g", price: 8900, plat: "컬리", tag: "" },
-  { name: "시금치", q: "200g", price: 1890, plat: "쿠팡", tag: "제철" },
-  { name: "고추장", q: "500g", price: 4990, plat: "쿠팡", tag: "" },
-  { name: "쌀", q: "1kg", price: 7150, plat: "컬리", tag: "" },
+  { name: "봄동", q: "1봉", price: 2400, plat: "오산 홍진이", tag: "제철적기" },
+  { name: "배추", q: "1포기", price: 2890, plat: "해남 김상도", tag: "과잉" },
+  { name: "당근", q: "300g", price: 1990, plat: "평창 이수향", tag: "" },
+  { name: "대파", q: "1단", price: 3500, plat: "논산 정대근", tag: "⚠ 가격↑" },
+  { name: "계란", q: "15구", price: 5900, plat: "상주 윤도현", tag: "" },
+  {
+    name: "돼지고기 앞다리",
+    q: "500g",
+    price: 8900,
+    plat: "영천 권민성",
+    tag: "",
+  },
+  { name: "시금치", q: "200g", price: 1890, plat: "평창 이수향", tag: "제철" },
+  { name: "고추장", q: "500g", price: 4990, plat: "영천 권민성", tag: "" },
+  { name: "쌀", q: "1kg", price: 7150, plat: "상주 윤도현", tag: "" },
 ];
 
 export function ScreenAIResult({ t }) {
@@ -765,7 +778,7 @@ export function ScreenAIResult({ t }) {
                   width: 300,
                 }}
               >
-                ₩{priceRange(CART_ITEMS.reduce((s, i) => s + i.price, 0))}
+                ₩{priceExact(CART_ITEMS.reduce((s, i) => s + i.price, 0))}
               </div>
             </div>
           </div>
@@ -929,7 +942,7 @@ export function ScreenAIResult({ t }) {
                       fontFeatureSettings: '"tnum"',
                     }}
                   >
-                    ₩{priceRange(it.price)}
+                    ₩{priceExact(it.price)}
                   </div>
                 </div>
               );
@@ -975,7 +988,7 @@ export function ScreenAIResult({ t }) {
               fill="#fff"
             />
           </svg>
-          {checkedCount}개 식재료 찜하기
+          {checkedCount}개 장바구니 담기
         </button>
       </div>
     </Phone>
@@ -1169,7 +1182,7 @@ export function ScreenAIChatB({ t }) {
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 13, fontWeight: 700 }}>
-                찜하기 9개 · ₩{priceRange(38400)}
+                찜하기 9개 · ₩{priceExact(38400)}
               </div>
               <div style={{ fontSize: 11, opacity: 0.7 }}>재료 보러 가기</div>
             </div>

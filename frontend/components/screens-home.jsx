@@ -5,6 +5,8 @@
 import React from "react";
 import { Phone, BottomTabBar, VegPlaceholder, Chip, priceRange } from "./phone";
 import { DISH_IMG, vegImg } from "./mock-images";
+import { HONORARY_PRODUCERS, producersForIngredient } from "./producers-data";
+import { ProducerCircle, ProducerRow } from "./producer-card";
 
 // 봄동 hero 이미지
 const HERO_IMG = "/food/bomdong_main.jpg";
@@ -797,6 +799,53 @@ export function ScreenHomeB({ t }) {
                   }}
                 />
               </div>
+              {/* 장바구니 — 알람 오른쪽, 동일 글래스 스타일 */}
+              <div
+                className="tap"
+                style={{
+                  position: "relative",
+                  width: 38,
+                  height: 38,
+                  borderRadius: 19,
+                  background: "rgba(255,255,255,0.18)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.25)",
+                  display: "grid",
+                  placeItems: "center",
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path
+                    d="M2 2h2l1.5 8.5a1 1 0 001 .8h6.2a1 1 0 001-.8L15 5H5"
+                    stroke="#fff"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="7" cy="15" r="1.2" fill="#fff" />
+                  <circle cx="13" cy="15" r="1.2" fill="#fff" />
+                </svg>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 6,
+                    right: 6,
+                    minWidth: 14,
+                    height: 14,
+                    padding: "0 3px",
+                    borderRadius: 7,
+                    background: t.hot,
+                    border: "1.5px solid #fff",
+                    color: "#fff",
+                    fontSize: 8.5,
+                    fontWeight: 800,
+                    display: "grid",
+                    placeItems: "center",
+                  }}
+                >
+                  3
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1370,14 +1419,15 @@ export function ScreenHomeB({ t }) {
           </div>
         </div>
 
-        {/* ============ 이번 주 가격 동향 ============ */}
-        <div style={{ padding: "28px 20px 0" }}>
+        {/* ============ 이번 주 우수 농가 ============ */}
+        <div style={{ padding: "28px 0 0" }}>
           <div
             style={{
+              padding: "0 20px",
               display: "flex",
               alignItems: "baseline",
               justifyContent: "space-between",
-              marginBottom: 12,
+              marginBottom: 14,
             }}
           >
             <div
@@ -1386,124 +1436,86 @@ export function ScreenHomeB({ t }) {
                 fontWeight: 800,
                 color: t.text,
                 letterSpacing: -0.5,
-                width: 230,
               }}
             >
-              이번 주 가격 동향
+              이번 주 <span style={{ color: t.primary }}>우수 농가</span>
             </div>
             <span style={{ fontSize: 11, color: t.textSoft }}>
-              KAMIS 시세 · 오늘 기준
+              산지직송 명예생산자
             </span>
           </div>
 
-          <div
-            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}
-          >
-            {/* 가격 상승 중 */}
+          <div style={{ position: "relative" }}>
+            {/* 좌 chevron */}
             <div
               className="tap"
               style={{
-                borderRadius: 16,
-                padding: "14px 14px 16px",
-                background: t.hotBg,
-                border: `1px solid ${t.hot}33`,
+                position: "absolute",
+                left: 8,
+                top: 18,
+                zIndex: 2,
+                width: 28,
+                height: 28,
+                borderRadius: 14,
+                background: "#fff",
+                border: `1px solid ${t.borderSoft}`,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                display: "grid",
+                placeItems: "center",
               }}
             >
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 4,
-                  padding: "3px 8px 3px 6px",
-                  borderRadius: 999,
-                  background: "#fff",
-                  color: t.hot,
-                  fontSize: 11,
-                  fontWeight: 800,
-                }}
-              >
-                <svg width="9" height="9" viewBox="0 0 9 9">
-                  <path d="M4.5 1L8 6H1L4.5 1z" fill="currentColor" />
-                </svg>
-                가격 상승 중
-              </div>
-              <div
-                style={{
-                  fontSize: 15,
-                  fontWeight: 800,
-                  color: t.text,
-                  marginTop: 8,
-                  letterSpacing: -0.4,
-                  lineHeight: 1.3,
-                }}
-              >
-                마늘, 양파,
-                <br />
-                대파
-              </div>
-              <div
-                style={{
-                  fontSize: 11,
-                  color: t.hot,
-                  marginTop: 6,
-                  fontWeight: 600,
-                }}
-              >
-                지금 담아두면 좋아요
-              </div>
+              <svg width="12" height="12" viewBox="0 0 12 12">
+                <path
+                  d="M7.5 2L3.5 6l4 4"
+                  stroke={t.text}
+                  strokeWidth="1.8"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
-            {/* 가격 하락 중 */}
+            {/* 우 chevron */}
             <div
               className="tap"
               style={{
-                borderRadius: 16,
-                padding: "14px 14px 16px",
-                background: t.primaryBg,
-                border: `1px solid ${t.primarySoft}`,
+                position: "absolute",
+                right: 8,
+                top: 18,
+                zIndex: 2,
+                width: 28,
+                height: 28,
+                borderRadius: 14,
+                background: "#fff",
+                border: `1px solid ${t.borderSoft}`,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                display: "grid",
+                placeItems: "center",
               }}
             >
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 4,
-                  padding: "3px 8px 3px 6px",
-                  borderRadius: 999,
-                  background: "#fff",
-                  color: t.primaryDark,
-                  fontSize: 11,
-                  fontWeight: 800,
-                }}
-              >
-                <svg width="9" height="9" viewBox="0 0 9 9">
-                  <path d="M4.5 8L1 3h7L4.5 8z" fill="currentColor" />
-                </svg>
-                가격 하락 중
-              </div>
-              <div
-                style={{
-                  fontSize: 15,
-                  fontWeight: 800,
-                  color: t.text,
-                  marginTop: 8,
-                  letterSpacing: -0.4,
-                  lineHeight: 1.3,
-                }}
-              >
-                토마토, 가지,
-                <br />
-                옥수수
-              </div>
-              <div
-                style={{
-                  fontSize: 11,
-                  color: t.primaryDark,
-                  marginTop: 6,
-                  fontWeight: 600,
-                }}
-              >
-                급하게 사지 않아도 돼요
-              </div>
+              <svg width="12" height="12" viewBox="0 0 12 12">
+                <path
+                  d="M4.5 2L8.5 6l-4 4"
+                  stroke={t.text}
+                  strokeWidth="1.8"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <div
+              className="phone-scroll"
+              style={{
+                display: "flex",
+                gap: 14,
+                overflowX: "auto",
+                padding: "0 40px 6px",
+              }}
+            >
+              {HONORARY_PRODUCERS.map((p) => (
+                <ProducerCircle key={p.id} producer={p} t={t} size={72} />
+              ))}
             </div>
           </div>
         </div>
@@ -2016,6 +2028,67 @@ export function ScreenHomeSearchResult({ t }) {
               }}
             >
               식재료 더보기
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path
+                  d="M4 2l4 4-4 4"
+                  stroke={t.text}
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* ── 섹션 구분선 ── */}
+        <div style={{ height: 8, background: t.bgSoft, marginTop: 22 }} />
+
+        {/* 농가 — 봄동을 다루는 농가 */}
+        <div style={{ padding: "18px 0 0" }}>
+          <SectionHeader
+            title="봄동 농가"
+            count={producersForIngredient("봄동").length}
+            t={t}
+          />
+          <div
+            style={{
+              margin: "0 16px",
+              background: "#fff",
+              borderRadius: 18,
+              border: `1px solid ${t.borderSoft}`,
+              overflow: "hidden",
+            }}
+          >
+            {producersForIngredient("봄동").map((p, i, arr) => (
+              <ProducerRow
+                key={p.id}
+                producer={p}
+                t={t}
+                divider={i < arr.length - 1}
+              />
+            ))}
+          </div>
+          <div style={{ padding: "12px 20px 0" }}>
+            <div
+              className="tap"
+              style={{
+                width: "100%",
+                height: 44,
+                borderRadius: 12,
+                background: t.bgSoft,
+                border: `1px solid ${t.borderSoft}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+                fontSize: 13,
+                fontWeight: 700,
+                color: t.text,
+                letterSpacing: -0.2,
+              }}
+            >
+              농가 더보기
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <path
                   d="M4 2l4 4-4 4"

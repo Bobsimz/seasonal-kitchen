@@ -13,6 +13,12 @@ export function priceRange(value, pct = 0.1) {
   return `${lo.toLocaleString()}~${hi.toLocaleString()}`;
 }
 
+// 명확한(단일) 금액 콤마 포맷 (예: 2400 → "2,400") — 농가 직거래 가격용
+export function priceExact(value) {
+  const n = typeof value === "string" ? Number(value.replace(/,/g, "")) : value;
+  return n.toLocaleString();
+}
+
 // Compact iOS-y status bar that respects our color theme
 export function PhoneStatus({ dark }) {
   const c = dark ? "#fff" : "#0F1A14";

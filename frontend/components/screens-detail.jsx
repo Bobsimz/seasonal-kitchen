@@ -8,9 +8,17 @@ import {
   VegPlaceholder,
   Chip,
   priceRange,
+  priceExact,
 } from "./phone";
 import { PriceBadge } from "./screens-home";
 import { DISH_IMG, FACE_IMG } from "./mock-images";
+import {
+  PRODUCERS,
+  HONORARY_PRODUCERS,
+  producersForIngredient,
+  producerOffer,
+} from "./producers-data";
+import { ProducerCircle, ProducerRow } from "./producer-card";
 
 // ─────────────────────────────────────────────────────────────
 // LIST — 식재료 카테고리 리스트
@@ -74,12 +82,167 @@ export function ScreenRecipeListSearchResult({ t }) {
   );
 }
 
-// Shared header with mode toggle (식재료 ⇄ 레시피)
+// 농가 탭 — 베스트 농가 캐러셀 + 카테고리/정렬 + 농가 리스트
+export function ScreenProducerList({ t, query = "" }) {
+  return (
+    <Phone t={t} tabBar={<BottomTabBar active="list" t={t} />}>
+      <div
+        className="phone-scroll"
+        style={{ flex: 1, overflow: "auto", background: t.bg }}
+      >
+        <ListHeader t={t} mode="producer" query={query} />
+        <ProducerListBody t={t} query={query} />
+      </div>
+    </Phone>
+  );
+}
+
+export function ScreenProducerListSearchResult({ t }) {
+  return <ScreenProducerList t={t} query="봄동" />;
+}
+
+function ProducerListBody({ t, query = "" }) {
+  const cats = [
+    "전체",
+    "잎채소",
+    "뿌리채소",
+    "과일",
+    "곡류",
+    "해산물",
+    "유기농",
+    "프리미엄",
+  ];
+  const list = query
+    ? producersForIngredient(query)
+    : PRODUCERS;
+
+  return (
+    <React.Fragment>
+      {/* ── 베스트 농가 — 크라운-써클 캐러셀 ── */}
+      <div
+        style={{
+          padding: "16px 20px 0",
+          display: "flex",
+          alignItems: "baseline",
+          justifyContent: "space-between",
+        }}
+      >
+        <div
+          style={{
+            fontSize: 16,
+            fontWeight: 800,
+            color: t.text,
+            letterSpacing: -0.4,
+          }}
+        >
+          👑 이번주 <span style={{ color: t.primary }}>베스트 농가</span>
+        </div>
+        <span style={{ fontSize: 12, color: t.primary, fontWeight: 700 }}>
+          전체 →
+        </span>
+      </div>
+      <div
+        className="phone-scroll"
+        style={{ display: "flex", gap: 14, overflowX: "auto", padding: "12px 20px 4px" }}
+      >
+        {HONORARY_PRODUCERS.map((p) => (
+          <ProducerCircle key={p.id} producer={p} t={t} size={68} />
+        ))}
+      </div>
+
+      {/* ── 카테고리 pill ── */}
+      <div
+        className="phone-scroll"
+        style={{ display: "flex", gap: 6, overflowX: "auto", padding: "14px 20px 0" }}
+      >
+        {cats.map((c, i) => (
+          <div
+            key={i}
+            className="tap"
+            style={{
+              padding: "7px 14px",
+              borderRadius: 999,
+              fontSize: 12.5,
+              fontWeight: 700,
+              background: i === 0 ? t.text : "#fff",
+              border: i === 0 ? "none" : `1px solid ${t.border}`,
+              color: i === 0 ? "#fff" : t.textMid,
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+            }}
+          >
+            {c}
+          </div>
+        ))}
+      </div>
+
+      {/* ── 정렬 행 ── */}
+      <div
+        style={{
+          padding: "14px 20px 8px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span style={{ fontSize: 12.5, color: t.textMid }}>
+          <b style={{ color: t.text }}>{list.length}곳</b>
+          {query ? `의 '${query}' 농가` : "의 추천 농가"}
+        </span>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 4,
+            fontSize: 12.5,
+            fontWeight: 700,
+            color: t.text,
+          }}
+        >
+          평점 높은 순
+          <svg width="10" height="10" viewBox="0 0 10 10">
+            <path
+              d="M2 3.5l3 3 3-3"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      </div>
+
+      {/* ── 농가 리스트 ── */}
+      <div
+        style={{
+          background: "#fff",
+          margin: "0 16px",
+          borderRadius: 18,
+          border: `1px solid ${t.borderSoft}`,
+          overflow: "hidden",
+        }}
+      >
+        {list.map((p, i, arr) => (
+          <ProducerRow
+            key={p.id}
+            producer={p}
+            t={t}
+            divider={i < arr.length - 1}
+          />
+        ))}
+      </div>
+      <div style={{ height: 24 }} />
+    </React.Fragment>
+  );
+}
+
+// Shared header with mode toggle (식재료 ⇄ 레시피 ⇄ 농가)
 function ListHeader({ t, mode, query = "" }) {
   const counts =
     query === "봄동"
-      ? { ingredient: 1, recipe: 3 }
-      : { ingredient: 14, recipe: 86 };
+      ? { ingredient: 1, recipe: 3, producer: 5 }
+      : { ingredient: 14, recipe: 86, producer: 32 };
   return (
     <div
       style={{
@@ -131,7 +294,9 @@ function ListHeader({ t, mode, query = "" }) {
           <span style={{ flex: 1, fontSize: 13.5, color: t.textSoft }}>
             {mode === "ingredient"
               ? "식재료 검색 (무, 배추, …)"
-              : "레시피 검색 (무생채, 김치찌개, …)"}
+              : mode === "recipe"
+                ? "레시피 검색 (무생채, 김치찌개, …)"
+                : "농가 검색 (지역, 농가명, 품목…)"}
           </span>
         )}
       </div>
@@ -148,6 +313,7 @@ function ListHeader({ t, mode, query = "" }) {
         {[
           { id: "ingredient", label: "식재료", count: counts.ingredient },
           { id: "recipe", label: "레시피", count: counts.recipe },
+          { id: "producer", label: "농가", count: counts.producer },
         ].map((tab) => {
           const active = mode === tab.id;
           return (
@@ -1234,14 +1400,14 @@ export function ScreenDetail({ t }) {
           </div>
         </div>
 
-        {/* 영양 정보 */}
+        {/* 이번주 베스트 농가 — 이 재료(무)를 파는 농가 */}
         <div
           style={{
             margin: "12px 16px 0",
             background: "#fff",
             borderRadius: 18,
             border: `1px solid ${t.borderSoft}`,
-            padding: "16px 18px",
+            padding: "16px 18px 8px",
           }}
         >
           <div
@@ -1249,186 +1415,65 @@ export function ScreenDetail({ t }) {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              marginBottom: 4,
             }}
           >
-            <div style={{ fontSize: 14, fontWeight: 800, color: t.text }}>
-              영양 정보
+            <div style={{ fontSize: 16, fontWeight: 800, color: t.text }}>
+              👑 이번주 베스트 농가
             </div>
-            <span style={{ fontSize: 11, color: t.textSoft }}>
-              100g · 생식 기준
+            <span style={{ fontSize: 11, color: t.primary, fontWeight: 700 }}>
+              전체 →
             </span>
           </div>
-          <div style={{ fontSize: 11.5, color: t.textSoft, marginBottom: 14 }}>
-            수분 94% · 저칼로리 뿌리채소
+          <div style={{ fontSize: 11.5, color: t.textSoft, marginTop: 4 }}>
+            무를 직접 키우는 농가에서 신선하게 받아보세요
           </div>
-
-          {/* 칼로리 헤드라인 */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "baseline",
-              gap: 8,
-              paddingBottom: 14,
-              borderBottom: `1px solid ${t.borderSoft}`,
-            }}
-          >
-            <div
-              style={{
-                fontSize: 32,
-                fontWeight: 800,
-                color: t.text,
-                letterSpacing: -1,
-                fontFeatureSettings: '"tnum"',
-                lineHeight: 1,
-              }}
-            >
-              18
-            </div>
-            <span style={{ fontSize: 13, color: t.textMid, fontWeight: 600 }}>
-              kcal
-            </span>
-            <span style={{ marginLeft: "auto" }}>
-              <Chip color={t.primary} bg={t.primaryBg}>
-                저칼로리
-              </Chip>
-            </span>
-          </div>
-
-          {/* 주요 영양소 그리드 */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 10,
-              marginTop: 14,
-            }}
-          >
-            {[
-              { k: "탄수화물", v: "4.1g", sub: "당류 2.5g" },
-              { k: "식이섬유", v: "1.6g", sub: "일일 권장 6%" },
-              { k: "단백질", v: "0.6g", sub: "" },
-              { k: "지방", v: "0.1g", sub: "" },
-            ].map((n, i) => (
-              <div
-                key={i}
-                style={{
-                  background: t.bgSoft,
-                  borderRadius: 12,
-                  padding: "10px 12px",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: t.textMid,
-                    fontWeight: 600,
-                  }}
-                >
-                  {n.k}
-                </div>
-                <div
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 800,
-                    color: t.text,
-                    marginTop: 2,
-                    fontFeatureSettings: '"tnum"',
-                  }}
-                >
-                  {n.v}
-                </div>
-                {n.sub && (
-                  <div
-                    style={{
-                      fontSize: 10,
-                      color: t.textSoft,
-                      marginTop: 2,
-                    }}
-                  >
-                    {n.sub}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* 비타민·미네랄 */}
-          <div
-            style={{
-              marginTop: 14,
-              paddingTop: 14,
-              borderTop: `1px solid ${t.borderSoft}`,
-            }}
-          >
-            <div
-              style={{
-                fontSize: 11.5,
-                fontWeight: 700,
-                color: t.textMid,
-                marginBottom: 10,
-              }}
-            >
-              풍부한 비타민·미네랄
-            </div>
-            {[
-              { k: "비타민C", v: "22mg", pct: 0.73, label: "일일 73%" },
-              { k: "칼륨", v: "233mg", pct: 0.07, label: "일일 7%" },
-              { k: "엽산", v: "25µg", pct: 0.06, label: "일일 6%" },
-            ].map((n, i) => (
-              <div key={i} style={{ marginTop: i === 0 ? 0 : 10 }}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "baseline",
-                    fontSize: 12,
-                    marginBottom: 4,
-                  }}
-                >
-                  <span style={{ color: t.text, fontWeight: 700 }}>{n.k}</span>
-                  <span
-                    style={{
-                      color: t.textSoft,
-                      fontFeatureSettings: '"tnum"',
-                    }}
-                  >
-                    <b style={{ color: t.text, fontWeight: 700 }}>{n.v}</b>
-                    <span style={{ marginLeft: 6 }}>{n.label}</span>
-                  </span>
-                </div>
-                <div
-                  style={{
-                    height: 6,
-                    borderRadius: 3,
-                    background: t.borderSoft,
-                    overflow: "hidden",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: `${Math.min(100, n.pct * 100)}%`,
-                      height: "100%",
-                      borderRadius: 3,
-                      background: n.pct >= 0.5 ? t.primary : t.primarySoft,
-                    }}
+          <div style={{ marginTop: 4 }}>
+            {producersForIngredient("무")
+              .slice(0, 3)
+              .map((p, i, arr) => {
+                const o = producerOffer(p, "무");
+                return (
+                  <ProducerRow
+                    key={p.id}
+                    producer={p}
+                    t={t}
+                    divider={i < arr.length - 1}
+                    footer={
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "baseline",
+                          gap: 6,
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: 16,
+                            fontWeight: 800,
+                            color: t.text,
+                            fontFeatureSettings: '"tnum"',
+                          }}
+                        >
+                          ₩{priceExact(o.price)}
+                        </span>
+                        <span style={{ fontSize: 12, color: t.textMid }}>
+                          /{o.unit}
+                        </span>
+                        <span
+                          style={{
+                            marginLeft: "auto",
+                            fontSize: 11.5,
+                            fontWeight: 700,
+                            color: t.primary,
+                          }}
+                        >
+                          🌱 {o.fresh}
+                        </span>
+                      </div>
+                    }
                   />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div
-            style={{
-              marginTop: 14,
-              paddingTop: 12,
-              borderTop: `1px solid ${t.borderSoft}`,
-              fontSize: 10.5,
-              color: t.textSoft,
-              lineHeight: 1.55,
-            }}
-          >
-            출처 · 농촌진흥청 국가표준식품성분표 (DB 10.0)
+                );
+              })}
           </div>
         </div>
 
@@ -1664,7 +1709,7 @@ export function ScreenDetail({ t }) {
         <div style={{ height: 96 }} />
       </div>
 
-      {/* Floating action bar — AI 셰프(1) : 온라인 가격 비교(4) */}
+      {/* Floating action bar — AI 셰프(1) : 농가에서 구매(4) */}
       <div
         style={{
           position: "absolute",
@@ -1741,18 +1786,16 @@ export function ScreenDetail({ t }) {
           }}
         >
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <rect
-              x="2"
-              y="3"
-              width="14"
-              height="12"
-              rx="2"
+            <path
+              d="M9 16V8M9 8C9 5 6.5 3 3 3c0 3.5 2.5 5 6 5zM9 9c0-2.5 2-4.5 5-4.5 0 3-2 4.5-5 4.5z"
               stroke="#fff"
               strokeWidth="1.5"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
-            <path d="M2 7h14" stroke="#fff" strokeWidth="1.5" />
           </svg>
-          온라인 가격 비교하기 (3곳)
+          농가에서 구매하기
         </button>
       </div>
     </Phone>
@@ -1763,64 +1806,17 @@ export function ScreenDetail({ t }) {
 // PRICE COMPARE — 쿠팡 / 마켓컬리 / 오아시스 …
 // ─────────────────────────────────────────────────────────────
 export function ScreenCompare({ t }) {
-  const platforms = [
-    {
-      name: "쿠팡",
-      sub: "로켓프레시 · 내일 도착",
-      price: 1190,
-      range: "1,150~1,290",
-      orig: 1490,
-      discount: 20,
-      tag: "최저가",
-      tagColor: t.primary,
-      brand: "#FF5C39",
-      logo: "C",
-    },
-    {
-      name: "마켓컬리",
-      sub: "샛별배송 · 오늘밤 도착",
-      price: 1290,
-      range: "1,250~1,380",
-      orig: 1490,
-      discount: 13,
-      brand: "#5F0080",
-      logo: "K",
-    },
-    {
-      name: "오아시스",
-      sub: "새벽배송 · 4시 출고",
-      price: 1350,
-      range: "1,300~1,420",
-      orig: null,
-      discount: null,
-      brand: "#1B6F4E",
-      logo: "O",
-    },
-    {
-      name: "네이버 장보기",
-      sub: "하나로마트 직배송",
-      price: 1450,
-      range: "1,400~1,520",
-      orig: null,
-      discount: null,
-      brand: "#03C75A",
-      logo: "N",
-    },
-    {
-      name: "이마트몰",
-      sub: "쓱배송 · 오늘 도착",
-      price: 1490,
-      range: "1,450~1,580",
-      orig: 1690,
-      discount: 12,
-      brand: "#FFD400",
-      logoColor: "#000",
-      logo: "E",
-    },
-  ];
+  // 무를 취급하는 농가 — 가격순 정렬, 최저가 태그
+  const farms = producersForIngredient("무")
+    .map((p) => {
+      const o = producerOffer(p, "무");
+      return { producer: p, price: o.price, unit: o.unit, fresh: o.fresh };
+    })
+    .sort((a, b) => a.price - b.price)
+    .map((f, i) => ({ ...f, tag: i === 0 ? "최저가" : null }));
   return (
     <Phone t={t}>
-      <AppHeader t={t} title="가격 비교 · 무 1단" leftBack />
+      <AppHeader t={t} title="농가 비교 · 무 1단" leftBack />
       <div
         className="phone-scroll"
         style={{ flex: 1, overflow: "auto", background: t.bgSoft }}
@@ -1837,7 +1833,7 @@ export function ScreenCompare({ t }) {
             <VegPlaceholder name="무" size={52} t={t} />
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: t.primary }}>
-                5개 플랫폼 · 실시간
+                {farms.length}개 농가 · 산지직송
               </div>
               <div
                 style={{
@@ -1865,7 +1861,7 @@ export function ScreenCompare({ t }) {
             }}
             className="phone-scroll"
           >
-            {["가격순", "배송 빠른순", "리뷰순", "🥇 최저가만"].map((f, i) => (
+            {["가격순", "신선도순", "리뷰순", "🥇 최저가만"].map((f, i) => (
               <div
                 key={i}
                 style={{
@@ -1896,7 +1892,7 @@ export function ScreenCompare({ t }) {
               padding: "0 4px 8px",
             }}
           >
-            전체 비교 · 5곳
+            전체 비교 · {farms.length}곳
           </div>
           <div
             style={{
@@ -1906,86 +1902,135 @@ export function ScreenCompare({ t }) {
               overflow: "hidden",
             }}
           >
-            {platforms.map((p, i) => (
+            {farms.map((f, i) => (
               <div
-                key={i}
+                key={f.producer.id}
                 className="tap"
                 style={{
                   padding: "14px 16px",
                   borderBottom:
-                    i < platforms.length - 1
+                    i < farms.length - 1
                       ? `1px solid ${t.borderSoft}`
                       : "none",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
                 }}
               >
+                {/* 농가 정보 */}
                 <div
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 10,
-                    background: p.brand,
-                    color: p.logoColor || "#fff",
-                    fontWeight: 800,
-                    fontSize: 18,
-                    display: "grid",
-                    placeItems: "center",
-                    flexShrink: 0,
-                  }}
+                  style={{ display: "flex", alignItems: "center", gap: 12 }}
                 >
-                  {p.logo}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 6 }}
-                  >
-                    <span
-                      style={{ fontSize: 14, fontWeight: 700, color: t.text }}
-                    >
-                      {p.name}
-                    </span>
-                    {p.tag && (
-                      <Chip color={t.primary} bg={t.primaryBg}>
-                        {p.tag}
-                      </Chip>
-                    )}
-                  </div>
-                  <div
-                    style={{ fontSize: 11.5, color: t.textSoft, marginTop: 3 }}
-                  >
-                    {p.sub}
-                  </div>
-                </div>
-                <div style={{ textAlign: "right" }}>
                   <div
                     style={{
-                      fontSize: 14,
+                      position: "relative",
+                      width: 40,
+                      height: 40,
+                      flexShrink: 0,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 20,
+                        overflow: "hidden",
+                        backgroundImage: `url(${f.producer.photo})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
+                    />
+                    {f.producer.honorary && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          right: -2,
+                          bottom: -2,
+                          width: 16,
+                          height: 16,
+                          borderRadius: 8,
+                          background: t.primary,
+                          border: "1.5px solid #fff",
+                          display: "grid",
+                          placeItems: "center",
+                          fontSize: 8,
+                        }}
+                      >
+                        👑
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 6 }}
+                    >
+                      <span
+                        style={{ fontSize: 14, fontWeight: 700, color: t.text }}
+                      >
+                        {f.producer.region} {f.producer.name}
+                      </span>
+                      {f.tag && (
+                        <Chip color={t.primary} bg={t.primaryBg}>
+                          {f.tag}
+                        </Chip>
+                      )}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 11.5,
+                        color: t.textSoft,
+                        marginTop: 3,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {f.producer.tagline}
+                    </div>
+                  </div>
+                  <svg width="8" height="14" viewBox="0 0 8 14">
+                    <path
+                      d="M1 1l6 6-6 6"
+                      stroke={t.textSoft}
+                      strokeWidth="1.6"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                {/* 가격 — 아래에 위아래로 */}
+                <div
+                  style={{
+                    marginTop: 10,
+                    paddingTop: 10,
+                    borderTop: `1px solid ${t.borderSoft}`,
+                    display: "flex",
+                    alignItems: "baseline",
+                    gap: 6,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 16,
                       fontWeight: 800,
                       color: t.text,
                       fontFeatureSettings: '"tnum"',
-                      whiteSpace: "nowrap",
                     }}
                   >
-                    ₩{p.range}
-                  </div>
+                    ₩{priceExact(f.price)}
+                  </span>
+                  <span style={{ fontSize: 12, color: t.textMid }}>
+                    /{f.unit}
+                  </span>
+                  <span
+                    style={{
+                      marginLeft: "auto",
+                      fontSize: 11.5,
+                      fontWeight: 700,
+                      color: t.primary,
+                    }}
+                  >
+                    🌱 {f.fresh}
+                  </span>
                 </div>
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 14 14"
-                  style={{ marginLeft: 4 }}
-                >
-                  <path
-                    d="M3 11L11 3M11 3H5M11 3v6"
-                    stroke={t.textSoft}
-                    strokeWidth="1.6"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
               </div>
             ))}
           </div>
@@ -2002,7 +2047,7 @@ export function ScreenCompare({ t }) {
             }}
           >
             <b style={{ color: t.text }}>참고</b> · 가격은 1단(1kg 기준)으로
-            환산했어요. 배송비 · 쿠폰은 각 플랫폼에서 확인하세요.
+            환산했어요. 배송비 · 수확일은 각 농가에서 확인하세요.
           </div>
         </div>
 

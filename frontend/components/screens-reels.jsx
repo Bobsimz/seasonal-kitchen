@@ -11,6 +11,10 @@ import {
   priceRange,
 } from "./phone";
 import { DISH_IMG, FACE_IMG, vegImg } from "./mock-images";
+import { producersForIngredient } from "./producers-data";
+
+// 해당 재료를 파는 농가가 있는지
+const hasProducer = (name) => producersForIngredient(name).length > 0;
 
 const IMG = {
   reelHero: DISH_IMG.봄동비빔밥히어로,
@@ -691,6 +695,36 @@ export function ScreenRecipeDetail({ t }) {
                   <Chip color={t.primary} bg={t.primaryBg}>
                     적기 ↓
                   </Chip>
+                )}
+                {hasProducer(it.name) && (
+                  <span
+                    className="tap"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 3,
+                      fontSize: 10.5,
+                      fontWeight: 700,
+                      color: t.primary,
+                      background: t.primaryBg,
+                      padding: "3px 8px",
+                      borderRadius: 999,
+                      flexShrink: 0,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    농가 보기
+                    <svg width="7" height="11" viewBox="0 0 7 11">
+                      <path
+                        d="M1 1l4.5 4.5L1 10"
+                        stroke={t.primary}
+                        strokeWidth="1.4"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
                 )}
                 <div
                   style={{
