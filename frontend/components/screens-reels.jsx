@@ -904,7 +904,7 @@ export function ScreenRecipeDetail({ t }) {
         <div style={{ height: 96 }} />
       </div>
 
-      {/* Floating action bar — AI 셰프 : 조리 순서 보기 (1:1) */}
+      {/* Floating action bar — 조리 순서 보기 */}
       <div
         style={{
           position: "absolute",
@@ -919,43 +919,6 @@ export function ScreenRecipeDetail({ t }) {
           zIndex: 90,
         }}
       >
-        <button
-          className="tap"
-          style={{
-            flex: 1,
-            height: 52,
-            borderRadius: 14,
-            border: `1px solid ${t.borderSoft}`,
-            background: "#fff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 6,
-            padding: 0,
-            boxShadow: "0 4px 14px rgba(20,40,30,0.06)",
-            fontSize: 14,
-            fontWeight: 700,
-            color: t.text,
-            letterSpacing: -0.3,
-          }}
-        >
-          <svg width="20" height="20" viewBox="0 0 26 26" fill="none">
-            <path
-              d="M13 4c-2 0-3.5 1.5-3.5 3.5 0 0-3 0-4.5 2.5C3.5 12.5 5 15.5 7.5 17c-0.5 3 1.5 5 5.5 5s6-2 5.5-5c2.5-1.5 4-4.5 2.5-7-1.5-2.5-4.5-2.5-4.5-2.5C16.5 5.5 15 4 13 4z"
-              fill={t.primary}
-            />
-            <circle cx="10" cy="11" r="1" fill="#fff" />
-            <circle cx="16" cy="11" r="1" fill="#fff" />
-            <path
-              d="M10 15c1 1.5 5 1.5 6 0"
-              stroke="#fff"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              fill="none"
-            />
-          </svg>
-          함께 요리하기
-        </button>
         <button
           className="tap"
           style={{
