@@ -1,9 +1,20 @@
 // MyPage, Notifications, Wishlist, Order checkout
 
 import React from "react";
-import { Phone, BottomTabBar, AppHeader, VegPlaceholder, Chip, priceRange } from "./phone";
-import { FACE_IMG } from "./mock-images";
+import {
+  Phone,
+  BottomTabBar,
+  AppHeader,
+  VegPlaceholder,
+  Chip,
+  priceRange,
+  priceExact,
+} from "./phone";
+import { FACE_IMG, DISH_IMG } from "./mock-images";
 import { PriceBadge } from "./screens-home";
+import { PRODUCERS, producerReviews } from "./producers-data";
+import { ProducerRow } from "./producer-card";
+import { ProducerHeader, StickyBar } from "./screens-farm";
 
 // ─────────────────────────────────────────────────────────────
 // MyPage
@@ -250,6 +261,9 @@ export function ScreenMyPage({ t }) {
             }}
           >
             {[
+              { ic: "📦", label: "주문 내역", sub: "최근 3건" },
+              { ic: "❤️", label: "찜한 농가", sub: "8곳" },
+              { ic: "⭐", label: "리뷰 관리", sub: "작성 가능 2건", tag: "NEW" },
               { ic: "🔔", label: "가격 알림 설정", sub: "5건 활성" },
               { ic: "🌱", label: "제철 캘린더", sub: "11월 알림" },
             ].map((r, i, arr) => (
@@ -858,6 +872,655 @@ export function ScreenCheckout({ t }) {
         </div>
         <div style={{ height: 30 }} />
       </div>
+    </Phone>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 공용 — 세그먼트 탭
+// ─────────────────────────────────────────────────────────────
+function SegTabs({ tabs, active, onChange, t }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        background: t.bgSoft,
+        borderRadius: 12,
+        padding: 4,
+        gap: 4,
+        margin: "12px 16px 0",
+      }}
+    >
+      {tabs.map((tab) => {
+        const on = active === tab.id;
+        return (
+          <div
+            key={tab.id}
+            className="tap"
+            onClick={() => onChange(tab.id)}
+            style={{
+              flex: 1,
+              padding: "9px 8px",
+              borderRadius: 9,
+              textAlign: "center",
+              background: on ? "#fff" : "transparent",
+              boxShadow: on ? "0 2px 6px rgba(20,40,30,0.08)" : "none",
+              fontSize: 13,
+              fontWeight: on ? 800 : 600,
+              color: on ? t.text : t.textSoft,
+            }}
+          >
+            {tab.label}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+const StatusChip = ({ done, t }) => (
+  <span
+    style={{
+      fontSize: 11,
+      fontWeight: 800,
+      padding: "3px 9px",
+      borderRadius: 999,
+      color: done ? t.primaryDark : t.warning,
+      background: done ? t.primaryBg : t.warningBg,
+    }}
+  >
+    {done ? "배송완료" : "배송중"}
+  </span>
+);
+
+// ─────────────────────────────────────────────────────────────
+// 21a — 주문 내역
+// ─────────────────────────────────────────────────────────────
+export function ScreenOrders({ t }) {
+  const orders = [
+    {
+      date: "2026.06.09",
+      no: "2026-0609-0427",
+      done: false,
+      p: PRODUCERS[2],
+      items: [
+        { name: "무", qty: 2, unit: "개", price: 2090 },
+        { name: "배추", qty: 1, unit: "포기", price: 5560 },
+      ],
+    },
+    {
+      date: "2026.05.28",
+      no: "2026-0528-0193",
+      done: true,
+      p: PRODUCERS[4],
+      items: [{ name: "시금치", qty: 3, unit: "단", price: 4140 }],
+    },
+    {
+      date: "2026.05.14",
+      no: "2026-0514-0061",
+      done: true,
+      p: PRODUCERS[0],
+      items: [
+        { name: "봄동", qty: 2, unit: "봉", price: 5310 },
+        { name: "무", qty: 1, unit: "개", price: 2530 },
+      ],
+    },
+  ];
+  return (
+    <Phone t={t}>
+      <AppHeader t={t} title="주문 내역" leftBack />
+      <div
+        className="phone-scroll"
+        style={{ flex: 1, overflow: "auto", background: t.bgSoft }}
+      >
+        {orders.map((o, oi) => {
+          const total = o.items.reduce((a, it) => a + it.price * it.qty, 0);
+          return (
+            <div key={oi} style={{ padding: "12px 16px 0" }}>
+              <div
+                style={{
+                  background: "#fff",
+                  borderRadius: 18,
+                  border: `1px solid ${t.borderSoft}`,
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "12px 16px",
+                    borderBottom: `1px solid ${t.borderSoft}`,
+                  }}
+                >
+                  <span style={{ fontSize: 12, color: t.textSoft }}>
+                    {o.date} · {o.no}
+                  </span>
+                  <StatusChip done={o.done} t={t} />
+                </div>
+                <div style={{ padding: "12px 16px 0" }}>
+                  <ProducerHeader producer={o.p} t={t} size={36} />
+                </div>
+                <div style={{ padding: "10px 16px 0" }}>
+                  {o.items.map((it, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 10,
+                        padding: "6px 0",
+                      }}
+                    >
+                      <VegPlaceholder name={it.name} size={36} t={t} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <span
+                          style={{ fontSize: 13, fontWeight: 700, color: t.text }}
+                        >
+                          {it.name}
+                        </span>
+                        <span style={{ fontSize: 11.5, color: t.textSoft }}>
+                          {" "}
+                          {it.qty}
+                          {it.unit}
+                        </span>
+                      </div>
+                      <span
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 700,
+                          color: t.text,
+                          fontFeatureSettings: '"tnum"',
+                        }}
+                      >
+                        ₩{priceExact(it.price * it.qty)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "12px 16px",
+                    marginTop: 6,
+                    borderTop: `1px solid ${t.borderSoft}`,
+                  }}
+                >
+                  <span style={{ fontSize: 12.5, color: t.textMid }}>
+                    총 결제
+                    <b
+                      style={{
+                        color: t.text,
+                        marginLeft: 6,
+                        fontFeatureSettings: '"tnum"',
+                      }}
+                    >
+                      ₩{priceExact(total)}
+                    </b>
+                  </span>
+                  {o.done && (
+                    <span
+                      className="tap"
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 800,
+                        color: t.primary,
+                        border: `1px solid ${t.primary}`,
+                        borderRadius: 999,
+                        padding: "6px 14px",
+                      }}
+                    >
+                      ⭐ 리뷰 쓰기
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <div style={{ height: 24 }} />
+      </div>
+    </Phone>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 21b — 찜 목록 (농가 / 식재료 / 레시피)
+// ─────────────────────────────────────────────────────────────
+export function ScreenWishlist({ t }) {
+  const [tab, setTab] = React.useState("producer");
+  const farms = PRODUCERS.slice(0, 4);
+  const ings = ["무", "봄동", "배추", "시금치"];
+  const recipes = [
+    { name: "봄동 비빔밥", img: DISH_IMG.봄동비빔밥, sub: "20분 · 쉬움" },
+    { name: "무생채", img: DISH_IMG.무생채, sub: "15분 · 쉬움" },
+    { name: "배추전", img: DISH_IMG.배추전, sub: "25분 · 보통" },
+  ];
+  const Heart = () => <span style={{ fontSize: 18 }}>❤️</span>;
+  return (
+    <Phone t={t}>
+      <AppHeader t={t} title="찜" leftBack />
+      <SegTabs
+        t={t}
+        active={tab}
+        onChange={setTab}
+        tabs={[
+          { id: "producer", label: "농가" },
+          { id: "ingredient", label: "식재료" },
+          { id: "recipe", label: "레시피" },
+        ]}
+      />
+      <div
+        className="phone-scroll"
+        style={{ flex: 1, overflow: "auto", background: t.bg }}
+      >
+        {tab === "producer" && (
+          <div style={{ padding: "14px 16px 0" }}>
+            <div
+              style={{
+                background: "#fff",
+                borderRadius: 18,
+                border: `1px solid ${t.borderSoft}`,
+                overflow: "hidden",
+              }}
+            >
+              {farms.map((p, i, arr) => (
+                <ProducerRow
+                  key={p.id}
+                  producer={p}
+                  t={t}
+                  divider={i < arr.length - 1}
+                  trailing={<Heart />}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {tab === "ingredient" && (
+          <div style={{ padding: "14px 16px 0" }}>
+            <div
+              style={{
+                background: "#fff",
+                borderRadius: 18,
+                border: `1px solid ${t.borderSoft}`,
+                overflow: "hidden",
+              }}
+            >
+              {ings.map((name, i, arr) => (
+                <div
+                  key={name}
+                  className="tap"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    padding: "12px 16px",
+                    borderBottom:
+                      i < arr.length - 1 ? `1px solid ${t.borderSoft}` : "none",
+                  }}
+                >
+                  <VegPlaceholder name={name} size={48} t={t} />
+                  <div style={{ flex: 1, fontSize: 14, fontWeight: 700, color: t.text }}>
+                    {name}
+                    <div style={{ fontSize: 11.5, color: t.textSoft, fontWeight: 500, marginTop: 2 }}>
+                      제철 · 가격 하락 중
+                    </div>
+                  </div>
+                  <Heart />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {tab === "recipe" && (
+          <div style={{ padding: "14px 16px 0" }}>
+            <div
+              style={{
+                background: "#fff",
+                borderRadius: 18,
+                border: `1px solid ${t.borderSoft}`,
+                overflow: "hidden",
+              }}
+            >
+              {recipes.map((r, i, arr) => (
+                <div
+                  key={r.name}
+                  className="tap"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    padding: "12px 16px",
+                    borderBottom:
+                      i < arr.length - 1 ? `1px solid ${t.borderSoft}` : "none",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 52,
+                      height: 52,
+                      borderRadius: 12,
+                      flexShrink: 0,
+                      backgroundImage: `url(${r.img})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: t.text }}>
+                      {r.name}
+                    </div>
+                    <div style={{ fontSize: 11.5, color: t.textSoft, marginTop: 2 }}>
+                      {r.sub}
+                    </div>
+                  </div>
+                  <Heart />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <div style={{ height: 24 }} />
+      </div>
+    </Phone>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 21c — 리뷰 관리 (작성한 / 작성 가능)
+// ─────────────────────────────────────────────────────────────
+export function ScreenReviews({ t }) {
+  const [tab, setTab] = React.useState("written");
+  const written = producerReviews(PRODUCERS[2])
+    .slice(0, 2)
+    .map((rv, i) => ({ ...rv, producer: PRODUCERS[2], author: "나" }));
+  const pending = [
+    { p: PRODUCERS[4], item: "시금치", date: "2026.05.30 배송완료" },
+    { p: PRODUCERS[0], item: "봄동", date: "2026.05.16 배송완료" },
+  ];
+  return (
+    <Phone t={t}>
+      <AppHeader t={t} title="리뷰 관리" leftBack />
+      <SegTabs
+        t={t}
+        active={tab}
+        onChange={setTab}
+        tabs={[
+          { id: "written", label: "작성한 리뷰" },
+          { id: "pending", label: "작성 가능" },
+        ]}
+      />
+      <div
+        className="phone-scroll"
+        style={{ flex: 1, overflow: "auto", background: t.bgSoft }}
+      >
+        {tab === "written" &&
+          written.map((rv, i) => (
+            <div key={i} style={{ padding: "12px 16px 0" }}>
+              <div
+                style={{
+                  background: "#fff",
+                  borderRadius: 18,
+                  border: `1px solid ${t.borderSoft}`,
+                  padding: 16,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span style={{ fontSize: 13, fontWeight: 800, color: t.text }}>
+                    {rv.producer.region} {rv.producer.name}
+                  </span>
+                  <span style={{ fontSize: 11, color: t.textSoft }}>
+                    {rv.date}
+                  </span>
+                </div>
+                <div style={{ fontSize: 13, color: t.warning, marginTop: 6 }}>
+                  {"★".repeat(rv.rating)}
+                  <span style={{ color: t.border }}>
+                    {"★".repeat(5 - rv.rating)}
+                  </span>
+                  <span style={{ color: t.textSoft, fontSize: 11, marginLeft: 6 }}>
+                    {rv.item} 구매
+                  </span>
+                </div>
+                <div
+                  style={{
+                    fontSize: 12.5,
+                    color: t.textMid,
+                    lineHeight: 1.55,
+                    marginTop: 8,
+                  }}
+                >
+                  {rv.body}
+                </div>
+                <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+                  {["수정", "삭제"].map((b) => (
+                    <span
+                      key={b}
+                      className="tap"
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 700,
+                        color: t.textMid,
+                        border: `1px solid ${t.border}`,
+                        borderRadius: 8,
+                        padding: "6px 14px",
+                      }}
+                    >
+                      {b}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+
+        {tab === "pending" &&
+          pending.map((o, i) => (
+            <div key={i} style={{ padding: "12px 16px 0" }}>
+              <div
+                style={{
+                  background: "#fff",
+                  borderRadius: 18,
+                  border: `1px solid ${t.borderSoft}`,
+                  padding: 16,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                }}
+              >
+                <VegPlaceholder name={o.item} size={44} t={t} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13.5, fontWeight: 700, color: t.text }}>
+                    {o.p.region} {o.p.name} · {o.item}
+                  </div>
+                  <div style={{ fontSize: 11.5, color: t.textSoft, marginTop: 2 }}>
+                    {o.date}
+                  </div>
+                </div>
+                <span
+                  className="tap"
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 800,
+                    color: "#fff",
+                    background: t.primary,
+                    borderRadius: 999,
+                    padding: "8px 14px",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  리뷰 쓰기
+                </span>
+              </div>
+            </div>
+          ))}
+        <div style={{ height: 24 }} />
+      </div>
+    </Phone>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 21d — 리뷰 작성
+// ─────────────────────────────────────────────────────────────
+export function ScreenWriteReview({ t, producer = PRODUCERS[4] }) {
+  const [rating, setRating] = React.useState(5);
+  const item = producer.specialties[0];
+  return (
+    <Phone t={t}>
+      <AppHeader t={t} title="리뷰 작성" leftBack />
+      <div
+        className="phone-scroll"
+        style={{ flex: 1, overflow: "auto", background: t.bg }}
+      >
+        {/* 대상 */}
+        <div style={{ padding: "14px 16px 0" }}>
+          <div
+            style={{
+              background: t.bgSoft,
+              borderRadius: 14,
+              padding: "12px 14px",
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
+            <VegPlaceholder name={item} size={44} t={t} />
+            <div>
+              <div style={{ fontSize: 13.5, fontWeight: 800, color: t.text }}>
+                {producer.region} {producer.name}
+              </div>
+              <div style={{ fontSize: 11.5, color: t.textSoft, marginTop: 2 }}>
+                {item} · 2026.05.30 배송완료
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 별점 */}
+        <div style={{ padding: "22px 16px 0", textAlign: "center" }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: t.text }}>
+            농가는 어떠셨나요?
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: 6,
+              marginTop: 12,
+            }}
+          >
+            {[1, 2, 3, 4, 5].map((n) => (
+              <span
+                key={n}
+                className="tap"
+                onClick={() => setRating(n)}
+                style={{
+                  fontSize: 34,
+                  lineHeight: 1,
+                  color: n <= rating ? t.warning : t.border,
+                }}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* 사진 */}
+        <div style={{ padding: "22px 16px 0" }}>
+          <div style={{ fontSize: 12.5, fontWeight: 800, color: t.text, marginBottom: 8 }}>
+            사진 첨부
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <div
+              className="tap"
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: 14,
+                border: `1.5px dashed ${t.border}`,
+                background: t.bgSoft,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 4,
+                color: t.textSoft,
+              }}
+            >
+              <span style={{ fontSize: 20 }}>＋</span>
+              <span style={{ fontSize: 10.5, fontWeight: 700 }}>0/5</span>
+            </div>
+            <div
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: 14,
+                backgroundImage: "url(/uploads/pasted-1779886008264-0.png)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                border: `1px solid ${t.borderSoft}`,
+              }}
+            />
+          </div>
+        </div>
+
+        {/* 본문 */}
+        <div style={{ padding: "22px 16px 0" }}>
+          <div style={{ fontSize: 12.5, fontWeight: 800, color: t.text, marginBottom: 8 }}>
+            상세 리뷰
+          </div>
+          <textarea
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              minHeight: 120,
+              resize: "none",
+              border: `1px solid ${t.border}`,
+              borderRadius: 12,
+              padding: "13px 14px",
+              fontSize: 13.5,
+              color: t.text,
+              background: t.bgSoft,
+              fontFamily: "inherit",
+              lineHeight: 1.5,
+            }}
+            placeholder="농가의 신선도, 맛, 포장, 배송 등 솔직한 후기를 남겨주세요."
+          />
+        </div>
+
+        <div style={{ height: 110 }} />
+      </div>
+
+      <StickyBar t={t}>
+        <button
+          className="tap"
+          style={{
+            width: "100%",
+            height: 52,
+            borderRadius: 14,
+            border: "none",
+            background: t.primary,
+            color: "#fff",
+            fontSize: 15,
+            fontWeight: 800,
+          }}
+        >
+          등록하기
+        </button>
+      </StickyBar>
     </Phone>
   );
 }

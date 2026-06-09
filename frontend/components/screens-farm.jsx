@@ -8,12 +8,13 @@ import {
   producerOffer,
   styleStyle,
   producerNews,
+  producerReviews,
 } from "./producers-data";
 import { CrownBadge } from "./producer-card";
 import { vegImg } from "./mock-images";
 
 // 농가 헤더 — 아바타(+왕관) + 지역·이름 + 한 줄 설명
-function ProducerHeader({ producer, t, size = 44 }) {
+export function ProducerHeader({ producer, t, size = 44 }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
       <div
@@ -118,7 +119,7 @@ function Stepper({ value, t, small }) {
 }
 
 // 하단 sticky CTA 컨테이너 (ScreenDetail 패턴)
-function StickyBar({ children, t }) {
+export function StickyBar({ children, t }) {
   return (
     <div
       style={{
@@ -966,6 +967,7 @@ export function ScreenFarmUpload({ t }) {
 export function ScreenProducerDetail({ t, producer = PRODUCERS[0] }) {
   const ss = styleStyle(producer.style, t);
   const news = producerNews(producer);
+  const reviews = producerReviews(producer);
   return (
     <Phone t={t}>
       <div
@@ -1186,38 +1188,6 @@ export function ScreenProducerDetail({ t, producer = PRODUCERS[0] }) {
                 </Chip>
               ))}
             </div>
-            <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
-              <button
-                className="tap"
-                style={{
-                  flex: 1.6,
-                  height: 44,
-                  borderRadius: 12,
-                  border: "none",
-                  background: t.primary,
-                  color: "#fff",
-                  fontSize: 13.5,
-                  fontWeight: 800,
-                }}
-              >
-                🌱 팔로우
-              </button>
-              <button
-                className="tap"
-                style={{
-                  flex: 1,
-                  height: 44,
-                  borderRadius: 12,
-                  border: `1px solid ${t.border}`,
-                  background: "#fff",
-                  color: t.text,
-                  fontSize: 13.5,
-                  fontWeight: 700,
-                }}
-              >
-                문의
-              </button>
-            </div>
           </div>
         </div>
 
@@ -1310,6 +1280,135 @@ export function ScreenProducerDetail({ t, producer = PRODUCERS[0] }) {
                 </div>
               );
             })}
+          </div>
+        </div>
+
+        {/* ── 농가 리뷰 ── */}
+        <div style={{ padding: "24px 16px 0" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 12,
+              padding: "0 2px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: 16,
+                fontWeight: 800,
+                color: t.text,
+                letterSpacing: -0.4,
+              }}
+            >
+              리뷰{" "}
+              <span style={{ color: t.primary }}>
+                {producer.reviewCount.toLocaleString()}
+              </span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 13, fontWeight: 800, color: t.warning }}>
+                ★ {producer.rating}
+              </span>
+              <span
+                className="tap"
+                style={{ fontSize: 12, fontWeight: 700, color: t.primary }}
+              >
+                리뷰 쓰기
+              </span>
+            </div>
+          </div>
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 18,
+              border: `1px solid ${t.borderSoft}`,
+              overflow: "hidden",
+            }}
+          >
+            {reviews.map((rv, i, arr) => (
+              <div
+                key={i}
+                style={{
+                  padding: "14px 16px",
+                  borderBottom:
+                    i < arr.length - 1 ? `1px solid ${t.borderSoft}` : "none",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                  >
+                    <span
+                      style={{ fontSize: 13, fontWeight: 700, color: t.text }}
+                    >
+                      {rv.author}
+                    </span>
+                    <span style={{ fontSize: 12, color: t.warning }}>
+                      {"★".repeat(rv.rating)}
+                      <span style={{ color: t.border }}>
+                        {"★".repeat(5 - rv.rating)}
+                      </span>
+                    </span>
+                  </div>
+                  <span style={{ fontSize: 11, color: t.textSoft }}>
+                    {rv.date}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    fontSize: 12.5,
+                    color: t.textMid,
+                    lineHeight: 1.55,
+                    marginTop: 6,
+                  }}
+                >
+                  {rv.body}
+                </div>
+                <div style={{ marginTop: 8 }}>
+                  <Chip>{rv.item} 구매</Chip>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div
+            className="tap"
+            style={{
+              marginTop: 10,
+              height: 44,
+              borderRadius: 12,
+              background: t.bgSoft,
+              border: `1px solid ${t.borderSoft}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 6,
+              fontSize: 13,
+              fontWeight: 700,
+              color: t.text,
+            }}
+          >
+            리뷰 더보기
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path
+                d="M4 2l4 4-4 4"
+                stroke={t.text}
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </div>
         </div>
 
@@ -1491,6 +1590,260 @@ export function ScreenProducerDetail({ t, producer = PRODUCERS[0] }) {
 
         <div style={{ height: 110 }} />
       </div>
+    </Phone>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 24a — 주문 완료
+// ─────────────────────────────────────────────────────────────
+export function ScreenOrderComplete({ t }) {
+  const groups = [
+    {
+      p: PRODUCERS[2], // 해남 김상도
+      items: [
+        { name: "무", qty: 2, unit: "개", price: 2090 },
+        { name: "배추", qty: 1, unit: "포기", price: 5560 },
+      ],
+    },
+    {
+      p: PRODUCERS[4], // 평창 이수향
+      items: [{ name: "시금치", qty: 3, unit: "단", price: 4140 }],
+    },
+  ];
+  const subtotal = groups.reduce(
+    (s, g) => s + g.items.reduce((a, it) => a + it.price * it.qty, 0),
+    0,
+  );
+  const ship = 6500;
+  const total = subtotal + ship;
+
+  return (
+    <Phone t={t}>
+      <AppHeader t={t} title="주문 완료" leftBack />
+      <div
+        className="phone-scroll"
+        style={{ flex: 1, overflow: "auto", background: t.bgSoft }}
+      >
+        {/* 완료 헤드라인 */}
+        <div style={{ padding: "28px 20px 20px", textAlign: "center" }}>
+          <div
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: 32,
+              background: t.primary,
+              display: "grid",
+              placeItems: "center",
+              margin: "0 auto",
+              boxShadow: `0 8px 20px ${t.primary}55`,
+            }}
+          >
+            <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+              <path
+                d="M8 15.5l4.5 4.5L22 10"
+                stroke="#fff"
+                strokeWidth="2.6"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <div
+            style={{
+              fontSize: 20,
+              fontWeight: 800,
+              color: t.text,
+              marginTop: 16,
+              letterSpacing: -0.5,
+            }}
+          >
+            주문이 완료되었어요
+          </div>
+          <div style={{ fontSize: 12.5, color: t.textSoft, marginTop: 6 }}>
+            주문번호 2026-0609-0427 · 2026.06.09 오후 02:14
+          </div>
+        </div>
+
+        {/* 농가별 주문 요약 */}
+        {groups.map((g, gi) => (
+          <div key={gi} style={{ padding: "0 16px 12px" }}>
+            <div
+              style={{
+                background: "#fff",
+                borderRadius: 18,
+                border: `1px solid ${t.borderSoft}`,
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  padding: "14px 16px",
+                  borderBottom: `1px solid ${t.borderSoft}`,
+                }}
+              >
+                <ProducerHeader producer={g.p} t={t} size={40} />
+              </div>
+              {g.items.map((it, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    padding: "11px 16px",
+                    borderBottom:
+                      i < g.items.length - 1
+                        ? `1px solid ${t.borderSoft}`
+                        : "none",
+                  }}
+                >
+                  <VegPlaceholder name={it.name} size={40} t={t} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{ fontSize: 13.5, fontWeight: 700, color: t.text }}
+                    >
+                      {it.name}
+                    </div>
+                    <div
+                      style={{ fontSize: 11.5, color: t.textSoft, marginTop: 2 }}
+                    >
+                      {it.qty}{it.unit}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 13.5,
+                      fontWeight: 800,
+                      color: t.text,
+                      fontFeatureSettings: '"tnum"',
+                    }}
+                  >
+                    ₩{priceExact(it.price * it.qty)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {/* 결제 금액 */}
+        <div style={{ padding: "2px 16px 0" }}>
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 18,
+              border: `1px solid ${t.borderSoft}`,
+              padding: 16,
+            }}
+          >
+            {[
+              ["상품 금액", subtotal],
+              ["배송비", ship],
+            ].map(([l, v], i) => (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: 13,
+                  color: t.textMid,
+                  marginBottom: 8,
+                }}
+              >
+                <span>{l}</span>
+                <span style={{ fontFeatureSettings: '"tnum"' }}>
+                  ₩{priceExact(v)}
+                </span>
+              </div>
+            ))}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                paddingTop: 10,
+                borderTop: `1px solid ${t.borderSoft}`,
+              }}
+            >
+              <span style={{ fontSize: 14, fontWeight: 800, color: t.text }}>
+                결제 금액
+              </span>
+              <span
+                style={{
+                  fontSize: 18,
+                  fontWeight: 800,
+                  color: t.primary,
+                  fontFeatureSettings: '"tnum"',
+                }}
+              >
+                ₩{priceExact(total)}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* 배송 안내 */}
+        <div style={{ padding: "12px 16px 0" }}>
+          <div
+            style={{
+              background: t.primaryBg,
+              borderRadius: 14,
+              padding: "14px 16px",
+              display: "flex",
+              gap: 10,
+              alignItems: "center",
+            }}
+          >
+            <span style={{ fontSize: 20 }}>🚚</span>
+            <div style={{ flex: 1 }}>
+              <div
+                style={{ fontSize: 13, fontWeight: 800, color: t.primaryDark }}
+              >
+                산지직송 · 수확 후 1~2일 내 출고
+              </div>
+              <div style={{ fontSize: 11.5, color: t.textMid, marginTop: 2 }}>
+                배송 시작되면 알림으로 알려드릴게요
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ height: 110 }} />
+      </div>
+
+      <StickyBar t={t}>
+        <button
+          className="tap"
+          style={{
+            flex: 1,
+            height: 52,
+            borderRadius: 14,
+            border: `1px solid ${t.border}`,
+            background: "#fff",
+            color: t.text,
+            fontSize: 14,
+            fontWeight: 800,
+          }}
+        >
+          주문 내역 보기
+        </button>
+        <button
+          className="tap"
+          style={{
+            flex: 1,
+            height: 52,
+            borderRadius: 14,
+            border: "none",
+            background: t.primary,
+            color: "#fff",
+            fontSize: 15,
+            fontWeight: 800,
+          }}
+        >
+          홈으로
+        </button>
+      </StickyBar>
     </Phone>
   );
 }

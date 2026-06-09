@@ -176,6 +176,35 @@ export function producerOffer(producer, name) {
   return { price, unit, fresh };
 }
 
+// 농가 리뷰 — 농가별 샘플 리뷰 (평균은 producer.rating 사용)
+export function producerReviews(producer) {
+  const item = producer.specialties[0];
+  const item2 = producer.specialties[1] || item;
+  return [
+    {
+      author: "민지",
+      rating: 5,
+      date: "2026.05.30",
+      item,
+      body: `${producer.region}에서 바로 받아서 그런지 정말 싱싱해요. ${item} 이렇게 신선한 건 처음이에요. 재구매 의사 100%입니다!`,
+    },
+    {
+      author: "재현",
+      rating: 5,
+      date: "2026.05.21",
+      item: item2,
+      body: "포장도 꼼꼼하고 당일 수확이라 그런지 식감이 살아있어요. 가족들이 다 좋아하네요.",
+    },
+    {
+      author: "수안",
+      rating: 4,
+      date: "2026.05.12",
+      item,
+      body: "맛은 아주 좋은데 배송이 하루 늦었어요. 그래도 품질 보고 또 주문할 것 같습니다.",
+    },
+  ];
+}
+
 // 농가 스토어 소식 (NEWS 타임라인) — 농가별 샘플 3건
 // img: 식재료명(→vegImg) 또는 "photo"(→농가 사진)
 export function producerNews(producer) {

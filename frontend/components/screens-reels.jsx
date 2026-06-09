@@ -421,6 +421,17 @@ export function ScreenReels({ t }) {
 // RECIPE DETAIL — 릴스에서 좌→우 스와이프로 전환
 // ─────────────────────────────────────────────────────────────
 export function ScreenRecipeDetail({ t }) {
+  const ingredients = [
+    { name: "봄동", q: "1줌", price: 1200, dn: true },
+    { name: "고추장", q: "2큰술", price: 800, dn: false },
+    { name: "마늘", q: "1큰술", price: 400, dn: false },
+    { name: "쪽파", q: "약간", price: 1200, dn: false },
+    { name: "계란", q: "1개", price: 400, dn: false },
+  ];
+  // 농가에서 살 수 있는 재료만 가격 합계에 포함
+  const farmTotal = ingredients
+    .filter((it) => hasProducer(it.name))
+    .reduce((s, it) => s + it.price, 0);
   return (
     <Phone t={t}>
       <div
@@ -653,7 +664,7 @@ export function ScreenRecipeDetail({ t }) {
                 fontFeatureSettings: '"tnum"',
               }}
             >
-              총 ₩{priceRange(4000)}
+              총 ₩{priceRange(farmTotal)}
             </span>
           </div>
           <div
@@ -664,13 +675,7 @@ export function ScreenRecipeDetail({ t }) {
               overflow: "hidden",
             }}
           >
-            {[
-              { name: "봄동", q: "1줌", price: 1200, dn: true },
-              { name: "고추장", q: "2큰술", price: 800, dn: false },
-              { name: "마늘", q: "1큰술", price: 400, dn: false },
-              { name: "쪽파", q: "약간", price: 1200, dn: false },
-              { name: "계란", q: "1개", price: 400, dn: false },
-            ].map((it, i, arr) => (
+            {ingredients.map((it, i, arr) => (
               <div
                 key={i}
                 style={{
@@ -691,7 +696,7 @@ export function ScreenRecipeDetail({ t }) {
                   </div>
                   <div style={{ fontSize: 11, color: t.textSoft }}>{it.q}</div>
                 </div>
-                {it.dn && (
+                {it.dn && hasProducer(it.name) && (
                   <Chip color={t.primary} bg={t.primaryBg}>
                     적기 ↓
                   </Chip>
@@ -726,18 +731,20 @@ export function ScreenRecipeDetail({ t }) {
                     </svg>
                   </span>
                 )}
-                <div
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 700,
-                    color: it.price === 0 ? t.textSoft : t.text,
-                    fontFeatureSettings: '"tnum"',
-                    minWidth: 50,
-                    textAlign: "right",
-                  }}
-                >
-                  {it.price === 0 ? "−" : `₩${priceRange(it.price)}`}
-                </div>
+                {hasProducer(it.name) && (
+                  <div
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 700,
+                      color: it.price === 0 ? t.textSoft : t.text,
+                      fontFeatureSettings: '"tnum"',
+                      minWidth: 50,
+                      textAlign: "right",
+                    }}
+                  >
+                    {it.price === 0 ? "−" : `₩${priceRange(it.price)}`}
+                  </div>
+                )}
               </div>
             ))}
           </div>

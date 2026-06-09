@@ -11,8 +11,8 @@ import { ScreenHomeB, ScreenHomeSearch, ScreenHomeSearchResult } from './screens
 import { ScreenList, ScreenRecipeList, ScreenListSearchResult, ScreenRecipeListSearchResult, ScreenProducerList, ScreenProducerListSearchResult, ScreenDetail, ScreenCompare } from './screens-detail';
 import { ScreenAIChatB, ScreenAIResult } from './screens-ai';
 import { ScreenReels, ScreenRecipeDetail, ScreenRecipeSteps } from './screens-reels';
-import { ScreenMyPage, ScreenAlerts } from './screens-misc';
-import { ScreenCart, ScreenPurchase, ScreenFarmUpload, ScreenProducerDetail } from './screens-farm';
+import { ScreenMyPage, ScreenAlerts, ScreenOrders, ScreenWishlist, ScreenReviews, ScreenWriteReview } from './screens-misc';
+import { ScreenCart, ScreenPurchase, ScreenFarmUpload, ScreenProducerDetail, ScreenOrderComplete } from './screens-farm';
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "green": "spring",
@@ -82,12 +82,17 @@ export function App() {
 
         <DCSection id="me" title="06 · 마이 & 알림" subtitle="개인화 · 가격 하락 알림 · 주문 내역">
           <DCArtboard id="mypage"   label="21 마이페이지"         width={W} height={H}><ScreenMyPage    t={t}/></DCArtboard>
+          <DCArtboard id="orders"   label="21a 주문 내역"         width={W} height={H}><ScreenOrders    t={t}/></DCArtboard>
+          <DCArtboard id="wishlist" label="21b 찜 목록"           width={W} height={H}><ScreenWishlist  t={t}/></DCArtboard>
+          <DCArtboard id="reviews"  label="21c 리뷰 관리"         width={W} height={H}><ScreenReviews   t={t}/></DCArtboard>
+          <DCArtboard id="write-review" label="21d 리뷰 작성"     width={W} height={H}><ScreenWriteReview t={t}/></DCArtboard>
           <DCArtboard id="alerts"   label="22 알림"               width={W} height={H}><ScreenAlerts    t={t}/></DCArtboard>
         </DCSection>
 
         <DCSection id="farm" title="07 · 농가 연결 & 주문" subtitle="농가에서 바로 구매 · 장바구니 · 생산자 상품 등록">
           <DCArtboard id="cart"        label="23 장바구니"        width={W} height={H}><ScreenCart       t={t}/></DCArtboard>
           <DCArtboard id="purchase"    label="24 구매하기"        width={W} height={H}><ScreenPurchase   t={t}/></DCArtboard>
+          <DCArtboard id="order-complete" label="24a 주문 완료"   width={W} height={H}><ScreenOrderComplete t={t}/></DCArtboard>
           <DCArtboard id="farm-upload" label="25 농가 상품 등록"   width={W} height={H}><ScreenFarmUpload t={t}/></DCArtboard>
         </DCSection>
       </DesignCanvas>
