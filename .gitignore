@@ -60,3 +60,5 @@ replay_pid*
 # Misc generated files
 *.tsbuildinfo
 next-env.d.ts
+__pycache__/
+*.pyc
