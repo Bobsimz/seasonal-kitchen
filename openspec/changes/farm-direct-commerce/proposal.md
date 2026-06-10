@@ -25,6 +25,7 @@ See `backend/docs/frontend-gap-analysis-2026-06-10.md` for the full screen-by-sc
 - `producer-offer`: Per-ingredient producer price/unit/freshness comparison.
 - `cart-and-order`: Cart grouped by producer, checkout, and order history.
 - `review`: Producer reviews (MVP free-form create + written list; writable/eligibility future).
+- `seller-registration`: 사용자가 농가로 자가등록(`/producers/me`)하고 내 농가에 상품(offer) 등록. `producers.user_id`로 사용자=농가 연결(Option A).
 
 ### Modified Capabilities
 

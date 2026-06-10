@@ -6,7 +6,7 @@
 - [ ] 1.4 Payment/order scope: mock order (no PG) vs real payment for MVP.
 - [x] 1.5 Review eligibility: **MVP = free-form** (any authenticated user can review any existing producer). Delivered-order eligibility is out of MVP scope (future).
 - [ ] 1.6 Shipping rule: confirm per-producer shipping fee + free-shipping threshold (30,000원) from frontend.
-- [ ] 1.7 Producer-as-seller write side: fold management (product register/edit, seller AI, order mgmt) into `producer` domain (Option A) vs separate `product`/`seller` domain (Option B). See design.md "Producer as Seller". Currently only consumer-read is built.
+- [x] 1.7 Producer-as-seller write side: **Option A 확정** — producer 도메인에 통합. `producers.user_id`(V21)로 사용자=농가 연결, `POST /producers/me`, `GET /producers/me`, `POST /producers/me/offers` 구현. (수정/삭제·seller AI는 future)
 
 ## 2. Spec Updates
 
@@ -59,10 +59,12 @@
 - `status=writable` derivation from delivered orders.
 - Review edit/delete (`PATCH`/`DELETE /api/v1/reviews/{reviewId}`).
 
-## 6. Backend Implementation — Seller registration fields (P1)
+## 6. Backend Implementation — Seller / 농가 자가등록 (P1)
 
-- [ ] 6.1 Add stock, harvest/delivery, freshness/origin, image, category to product entity + registration DTO.
-- [ ] 6.2 Wire seller AI price-recommendation / promotional-copy buttons when upload form integrates.
+- [x] 6.1 `producers.user_id` 연결(V21) + 사용자=농가 등록 `POST /producers/me`, 내 농가 `GET /producers/me`, 상품 등록 `POST /producers/me/offers`. ErrorCode `PRODUCER_ALREADY_REGISTERED`. ProducerSelfRegistrationTest 작성.
+- [ ] 6.2 농가 프로필 수정/삭제(`PATCH`/`DELETE /producers/me`).
+- [ ] 6.3 추가 판매자 정보(재고·수확/배송·원산지·사업자번호 등) + 상품에 카테고리/재고.
+- [ ] 6.4 판매자 AI(가격 추천·홍보글) — future.
 
 ## 7. Verification
 

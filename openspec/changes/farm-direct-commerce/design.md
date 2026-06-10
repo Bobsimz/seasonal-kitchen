@@ -62,12 +62,13 @@ A producer **is** the selling party (farm = seller). The current skeleton only i
 - Read (built): producer profile, `producer_offers` (what they sell), reviews, news, q/style/honorary producer search.
 - Write (NOT built): a producer registering/editing their own products (the `farm-upload` screen), seller AI (price recommendation, promotional copy), and a producer managing incoming orders.
 
-Open decision (see task 1.7): where does the producer **write/management** side live?
+**RESOLVED (task 1.7): Option A — fold into `producer`.** 사용자=농가를 `producers.user_id`(V21)로 연결하고, 쓰기 API를 producer 도메인에 둔다:
+- `POST /api/v1/producers/me` — 농가 자가등록 (마이페이지)
+- `GET /api/v1/producers/me` — 내 농가
+- `POST /api/v1/producers/me/offers` — 내 농가 상품 등록
 
-- **Option A — fold into `producer`**: producer owns both profile and its listings; management APIs go under producer, e.g. `POST/PATCH /api/v1/producers/me/offers`, `POST /api/v1/producers/me/offers/price-recommendation`. Single domain, matches "producer is the seller" mental model.
-- **Option B — separate `product`/`seller` domain** (as in `product-commerce-pivot`): a generic product/listing domain references `producer_id`. Keeps consumer-read (`producer`) and seller-write (`product`) decoupled, but two domains describe the same farm.
-
-Recommendation pending product confirmation; A is simpler for the farm-direct model, B aligns with the older pivot spec. Whichever is chosen, `producer_offers` is the shared listing table.
+권한은 `user_id` 기반(내 농가만). `producer_offers`가 소비자 조회·판매자 등록 공용 listing 테이블. 시드 농가는 `user_id=NULL`로 공존.
+미구현(future): 프로필 수정/삭제, 추가 판매자 정보, 판매자 AI. (seller-registration spec 참조)
 
 ## Risks / Open
 
