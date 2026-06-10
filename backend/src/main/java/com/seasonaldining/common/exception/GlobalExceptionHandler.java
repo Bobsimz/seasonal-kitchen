@@ -7,6 +7,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
@@ -89,6 +90,21 @@ public class GlobalExceptionHandler {
                                 ErrorCode.COMMON_VALIDATION_FAILED.code(),
                                 ErrorCode.COMMON_VALIDATION_FAILED.message(),
                                 fieldErrors
+                        ),
+                        traceId()
+                ));
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<ApiResponse<Void>> handlePropertyReferenceException(PropertyReferenceException ex) {
+        // 잘못된 정렬/속성 파라미터 (예: Swagger 기본 sort="string") → 400
+        FieldErrorResponse fieldError = new FieldErrorResponse("sort", ex.getMessage(), ex.getPropertyName());
+        return ResponseEntity.status(ErrorCode.COMMON_INVALID_REQUEST.status())
+                .body(ApiResponse.failure(
+                        new ErrorResponse(
+                                ErrorCode.COMMON_INVALID_REQUEST.code(),
+                                "잘못된 정렬/속성 파라미터입니다.",
+                                List.of(fieldError)
                         ),
                         traceId()
                 ));
