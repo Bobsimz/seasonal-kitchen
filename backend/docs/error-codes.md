@@ -78,6 +78,7 @@ All error responses must follow the common error response format defined in `doc
 | Code | HTTP Status | Message |
 | --- | ---: | --- |
 | `PRODUCER_NOT_FOUND` | 404 | 농가를 찾을 수 없습니다. |
+| `PRODUCER_ALREADY_REGISTERED` | 409 | 이미 농가로 등록되어 있습니다. |
 | `PRODUCER_OFFER_NOT_FOUND` | 404 | 농가 판매 상품을 찾을 수 없습니다. |
 | `CART_ITEM_NOT_FOUND` | 404 | 장바구니 항목을 찾을 수 없습니다. |
 | `ORDER_NOT_FOUND` | 404 | 주문을 찾을 수 없습니다. |

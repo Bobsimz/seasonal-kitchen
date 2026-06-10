@@ -173,16 +173,29 @@ PATCH  /api/v1/price-alerts/{alertId}
 DELETE /api/v1/price-alerts/{alertId}
 ```
 
-### Products and Seller Listings
+### Producer Commerce
 
 ```text
-GET    /api/v1/products
-GET    /api/v1/products/{productId}
-POST   /api/v1/seller/products
-PATCH  /api/v1/seller/products/{productId}
-POST   /api/v1/seller/products/price-recommendation
-POST   /api/v1/seller/products/promotional-copy
+GET    /api/v1/producers
+GET    /api/v1/producers/{producerId}
+GET    /api/v1/producers/{producerId}/offers
+GET    /api/v1/producers/{producerId}/reviews
+GET    /api/v1/producers/{producerId}/news
+POST   /api/v1/producers/{producerId}/reviews
+GET    /api/v1/ingredients/{ingredientId}/producers
+POST   /api/v1/producers/me
+GET    /api/v1/producers/me
+POST   /api/v1/producers/me/offers
+GET    /api/v1/cart
+POST   /api/v1/cart/items
+PATCH  /api/v1/cart/items/{cartItemId}
+DELETE /api/v1/cart/items/{cartItemId}
+POST   /api/v1/orders
+GET    /api/v1/orders
+GET    /api/v1/orders/{orderId}
 ```
+
+전용 products/seller-products API와 판매자 AI 가격 추천/홍보글 API는 현재 미구현(future)입니다. 현재 상품 탭과 판매 등록은 producer/offer 흐름으로 연결합니다.
 
 ### Notifications
 
@@ -234,21 +247,37 @@ public record PriceSummaryResponse(
 ) {}
 ```
 
-### ProductCardResponse
+### ProducerCardResponse
 
 ```java
-public record ProductCardResponse(
+public record ProducerCardResponse(
     Long id,
-    Long ingredientId,
+    String name,
+    String region,
+    String tagline,
+    String photoUrl,
+    String style,
+    BigDecimal rating,
+    int reviewCount,
+    boolean honorary,
+    List<String> specialties,
+    List<String> badges
+) {}
+```
+
+### ProducerOfferResponse
+
+```java
+public record ProducerOfferResponse(
+    Long id,
+    Long producerId,
+    String producerName,
+    String region,
     String ingredientName,
-    String category,
-    String title,
+    Long ingredientId,
     BigDecimal price,
     String unit,
-    String thumbnailUrl,
-    String sellerName,
-    String origin,
-    String status
+    String freshnessLabel
 ) {}
 ```
 
@@ -275,7 +304,7 @@ public record ProductCardResponse(
 | 검색 | `GET /api/v1/search` |
 | 레시피 | `GET /api/v1/recipes/{recipeId}` |
 | 릴스 | `GET /api/v1/reels` |
-| 상품 | `GET /api/v1/products` |
-| 판매 등록 | `POST /api/v1/seller/products` |
+| 상품 | `GET /api/v1/producers` |
+| 판매 등록 | `POST /api/v1/producers/me/offers` |
 | 마이페이지 | `GET /api/v1/users/me/summary` |
 | 알림 | `GET /api/v1/notifications` |

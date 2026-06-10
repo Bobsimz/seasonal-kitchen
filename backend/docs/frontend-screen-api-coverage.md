@@ -1,5 +1,8 @@
 # Frontend Screen API Coverage
 
+> Historical analysis note: 프론트 연동의 현재 단일 기준은 `frontend-api-guide.md`입니다.
+> 이 문서는 2026-06-05 화면 커버리지 조사이며, products/seller-products 관련 행은 현재 producer/offer 흐름으로 대체되었습니다.
+
 Inspection target: `../frontend`
 
 Date: 2026-06-05

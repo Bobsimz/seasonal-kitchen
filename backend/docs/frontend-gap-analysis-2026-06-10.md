@@ -1,5 +1,8 @@
 # Frontend Gap Analysis (2026-06-10)
 
+> Historical analysis note: 프론트 연동의 현재 단일 기준은 `frontend-api-guide.md`입니다.
+> 이 문서는 2026-06-10 기획 전환 분석 이력이며, 이후 농가 자가등록은 `POST /api/v1/producers/me`, `GET /api/v1/producers/me`, `POST /api/v1/producers/me/offers`로 구현되었습니다.
+
 검수 대상: `../frontend` (Next.js 프로토타입, `components/app.jsx` 기준)
 선행 문서: `frontend-screen-api-coverage.md` (2026-06-05)
 
@@ -101,7 +104,7 @@ DELETE /api/v1/reviews/{reviewId}                  # future
 
 ## 6. 판매자 상품 등록(농가 상품 등록) — DTO 보강
 
-`POST /api/v1/seller/products`는 `03-api-contract.md`에 있으나 컨트롤러 미구현. 화면 25(`ScreenFarmUpload`)의 실제 입력 필드:
+현재 구현된 MVP 등록 흐름은 `POST /api/v1/producers/me`(농가 등록)와 `POST /api/v1/producers/me/offers`(농가 상품 등록)이다. 화면 25(`ScreenFarmUpload`)의 추가 확장 후보 입력 필드:
 
 - 상품 사진 (최대 10, 첫 장이 대표)
 - 카테고리: 잎채소 / 뿌리채소 / 과일 / 곡류 / 버섯 / 기타
@@ -110,11 +113,11 @@ DELETE /api/v1/reviews/{reviewId}                  # future
 - **수확·배송 정보** (수확일 / 출고 / 포장)
 - **신선도·원산지 소개** (최대 500자)
 
-문서의 `ProductCardResponse`엔 재고·수확·배송·신선도 필드가 없다. 등록 요청 DTO와 상품 엔티티에 위 필드 추가 필요. (참고: 화면에 AI 가격추천/홍보글 버튼은 아직 없음 → seller AI 엔드포인트는 등록 폼 연동 시점에 노출 예정)
+현재 `CreateOfferRequest`는 식재료명/가격/단위/신선도 라벨 중심의 MVP 필드만 받는다. 재고·수확일·배송정책·이미지는 future 확장이다.
 
 ## 7. AI 방향 정리
 
-**소비자용 AI(챗봇·AI 장보기)는 폐기 확정.** `chatbot/` 폴더, `frontend/components/screens-ai.jsx`(`ScreenAIChatB`/`ScreenAIResult`), `app.jsx`의 "04 · AI 장보기" 섹션은 삭제 예정 잔재이므로 백엔드 API 요구사항에서 제외한다. AI는 **판매자용만 유지**: `POST /api/v1/seller/products/price-recommendation`, `POST /api/v1/seller/products/promotional-copy` (OpenSpec `product-commerce-pivot` 참조).
+**소비자용 AI(챗봇·AI 장보기)는 폐기 확정.** `chatbot/` 폴더, `frontend/components/screens-ai.jsx`(`ScreenAIChatB`/`ScreenAIResult`), `app.jsx`의 "04 · AI 장보기" 섹션은 삭제 예정 잔재이므로 백엔드 API 요구사항에서 제외한다. AI는 **판매자용만 future로 유지**하되, 현재 구현된 엔드포인트는 없다.
 
 ## 8. 우선순위
 

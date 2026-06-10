@@ -2,6 +2,9 @@
 
 Date: 2026-06-04
 
+> Historical analysis note: 프론트 연동의 현재 단일 기준은 `frontend-api-guide.md`입니다.
+> 이 문서는 2026-06-04 검증 이력이며, product/seller API 항목은 현재 producer/offer 흐름으로 대체되었습니다.
+
 Scope:
 
 - Verify P0 frontend screen coverage from `docs/frontend-screen-api-coverage.md`.

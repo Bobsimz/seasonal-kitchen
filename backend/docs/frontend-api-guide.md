@@ -1,7 +1,10 @@
 # Frontend API Guide
 
 프론트엔드가 바로 붙일 수 있는 현재 구현 기준 API 정리입니다.
-전체 Swagger는 `http://localhost:8080/swagger-ui/index.html` 에서 확인합니다.
+**이 문서가 프론트 연동의 단일 기준(canonical)** 입니다. 다른 `frontend-*.md`(gap-analysis, screen-api-coverage, required-fields 등)는 분석/이력용 배경자료이니 참고만 하세요.
+
+> **필드 단위 계약서는 Swagger가 가장 정확합니다.** 모든 DTO에 필드 설명/예시가 붙어 있어요: `http://localhost:8080/swagger-ui/index.html` (JSON: `/v3/api-docs`). 이 문서는 "어떤 API가 있고 어떤 흐름인지" 지도 역할, Swagger는 "필드 상세" 역할.
+> 인증 API는 가입/로그인 후 받은 `accessToken`을 Swagger 우상단 **Authorize**에 넣으면 호출됩니다.
 
 ## 1. 기본 규칙
 
@@ -53,7 +56,10 @@ Authorization: Bearer <accessToken>
 | --- | --- |
 | `POST /api/v1/auth/signup` | 불필요 |
 | `POST /api/v1/auth/login` | 불필요 |
-| `GET /api/v1/producers/**` | 불필요 |
+| `GET /api/v1/producers`, `/api/v1/producers/{id}`, `/api/v1/producers/{id}/offers`, `/api/v1/producers/{id}/reviews`, `/api/v1/producers/{id}/news` | 불필요 |
+| `GET /api/v1/producers/me` | 필요 |
+| `POST /api/v1/producers/me` | 필요 |
+| `POST /api/v1/producers/me/offers` | 필요 |
 | `GET /api/v1/ingredients/**` | 불필요 |
 | `GET /api/v1/recipes/**` | 불필요 |
 | `GET /api/v1/reels/**` | 불필요 |
@@ -546,9 +552,132 @@ Response:
 | 필요 기능 | 현재 상태 | 프론트 임시 대응 |
 | --- | --- | --- |
 | 전용 상품 목록 `GET /api/v1/products` | 미구현 | `GET /api/v1/producers`와 offers 조합 사용 |
-| 전용 상품 상세 `GET /api/v1/products/{id}` | 미구현 | producer offer + ingredient detail 조합 사용 |
-| 판매 등록 `POST /api/v1/seller/products` | 미구현 | 화면만 먼저 만들고 API 연결 TODO |
-| AI 가격 추천 | 미구현 | 요청/응답 스펙 먼저 확정 필요 |
-| AI 홍보글 작성 | 미구현 | 요청/응답 스펙 먼저 확정 필요 |
-| 검색 상품 카테고리 `PRODUCT` | 미구현 | 현재는 `ALL/INGREDIENT/RECIPE`만 사용 |
-| refresh token | 미구현 | access token 만료 시 재로그인 |
+| 전용 상품 상세 `GET /api/v1/products/{id}` | 미구현 | `GET /api/v1/producers/{producerId}/offers` + `GET /api/v1/ingredients/{ingredientId}` 조합 |
+| 판매 등록 `POST /api/v1/seller/products` | 미구현 | 현재는 `POST /api/v1/producers/me/offers` 사용 |
+| 판매자 AI 가격 추천/홍보글 | 미구현 | 화면/스펙만 future로 유지 |
+| 검색 `PRODUCT` 타입 | 미구현 | 현재 `ALL`, `INGREDIENT`, `RECIPE`만 사용 |
+| refresh token/logout/OAuth | 미구현 | access token 만료 시 재로그인 |
+
+## 11. 농가 자가등록 / 내 농가 (마이페이지 → 농가로 등록)
+
+로그인 사용자가 본인을 농가로 등록하고 상품을 올린다. 한 사용자당 농가 1개. **인증 필요.**
+입력값(스타일 enum, 배지/단위/신선도 권장 목록)은 `producer-registration-fields.md` 참조.
+
+| 메서드 | 경로 | 설명 |
+| --- | --- | --- |
+| `POST` | `/api/v1/producers/me` | 농가로 등록. 이미 등록 시 `PRODUCER_ALREADY_REGISTERED`(409) |
+| `GET` | `/api/v1/producers/me` | 내 농가 조회. 미등록 시 `PRODUCER_NOT_FOUND`(404) → "농가 등록" 버튼 노출 판단에 사용 |
+| `POST` | `/api/v1/producers/me/offers` | 내 농가 상품(offer) 등록. 미등록 상태면 404 |
+
+```jsonc
+// POST /api/v1/producers/me  (요청)
+{ "name":"권민성", "region":"경북 영천", "tagline":"고랭지 무농약", "photoUrl":null,
+  "style":"ORGANIC", "priceLevel":4, "freshnessLevel":5,
+  "specialties":["봄동","무"], "badges":["산지직송","당일수확"] }
+// 응답 data: ProducerDetailResponse (id, name, region, tagline, photoUrl, style,
+//   priceLevel, freshnessLevel, rating=0, reviewCount=0, honorary=false, specialties[], badges[])
+
+// POST /api/v1/producers/me/offers  (요청)
+{ "ingredientId":12, "ingredientName":"봄동", "price":4500, "unit":"봉", "freshnessLabel":"당일수확" }
+// 응답 data: ProducerOfferResponse (id, producerId, producerName, region, ingredientName, ingredientId, price, unit, freshnessLabel)
+```
+- 상품 등록 시 해당 ingredientName이 specialty에 없으면 자동 추가 → 농가 검색에도 노출.
+- `ingredientId`를 주면 활성 식재료 검증(없으면 `INGREDIENT_NOT_FOUND`), 안 주면 이름으로 자동 연결.
+
+## 12. 전체 엔드포인트 인벤토리
+
+아래가 **현재 구현된 전부**입니다. 위 섹션에 예시가 없는 것도 Swagger에서 요청/응답 필드를 볼 수 있어요.
+인증: 🔓 불필요 / 🔒 필요.
+
+### 인증 / 사용자
+| | 메서드 | 경로 | 설명 |
+|---|---|---|---|
+| 🔓 | POST | `/api/v1/auth/signup` | 이메일 회원가입(+JWT) |
+| 🔓 | POST | `/api/v1/auth/login` | 이메일 로그인(+JWT) |
+| 🔒 | GET | `/api/v1/users/me` | 내 기본 정보 |
+| 🔒 | PATCH | `/api/v1/users/me` | 프로필(닉네임/사진) 수정 |
+| 🔒 | GET | `/api/v1/users/me/summary` | 마이페이지 요약(통계/메뉴 카운트) |
+| 🔒 | PUT | `/api/v1/users/me/preferences` | 가입 설문/선호(가구수·매움회피·우선순위·알러지) 저장 |
+| 🔒 | GET | `/api/v1/users/me/recent-searches` | 최근 검색어 |
+| 🔒 | GET | `/api/v1/users/me/reviews?status=written` | 내가 쓴 리뷰(writable은 future, 빈 배열) |
+
+### 홈 / 검색 (🔓)
+| | 메서드 | 경로 | 설명 |
+|---|---|---|---|
+| 🔓 | GET | `/api/v1/home` | 홈 화면(시즌 추천·재료·레시피·릴스·인기검색어·미읽음알림수) |
+| 🔓 | GET | `/api/v1/search?q=&type=ALL\|INGREDIENT\|RECIPE` | 통합 검색 |
+| 🔓 | GET | `/api/v1/search/trending` | 인기 검색어 |
+
+### 식재료 (🔓)
+| | 메서드 | 경로 | 설명 |
+|---|---|---|---|
+| 🔓 | GET | `/api/v1/ingredients` | 목록(페이지네이션) |
+| 🔓 | GET | `/api/v1/ingredients/{id}` | 상세(영양·손질/보관팁·제철 등) |
+| 🔓 | GET | `/api/v1/ingredients/{id}/prices` | 가격 이력(상세 차트용) |
+| 🔓 | GET | `/api/v1/ingredients/{id}/substitutes` | 대체 식재료 |
+| 🔓 | GET | `/api/v1/ingredients/{id}/offers` | 리테일 구매처 가격(스토어 오퍼) |
+| 🔓 | GET | `/api/v1/ingredients/{id}/recipes` | 관련 레시피 |
+| 🔓 | GET | `/api/v1/ingredients/{id}/producers` | **식재료별 농가 비교**(가격순) |
+
+### 레시피 (🔓)
+| | 메서드 | 경로 | 설명 |
+|---|---|---|---|
+| 🔓 | GET | `/api/v1/recipes` | 레시피 목록 |
+| 🔓 | GET | `/api/v1/recipes/{id}` | 상세(재료·예상비용·태그·관련릴스) |
+| 🔓 | GET | `/api/v1/recipes/{id}/steps` | 조리 순서 |
+
+### 릴스 (조회 🔓 / 반응 🔒)
+| | 메서드 | 경로 | 설명 |
+|---|---|---|---|
+| 🔓 | GET | `/api/v1/reels` | 릴스 피드 |
+| 🔓 | GET | `/api/v1/reels/{id}` | 릴스 상세 |
+| 🔓 | GET | `/api/v1/reels/{id}/comments` | 댓글 목록 |
+| 🔒 | POST | `/api/v1/reels/{id}/likes` | 좋아요 |
+| 🔒 | DELETE | `/api/v1/reels/{id}/likes` | 좋아요 취소 |
+| 🔒 | POST | `/api/v1/reels/{id}/comments` | 댓글 작성 |
+| 🔒 | POST | `/api/v1/reels/{id}/view-events` | 조회 이벤트 기록 |
+
+### 농가 (조회 🔓 / 내 농가 🔒)
+| | 메서드 | 경로 | 설명 |
+|---|---|---|---|
+| 🔓 | GET | `/api/v1/producers?q=&style=&honorary=` | 농가 목록/검색 |
+| 🔓 | GET | `/api/v1/producers/{id}` | 농가 상세 |
+| 🔓 | GET | `/api/v1/producers/{id}/offers` | 농가 판매 상품 |
+| 🔓 | GET | `/api/v1/producers/{id}/reviews` | 농가 리뷰 |
+| 🔓 | GET | `/api/v1/producers/{id}/news` | 농가 스토어 소식 |
+| 🔒 | POST | `/api/v1/producers/{id}/reviews` | 리뷰 작성(자유) |
+| 🔒 | POST | `/api/v1/producers/me` | 농가 자가등록 (§11) |
+| 🔒 | GET | `/api/v1/producers/me` | 내 농가 조회 (§11) |
+| 🔒 | POST | `/api/v1/producers/me/offers` | 내 농가 상품 등록 (§11) |
+
+### 장바구니 / 주문 (🔒)
+| | 메서드 | 경로 | 설명 |
+|---|---|---|---|
+| 🔒 | GET | `/api/v1/cart` | 장바구니(농가별 그룹·배송비·합계) |
+| 🔒 | POST | `/api/v1/cart/items` | 담기(`offerId`+`qty`) |
+| 🔒 | PATCH | `/api/v1/cart/items/{id}` | 수량 변경 |
+| 🔒 | DELETE | `/api/v1/cart/items/{id}` | 삭제 |
+| 🔒 | POST | `/api/v1/orders` | 주문 생성(모의 결제) |
+| 🔒 | GET | `/api/v1/orders` | 주문 내역 |
+| 🔒 | GET | `/api/v1/orders/{id}` | 주문 상세/완료 |
+
+### 찜 / 가격알림 / 알림 / 보유재료 (🔒)
+| | 메서드 | 경로 | 설명 |
+|---|---|---|---|
+| 🔒 | GET/POST | `/api/v1/favorites`, `/favorites/{id}`(DELETE) | 찜(targetType: INGREDIENT/RECIPE/PRODUCER) |
+| 🔒 | GET/POST | `/api/v1/price-alerts` | 가격 하락 알림 |
+| 🔒 | PATCH/DELETE | `/api/v1/price-alerts/{id}` | 알림 수정/삭제 |
+| 🔒 | GET | `/api/v1/notifications` | 알림 목록(+탭 카운트) |
+| 🔒 | PATCH | `/api/v1/notifications/{id}/read` · `/read-all` | 읽음 처리 |
+| 🔒 | GET/POST | `/api/v1/users/me/pantry` | 보유 재료 |
+| 🔒 | PATCH/DELETE | `/api/v1/users/me/pantry/{itemId}` | 보유 재료 수정/삭제 |
+
+### 기타
+| | 메서드 | 경로 | 설명 |
+|---|---|---|---|
+| 🔒 | POST | `/api/v1/events` | 사용자 행동 분석 이벤트 |
+| 🔓 | POST | `/api/v1/dev/auth/token` | (local/dev/test 전용) 개발 토큰 |
+
+### 미구현(프론트 화면은 있으나 백엔드 없음)
+- 전용 상품 도메인 `GET /api/v1/products`, `/products/{id}` → 농가/오퍼로 대체
+- 판매자 AI(가격추천·홍보글), 검색 `PRODUCT` 타입, refresh token → future

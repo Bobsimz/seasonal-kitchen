@@ -26,11 +26,17 @@
 - **WHEN** `GET /api/v1/ingredients/{ingredientId}/offers`를 호출한다
 - **THEN** 시스템은 스토어별 가격 비교 카드를 렌더링할 수 있는 필드를 반환해야 한다
 
-#### Scenario: 상품 상세 화면을 렌더링한다
+#### Scenario: 상품 탭을 농가/오퍼 데이터로 렌더링한다
 
-- **GIVEN** 프론트엔드가 상품 상세를 표시한다
-- **WHEN** `GET /api/v1/products/{productId}`를 호출한다
-- **THEN** 시스템은 상품 정보, 연결 식재료, 판매자 정보, 가격, 재고/상태, 관련 레시피를 반환해야 한다
+- **GIVEN** 프론트엔드가 상품 탭 또는 농가 상세를 표시한다
+- **WHEN** `GET /api/v1/producers`와 `GET /api/v1/producers/{producerId}/offers`를 호출한다
+- **THEN** 시스템은 농가 카드, 판매 식재료, 가격, 단위, 신선도 라벨을 반환해야 한다
+
+#### Scenario: 농가 상품 등록 화면을 렌더링한다
+
+- **GIVEN** 로그인 사용자가 마이페이지에서 농가 등록 또는 상품 등록을 진행한다
+- **WHEN** `POST /api/v1/producers/me` 또는 `POST /api/v1/producers/me/offers`를 호출한다
+- **THEN** 시스템은 내 농가 프로필과 판매 오퍼를 생성하고 반환해야 한다
 
 ### Requirement: 알림 응답 형태 변경 고지
 
@@ -52,9 +58,13 @@
 - `GET /api/v1/recipes`
 - `GET /api/v1/recipes/{recipeId}`
 - `GET /api/v1/reels`
-- `GET /api/v1/products`
-- `GET /api/v1/products/{productId}`
-- `POST /api/v1/seller/products`
+- `GET /api/v1/producers`
+- `GET /api/v1/producers/{producerId}`
+- `GET /api/v1/producers/{producerId}/offers`
+- `GET /api/v1/ingredients/{ingredientId}/producers`
+- `POST /api/v1/producers/me`
+- `GET /api/v1/producers/me`
+- `POST /api/v1/producers/me/offers`
 - `GET /api/v1/users/me/summary`
 - `GET /api/v1/notifications`
 
@@ -68,8 +78,9 @@
 - `reels`
 - `favorites`
 - `price_alerts`
-- `products`
-- `product_images`
+- `producers`
+- `producer_specialties`
+- `producer_offers`
 - `notifications`
 - `search_keywords`
 - `recent_searches`
@@ -78,4 +89,4 @@
 
 - 프론트엔드는 아직 production 앱이라기보다 화면 프로토타입이다.
 - demo seed 데이터는 화면 비어 있음 방지를 위한 목적이며 실제 외부 데이터 품질을 보장하지 않는다.
-- 실제 OAuth, 외부 제철/가격 데이터, 판매자 AI 연동 전까지 일부 라벨과 추천 품질은 제한적이다.
+- 전용 products API, 실제 OAuth, 외부 제철/가격 데이터, 판매자 AI 연동 전까지 일부 라벨과 추천 품질은 제한적이다.

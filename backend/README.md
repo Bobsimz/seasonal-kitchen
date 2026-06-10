@@ -19,7 +19,8 @@
 | [01-architecture.md](docs/01-architecture.md) | 기술 스택, 시스템 구성, 패키지 구조 |
 | [02-domains-and-erd.md](docs/02-domains-and-erd.md) | 전체 도메인과 ERD |
 | [03-api-contract.md](docs/03-api-contract.md) | Swagger, DTO, API 설계 규칙 |
-| [frontend-api-guide.md](docs/frontend-api-guide.md) | 프론트엔드 화면 연동용 API/응답 예시 |
+| [frontend-api-guide.md](docs/frontend-api-guide.md) | 프론트엔드 화면 연동용 canonical API/응답 예시 |
+| [producer-registration-fields.md](docs/producer-registration-fields.md) | 농가 등록/상품 등록 입력값 참고표 |
 | [04-roadmap.md](docs/04-roadmap.md) | 구현 순서와 단계별 완료 기준 |
 
 ## 권장 기술 스택
