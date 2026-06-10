@@ -4,6 +4,8 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +16,13 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI seasonalDiningOpenApi() {
         return new OpenAPI()
-                .components(frontendDemoExamples())
+                .components(frontendDemoExamples()
+                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")
+                                .description("로그인/회원가입으로 받은 accessToken을 입력하세요.")))
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .info(new Info()
                         .title("Seasonal Dining Backend API")
                         .description("Seasonal Dining backend API documentation. Frontend screen demo examples are available under OpenAPI components.examples.")

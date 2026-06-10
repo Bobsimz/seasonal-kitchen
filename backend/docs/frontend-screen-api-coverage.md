@@ -22,7 +22,7 @@ This document does not evaluate frontend code quality and does not require front
 | Onboarding price | `/` artboard `onboard` | `components/screens-onboarding.jsx` `ScreenOnboard` | Seasonal ingredient teaser cards | Ingredient name, image, status text such as `제철 · -15%`, `구매 적기`, `인기 ↑` | Inline array | Optional `GET /api/v1/home` or demo seed | Partially covered by home/ingredients | None if kept static onboarding | `seasonLabel`, `priceChangeLabel`, demo onboarding cards | P2 | `T87-demo-seed-data.md` |
 | Onboarding trend | `/` artboard `onboard-2` | `components/screens-onboarding.jsx` `ScreenOnboard2` | Recipe/video trend cards | Recipe title, image, social/trend labels | Inline cards | Optional demo seed or recipe/reels API | Recipes and reels exist | None if kept static onboarding | None blocking | P2 | None |
 | Onboarding AI | `/` artboard `onboard-3` | `components/screens-onboarding.jsx` `ScreenOnboard3` | AI explanation | Static prompt examples and result preview | Static JSX | None for MVP | Not needed | None | None | P2 | None |
-| Sign up | `/` artboard `signup` | `components/screens-onboarding.jsx` `ScreenSignup` | OAuth buttons | Kakao, Apple, Google, email labels | Static JSX | `POST /api/v1/auth/oauth/{provider}` | Not implemented; only dev token exists | OAuth endpoints | OAuth request/response DTOs | P2 | Future auth task, not frontend-integration P0 |
+| Sign up | `/` artboard `signup` | `components/screens-onboarding.jsx` `ScreenSignup` | Email signup/login first, OAuth buttons future | Kakao, Apple, Google, email labels | Static JSX | `POST /api/v1/auth/signup`, `POST /api/v1/auth/login` | Email/password auth implemented; OAuth deferred | OAuth endpoints | OAuth request/response DTOs | P2 | MVP uses access-token-only email auth; OAuth/refresh/logout are future |
 | Sign up survey | `/` artboard `signup-survey` | `components/screens-onboarding.jsx` `ScreenSignupSurvey` | Preference setup | household size, spicy avoid, allergens, selected count | Inline constants | `PUT /api/v1/users/me/preferences` | Partially covered; preference exists but allergy response/list unclear | Allergy code catalog endpoint optional | `allergyCodes`, allergen labels, selectedAllergens | P1 | `T85-my-page-screen-api.md`, `T87-demo-seed-data.md` |
 | Home main | `/` artboard `home-b` | `components/screens-home.jsx` `ScreenHomeB` | Header and notifications | Location-like context, unread notification dot | Static JSX | `GET /api/v1/home`, `GET /api/v1/notifications` | Covered | None | Location text remains frontend/static | P0 | None |
 | Home main | `/` artboard `home-b` | `components/screens-home.jsx` `ScreenHomeB` | Hero seasonal card | seasonal headline, hero image, ingredient/recipe callout, price/trend summary | Static JSX and local images | `GET /api/v1/home` | Covered | None | `weeklySeason`, dedicated `cta` object deferred | P0 | None |
@@ -68,7 +68,7 @@ This document does not evaluate frontend code quality and does not require front
 
 ## Missing APIs
 
-- OAuth endpoints: `POST /api/v1/auth/oauth/{provider}`, `POST /api/v1/auth/refresh`, `POST /api/v1/auth/logout`
+- OAuth/refresh/logout endpoints remain future: `POST /api/v1/auth/oauth/{provider}`, `POST /api/v1/auth/refresh`, `POST /api/v1/auth/logout`. MVP auth uses `POST /api/v1/auth/signup` and `POST /api/v1/auth/login`.
 - Optional catalogs: `GET /api/v1/allergies`
 
 ## Seed/Demo Data Requirements

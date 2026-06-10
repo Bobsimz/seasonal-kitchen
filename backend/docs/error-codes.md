@@ -18,12 +18,15 @@ All error responses must follow the common error response format defined in `doc
 
 ## Auth
 
-| Code | HTTP Status | Message |
-| --- | ---: | --- |
-| `AUTH_INVALID_TOKEN` | 401 | 유효하지 않은 토큰입니다. |
-| `AUTH_EXPIRED_TOKEN` | 401 | 만료된 토큰입니다. |
-| `AUTH_REVOKED_REFRESH_TOKEN` | 401 | 폐기된 refresh token입니다. |
-| `AUTH_UNSUPPORTED_PROVIDER` | 400 | 지원하지 않는 로그인 제공자입니다. |
+| Code | HTTP Status | Message | 상태 |
+| --- | ---: | --- | --- |
+| `AUTH_EMAIL_DUPLICATE` | 409 | 이미 가입된 이메일입니다. | 구현 |
+| `AUTH_NICKNAME_DUPLICATE` | 409 | 이미 사용 중인 닉네임입니다. | 구현 |
+| `AUTH_INVALID_CREDENTIALS` | 401 | 이메일 또는 비밀번호가 올바르지 않습니다. | 구현 |
+| `AUTH_INVALID_TOKEN` | 401 | 유효하지 않은 토큰입니다. | 구현 |
+| `AUTH_EXPIRED_TOKEN` | 401 | 만료된 토큰입니다. | future |
+| `AUTH_REVOKED_REFRESH_TOKEN` | 401 | 폐기된 refresh token입니다. | future |
+| `AUTH_UNSUPPORTED_PROVIDER` | 400 | 지원하지 않는 로그인 제공자입니다. | future(OAuth) |
 
 ## User
 
@@ -69,3 +72,12 @@ All error responses must follow the common error response format defined in `doc
 | `SELLER_PRODUCT_NOT_FOUND` | 404 | 판매자 상품을 찾을 수 없습니다. |
 | `SELLER_AI_PRICE_INPUT_REQUIRED` | 400 | 가격 추천에 필요한 입력값이 부족합니다. |
 | `SELLER_AI_COPY_INPUT_REQUIRED` | 400 | 홍보글 작성에 필요한 상품 정보가 부족합니다. |
+
+## Producer / Cart / Order (farm-direct-commerce)
+
+| Code | HTTP Status | Message |
+| --- | ---: | --- |
+| `PRODUCER_NOT_FOUND` | 404 | 농가를 찾을 수 없습니다. |
+| `PRODUCER_OFFER_NOT_FOUND` | 404 | 농가 판매 상품을 찾을 수 없습니다. |
+| `CART_ITEM_NOT_FOUND` | 404 | 장바구니 항목을 찾을 수 없습니다. |
+| `ORDER_NOT_FOUND` | 404 | 주문을 찾을 수 없습니다. |

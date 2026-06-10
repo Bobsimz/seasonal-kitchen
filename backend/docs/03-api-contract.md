@@ -99,10 +99,14 @@ npx @openapitools/openapi-generator-cli generate \
 ### Auth
 
 ```text
+POST   /api/v1/auth/signup
+POST   /api/v1/auth/login
 POST   /api/v1/dev/auth/token
 ```
 
-OAuth login, refresh, and logout endpoints are deferred. The dev token endpoint is temporary and must remain limited to `local`, `dev`, and `test` profiles.
+이메일/비밀번호 회원가입·로그인이 구현되어 있습니다. 두 엔드포인트 모두 JWT access token(`AuthTokenResponse`: accessToken, tokenType=Bearer, userId, nickname)을 발급합니다. 비밀번호는 BCrypt로 저장합니다.
+
+OAuth(kakao/apple/google) login, refresh, logout은 추후 도입(deferred)입니다. 임시 dev token 엔드포인트(`POST /api/v1/dev/auth/token`)는 `local`, `dev`, `test` 프로필에서만 노출됩니다.
 
 ### Users
 

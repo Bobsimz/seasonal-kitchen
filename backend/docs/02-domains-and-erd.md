@@ -4,7 +4,7 @@
 
 | 도메인 | 핵심 역할 |
 | --- | --- |
-| `auth` | 소셜 로그인, JWT, refresh token |
+| `auth` | 이메일/비밀번호 로그인, JWT access token. OAuth/refresh token은 future |
 | `user` | 프로필, 가구원 수, 취향, 알레르기, 보유 재료 |
 | `ingredient` | 표준 식재료, 품목 별칭, 영양 정보 |
 | `season` | 월별 및 지역별 제철 정보 |
@@ -60,9 +60,9 @@ erDiagram
 
 | 테이블 | 주요 컬럼 |
 | --- | --- |
-| `users` | `id`, `email`, `nickname`, `profile_image_url`, `status`, `created_at` |
-| `oauth_accounts` | `id`, `user_id`, `provider`, `provider_user_id` |
-| `refresh_tokens` | `id`, `user_id`, `token_hash`, `expires_at`, `revoked_at` |
+| `users` | `id`, `email`, `nickname`, `password_hash`, `profile_image_url`, `status`, `created_at` |
+| `oauth_accounts` | `id`, `user_id`, `provider`, `provider_user_id` (future) |
+| `refresh_tokens` | `id`, `user_id`, `token_hash`, `expires_at`, `revoked_at` (future) |
 | `user_preferences` | `user_id`, `household_size`, `budget`, `spicy_avoid`, `priority` |
 | `user_allergies` | `user_id`, `allergy_code` |
 | `pantry_items` | `id`, `user_id`, `ingredient_id`, `quantity`, `unit`, `expires_at` |

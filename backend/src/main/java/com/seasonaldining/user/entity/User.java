@@ -27,6 +27,9 @@ public class User {
     @Column(nullable = false, length = 50)
     private String status;
 
+    @Column(name = "password_hash", length = 255)
+    private String passwordHash;
+
     protected User() {
     }
 
@@ -35,6 +38,13 @@ public class User {
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.status = status;
+    }
+
+    /** 이메일/비밀번호 회원가입용 팩토리 (status=ACTIVE) */
+    public static User forEmailSignup(String email, String nickname, String passwordHash) {
+        User user = new User(email, nickname, null, "ACTIVE");
+        user.passwordHash = passwordHash;
+        return user;
     }
 
     public Long getId() {
@@ -55,6 +65,10 @@ public class User {
 
     public String getStatus() {
         return status;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
     public void updateProfile(String nickname, String profileImageUrl) {

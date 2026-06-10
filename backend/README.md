@@ -30,7 +30,7 @@
 | DB | PostgreSQL |
 | ORM | Spring Data JPA |
 | DB migration | Flyway |
-| 인증 | Spring Security, JWT, OAuth 2.0 |
+| 인증 | Spring Security, JWT access token (OAuth/refresh token은 future) |
 | 캐시 | Redis |
 | 파일 저장 | S3 호환 Object Storage |
 | 외부 가격 데이터 | KAMIS Open API |

@@ -21,7 +21,7 @@ flowchart LR
     API --> REDIS[("Redis")]
     API --> STORAGE["S3 Compatible Storage"]
     API --> LLM["LLM API"]
-    API --> OAUTH["Kakao / Google / Apple OAuth"]
+    API -. future .-> OAUTH["Kakao / Google / Apple OAuth"]
     API --> PUSH["FCM / Email"]
     API --> OUTBOX[("Event Outbox")]
 
@@ -150,8 +150,8 @@ flowchart TD
 
 ## 7. 보안과 운영
 
-- Access token과 refresh token을 분리합니다.
-- Refresh token은 서버에서 폐기 가능하도록 저장합니다.
+- MVP는 이메일/비밀번호 로그인 후 JWT access token만 발급합니다.
+- Refresh token 재발급, logout token revoke, OAuth는 고도화 단계에서 도입합니다.
 - 사용자 위치, 알레르기, 보유 재료는 최소 범위만 저장합니다.
 - 관리자 API는 별도 권한을 요구합니다.
 - 모든 외부 API 호출은 timeout, retry, circuit breaker 정책을 둡니다.
