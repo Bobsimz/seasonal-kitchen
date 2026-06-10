@@ -3,7 +3,7 @@
 // B: 비주얼 트렌디형 (당근/배민 톤, 카드 + 릴스 우선)
 
 import React from "react";
-import { Phone, BottomTabBar, VegPlaceholder, Chip, priceRange } from "./phone";
+import { Phone, BottomTabBar, VegPlaceholder, Chip, priceRange, priceExact } from "./phone";
 import { DISH_IMG, vegImg } from "./mock-images";
 import { HONORARY_PRODUCERS, producersForIngredient } from "./producers-data";
 import { ProducerCircle, ProducerRow } from "./producer-card";
@@ -764,42 +764,7 @@ export function ScreenHomeB({ t }) {
                   />
                 </svg>
               </div>
-              <div
-                className="tap"
-                style={{
-                  position: "relative",
-                  width: 38,
-                  height: 38,
-                  borderRadius: 19,
-                  background: "rgba(255,255,255,0.18)",
-                  backdropFilter: "blur(10px)",
-                  border: "1px solid rgba(255,255,255,0.25)",
-                  display: "grid",
-                  placeItems: "center",
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path
-                    d="M4 7a5 5 0 0110 0v2l2 3H2l2-3V7z"
-                    stroke="#fff"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 8,
-                    right: 8,
-                    width: 7,
-                    height: 7,
-                    borderRadius: 4,
-                    background: t.hot,
-                    border: "1.5px solid #fff",
-                  }}
-                />
-              </div>
-              {/* 장바구니 — 알람 오른쪽, 동일 글래스 스타일 */}
+              {/* 장바구니 — 검색 오른쪽, 동일 글래스 스타일 (알림 아이콘 제거) */}
               <div
                 className="tap"
                 style={{
@@ -1541,7 +1506,7 @@ function darken(hex, amt) {
 // ─────────────────────────────────────────────────────────────
 export function ScreenHomeSearch({ t }) {
   return (
-    <Phone t={t} tabBar={<BottomTabBar active="home" t={t} />} bg={t.bg}>
+    <Phone t={t} bg={t.bg}>
       <div className="phone-scroll" style={{ flex: 1, overflow: "auto" }}>
         {/* Search bar header — 빈 입력 상태 */}
         <div
@@ -1804,7 +1769,7 @@ function SectionHeader({ title, count, more, t }) {
 
 export function ScreenHomeSearchResult({ t }) {
   return (
-    <Phone t={t} tabBar={<BottomTabBar active="home" t={t} />} bg={t.bg}>
+    <Phone t={t} bg={t.bg}>
       <div className="phone-scroll" style={{ flex: 1, overflow: "auto" }}>
         {/* Search bar header — '봄동' 입력 상태 */}
         <div
@@ -1877,61 +1842,7 @@ export function ScreenHomeSearchResult({ t }) {
           </div>
         </div>
 
-        {/* AI 답변 카드 */}
-        <div style={{ padding: "16px 20px 0" }}>
-          <div
-            style={{
-              borderRadius: 16,
-              padding: 14,
-              background: `linear-gradient(135deg, ${t.primaryBg}, #fff)`,
-              border: `1px solid ${t.primarySoft}`,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                marginBottom: 6,
-              }}
-            >
-              <div
-                style={{
-                  width: 18,
-                  height: 18,
-                  borderRadius: 9,
-                  background: t.primary,
-                  color: "#fff",
-                  fontSize: 11,
-                  display: "grid",
-                  placeItems: "center",
-                }}
-              >
-                🧑‍🍳
-              </div>
-              <span
-                style={{
-                  fontSize: 11.5,
-                  fontWeight: 800,
-                  color: t.primary,
-                  letterSpacing: 0.3,
-                }}
-              >
-                AI 답변
-              </span>
-            </div>
-            <div style={{ fontSize: 13, color: t.text, lineHeight: 1.55 }}>
-              <b>봄동</b>은 지금이 평년 대비{" "}
-              <b style={{ color: t.primary }}>−22%</b>로 가장 알뜰한 시기예요.
-              제일 어울리는 메뉴는 <b>봄동 비빔밥</b>·<b>봄동 새우전</b>이에요.
-            </div>
-          </div>
-        </div>
-
-        {/* ── 섹션 구분선 ── */}
-        <div style={{ height: 8, background: t.bgSoft, marginTop: 22 }} />
-
-        {/* 식재료 — 기존 디자인 */}
+        {/* 식재료 — 기존 디자인 (AI 답변 카드 제거됨) */}
         <div style={{ padding: "18px 0 0" }}>
           <SectionHeader title="식재료" count={1} t={t} />
           <div style={{ padding: "0 20px 14px" }}>
@@ -2026,8 +1937,147 @@ export function ScreenHomeSearchResult({ t }) {
                 color: t.text,
                 letterSpacing: -0.2,
               }}
+              data-flow-src="ingredient"
             >
               식재료 더보기
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path
+                  d="M4 2l4 4-4 4"
+                  stroke={t.text}
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* ── 섹션 구분선 ── */}
+        <div style={{ height: 8, background: t.bgSoft, marginTop: 22 }} />
+
+        {/* 상품 — 농가가 등록한 봄동 상품 (식재료 정보와 별개의 판매 상품) */}
+        <div style={{ padding: "18px 0 0" }}>
+          <SectionHeader title="상품" count={3} t={t} />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+              padding: "0 20px 14px",
+            }}
+          >
+            {[
+              {
+                name: "햇 봄동 1.5kg 산지직송",
+                farm: "해남 송지농원",
+                rating: "4.9",
+                price: 6900,
+                tags: ["산지직송", "무료배송"],
+              },
+              {
+                name: "유기농 봄동 1kg",
+                farm: "영천 권민성 농가",
+                rating: "4.8",
+                price: 5400,
+                tags: ["유기농", "콜드체인"],
+              },
+            ].map((p, i) => (
+              <div
+                key={i}
+                className="tap"
+                style={{
+                  background: "#fff",
+                  borderRadius: 16,
+                  border: `1px solid ${t.borderSoft}`,
+                  padding: 14,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                }}
+              >
+                <VegPlaceholder name="봄동" size={64} t={t} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: 14.5,
+                      fontWeight: 800,
+                      color: t.text,
+                      letterSpacing: -0.2,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {p.name}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 11.5,
+                      color: t.textSoft,
+                      marginTop: 2,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                    }}
+                  >
+                    <span>{p.farm}</span>
+                    <span style={{ color: t.primary, fontWeight: 700 }}>
+                      ★ {p.rating}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 5,
+                      marginTop: 6,
+                    }}
+                  >
+                    {p.tags.map((tag) => (
+                      <Chip
+                        key={tag}
+                        color={t.primaryDark}
+                        bg={t.primaryBg}
+                      >
+                        {tag}
+                      </Chip>
+                    ))}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 800,
+                    color: t.text,
+                    fontFeatureSettings: '"tnum"',
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  ₩{priceExact(p.price)}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ padding: "0 20px" }}>
+            <div
+              className="tap"
+              style={{
+                width: "100%",
+                height: 44,
+                borderRadius: 12,
+                background: t.bgSoft,
+                border: `1px solid ${t.borderSoft}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+                fontSize: 13,
+                fontWeight: 700,
+                color: t.text,
+                letterSpacing: -0.2,
+              }}
+            >
+              상품 더보기
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                 <path
                   d="M4 2l4 4-4 4"
@@ -2209,6 +2259,7 @@ export function ScreenHomeSearchResult({ t }) {
                 color: t.text,
                 letterSpacing: -0.2,
               }}
+              data-flow-src="recipe"
             >
               레시피 더보기
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -2359,272 +2410,6 @@ export function ScreenHomeSearchResult({ t }) {
         </div>
 
         <div style={{ height: 30 }} />
-      </div>
-    </Phone>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// AI 시작 시트 (하단 중앙 AI 버튼 탭 → 슬라이드업 시트)
-// ─────────────────────────────────────────────────────────────
-export function ScreenAISheet({ t }) {
-  return (
-    <Phone t={t} tabBar={<BottomTabBar active="ai" t={t} />} bg={t.bg}>
-      <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
-        {/* dimmed home background */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: `linear-gradient(180deg, ${t.primarySoft} 0%, ${t.bg} 100%)`,
-            filter: "blur(2px)",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              right: -10,
-              top: 70,
-              width: 200,
-              height: 200,
-              borderRadius: 200,
-              background:
-                "radial-gradient(circle at 35% 35%, #f5a55a, #d77a2f)",
-              opacity: 0.6,
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              right: 70,
-              top: 180,
-              width: 80,
-              height: 80,
-              borderRadius: 80,
-              background:
-                "radial-gradient(circle at 30% 30%, #c8e58e, #6ba83f)",
-              opacity: 0.6,
-            }}
-          />
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "rgba(0,0,0,0.45)",
-          }}
-        />
-
-        {/* Sheet */}
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "#fff",
-            borderRadius: "24px 24px 0 0",
-            padding: "12px 20px 24px",
-            boxShadow: "0 -20px 60px rgba(0,0,0,0.18)",
-            maxHeight: "78%",
-            overflow: "auto",
-          }}
-          className="phone-scroll"
-        >
-          {/* drag handle */}
-          <div
-            style={{
-              width: 40,
-              height: 4,
-              borderRadius: 2,
-              background: t.borderSoft,
-              margin: "0 auto 18px",
-            }}
-          />
-
-          {/* Header */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              marginBottom: 6,
-            }}
-          >
-            <div
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: 22,
-                background: `linear-gradient(135deg, ${t.primary}, ${t.primaryDark})`,
-                display: "grid",
-                placeItems: "center",
-                fontSize: 22,
-              }}
-            >
-              🧑‍🍳
-            </div>
-            <div style={{ flex: 1 }}>
-              <div
-                style={{
-                  fontSize: 17,
-                  fontWeight: 800,
-                  color: t.text,
-                  letterSpacing: -0.4,
-                }}
-              >
-                AI 셰프
-              </div>
-              <div style={{ fontSize: 12, color: t.textSoft, marginTop: 1 }}>
-                ● 온라인 · 평균 응답 3초
-              </div>
-            </div>
-            <div
-              className="tap"
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: 16,
-                background: t.bgSoft,
-                display: "grid",
-                placeItems: "center",
-                color: t.textMid,
-                fontSize: 16,
-              }}
-            >
-              ✕
-            </div>
-          </div>
-
-          <div
-            style={{
-              fontSize: 14,
-              color: t.text,
-              lineHeight: 1.55,
-              marginTop: 10,
-            }}
-          >
-            안녕하세요 🌱
-            <br />
-            <b>이번 주 장보기</b>, 어떻게 도와드릴까요?
-          </div>
-
-          {/* Quick start cards */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 8,
-              marginTop: 16,
-            }}
-          >
-            {[
-              {
-                ic: "🛒",
-                title: "우리 집 조건으로 추천",
-                sub: "인원·예산·취향 입력 → 식재료 쇼핑 완성",
-                primary: true,
-              },
-              {
-                ic: "🌱",
-                title: "지금 제철 재료로 짜줘",
-                sub: "11월 입동 · 14개 중 골라서",
-              },
-              {
-                ic: "🥘",
-                title: "냉장고에 있는 재료로",
-                sub: "사진 한 장이면 OK",
-              },
-              {
-                ic: "🎬",
-                title: "본 레시피 재료 한 번에 주문",
-                sub: "최근 본 레시피 3개",
-              },
-            ].map((q, i) => (
-              <div
-                key={i}
-                className="tap"
-                style={{
-                  padding: 14,
-                  borderRadius: 14,
-                  background: q.primary ? t.text : "#fff",
-                  color: q.primary ? "#fff" : t.text,
-                  border: q.primary ? "none" : `1px solid ${t.borderSoft}`,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                }}
-              >
-                <div
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 12,
-                    background: q.primary
-                      ? "rgba(255,255,255,0.15)"
-                      : t.primaryBg,
-                    display: "grid",
-                    placeItems: "center",
-                    fontSize: 20,
-                    flexShrink: 0,
-                  }}
-                >
-                  {q.ic}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 800,
-                      letterSpacing: -0.2,
-                    }}
-                  >
-                    {q.title}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 11.5,
-                      opacity: q.primary ? 0.75 : 1,
-                      color: q.primary ? "#fff" : t.textSoft,
-                      marginTop: 3,
-                    }}
-                  >
-                    {q.sub}
-                  </div>
-                </div>
-                <svg width="14" height="14" viewBox="0 0 14 14">
-                  <path
-                    d="M5 3l4 4-4 4"
-                    stroke={q.primary ? "#fff" : t.textSoft}
-                    strokeWidth="1.7"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-            ))}
-          </div>
-
-          {/* Free input */}
-          <div
-            style={{
-              marginTop: 16,
-              padding: "12px 14px",
-              borderRadius: 14,
-              border: `1px dashed ${t.border}`,
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-            }}
-          >
-            <span style={{ fontSize: 16 }}>💬</span>
-            <span style={{ flex: 1, fontSize: 13, color: t.textSoft }}>
-              아니면 자유롭게 채팅으로 물어보세요…
-            </span>
-            <span style={{ fontSize: 16 }}>🎙️</span>
-          </div>
-        </div>
       </div>
     </Phone>
   );

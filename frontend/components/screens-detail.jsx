@@ -25,7 +25,7 @@ import { ProducerCircle, ProducerRow } from "./producer-card";
 // ─────────────────────────────────────────────────────────────
 export function ScreenList({ t }) {
   return (
-    <Phone t={t} tabBar={<BottomTabBar active="list" t={t} />}>
+    <Phone t={t} tabBar={<BottomTabBar active="info" t={t} />}>
       <div
         className="phone-scroll"
         style={{ flex: 1, overflow: "auto", background: t.bg }}
@@ -39,7 +39,7 @@ export function ScreenList({ t }) {
 
 export function ScreenRecipeList({ t }) {
   return (
-    <Phone t={t} tabBar={<BottomTabBar active="list" t={t} />}>
+    <Phone t={t} tabBar={<BottomTabBar active="info" t={t} />}>
       <div
         className="phone-scroll"
         style={{ flex: 1, overflow: "auto", background: t.bg }}
@@ -55,7 +55,7 @@ export function ScreenRecipeList({ t }) {
 export function ScreenListSearchResult({ t }) {
   const query = "봄동";
   return (
-    <Phone t={t} tabBar={<BottomTabBar active="list" t={t} />}>
+    <Phone t={t} tabBar={<BottomTabBar active="info" t={t} />}>
       <div
         className="phone-scroll"
         style={{ flex: 1, overflow: "auto", background: t.bg }}
@@ -70,7 +70,7 @@ export function ScreenListSearchResult({ t }) {
 export function ScreenRecipeListSearchResult({ t }) {
   const query = "봄동";
   return (
-    <Phone t={t} tabBar={<BottomTabBar active="list" t={t} />}>
+    <Phone t={t} tabBar={<BottomTabBar active="info" t={t} />}>
       <div
         className="phone-scroll"
         style={{ flex: 1, overflow: "auto", background: t.bg }}
@@ -85,7 +85,7 @@ export function ScreenRecipeListSearchResult({ t }) {
 // 농가 탭 — 베스트 농가 캐러셀 + 카테고리/정렬 + 농가 리스트
 export function ScreenProducerList({ t, query = "" }) {
   return (
-    <Phone t={t} tabBar={<BottomTabBar active="list" t={t} />}>
+    <Phone t={t} tabBar={<BottomTabBar active="info" t={t} />}>
       <div
         className="phone-scroll"
         style={{ flex: 1, overflow: "auto", background: t.bg }}
@@ -237,12 +237,12 @@ function ProducerListBody({ t, query = "" }) {
   );
 }
 
-// Shared header with mode toggle (식재료 ⇄ 레시피 ⇄ 농가)
+// Shared header with mode toggle (식재료 ⇄ 레시피)
 function ListHeader({ t, mode, query = "" }) {
   const counts =
     query === "봄동"
-      ? { ingredient: 1, recipe: 3, producer: 5 }
-      : { ingredient: 14, recipe: 86, producer: 32 };
+      ? { ingredient: 1, recipe: 3 }
+      : { ingredient: 14, recipe: 86 };
   return (
     <div
       style={{
@@ -252,52 +252,127 @@ function ListHeader({ t, mode, query = "" }) {
         borderBottom: `1px solid ${t.borderSoft}`,
       }}
     >
-      {/* Search — moved to top for consistency with home search */}
+      {/* 최상단: 검색 결과면 뒤로가기, 기본 탭이면 검색·장바구니 (둘 중 하나만) */}
       <div
         style={{
-          height: 44,
-          borderRadius: 12,
-          background: t.bgSoft,
           display: "flex",
           alignItems: "center",
-          padding: "0 12px",
           gap: 8,
           marginBottom: 12,
+          minHeight: 32,
         }}
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <circle cx="7" cy="7" r="5" stroke={t.textSoft} strokeWidth="1.5" />
-          <path
-            d="M10.5 10.5L14 14"
-            stroke={t.textSoft}
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
         {query ? (
+          <React.Fragment>
+            <div
+              className="tap"
+              style={{
+                width: 32,
+                height: 32,
+                display: "grid",
+                placeItems: "center",
+                marginLeft: -6,
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M13 4L7 10l6 6"
+                  stroke={t.text}
+                  strokeWidth="2"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <span
+              style={{
+                fontSize: 15,
+                fontWeight: 700,
+                color: t.text,
+                letterSpacing: -0.3,
+              }}
+            >
+              ‘{query}’ 검색 결과
+            </span>
+          </React.Fragment>
+        ) : (
           <React.Fragment>
             <span
               style={{
                 flex: 1,
-                fontSize: 14,
+                fontSize: 18,
+                fontWeight: 800,
                 color: t.text,
-                fontWeight: 600,
+                letterSpacing: -0.4,
               }}
             >
-              {query}
+              정보
             </span>
-            <div style={{ color: t.textSoft, fontSize: 18, lineHeight: 1 }}>
-              ✕
+            {/* 검색 */}
+            <div
+              className="tap"
+              style={{
+                width: 32,
+                height: 32,
+                display: "grid",
+                placeItems: "center",
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="9" cy="9" r="6" stroke={t.text} strokeWidth="1.7" />
+                <path
+                  d="M13.5 13.5L17 17"
+                  stroke={t.text}
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+            {/* 장바구니 */}
+            <div
+              className="tap"
+              style={{
+                position: "relative",
+                width: 32,
+                height: 32,
+                display: "grid",
+                placeItems: "center",
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M2 2h2l1.7 9.5a1 1 0 001 .8h7a1 1 0 001-.8L17 5.5H5.2"
+                  stroke={t.text}
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle cx="8" cy="16.5" r="1.3" fill={t.text} />
+                <circle cx="14.5" cy="16.5" r="1.3" fill={t.text} />
+              </svg>
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  minWidth: 14,
+                  height: 14,
+                  padding: "0 3px",
+                  borderRadius: 7,
+                  background: t.hot,
+                  border: "1.5px solid #fff",
+                  color: "#fff",
+                  fontSize: 8.5,
+                  fontWeight: 800,
+                  display: "grid",
+                  placeItems: "center",
+                }}
+              >
+                3
+              </div>
             </div>
           </React.Fragment>
-        ) : (
-          <span style={{ flex: 1, fontSize: 13.5, color: t.textSoft }}>
-            {mode === "ingredient"
-              ? "식재료 검색 (무, 배추, …)"
-              : mode === "recipe"
-                ? "레시피 검색 (무생채, 김치찌개, …)"
-                : "농가 검색 (지역, 농가명, 품목…)"}
-          </span>
         )}
       </div>
       {/* Mode toggle — pill segmented */}
@@ -313,7 +388,6 @@ function ListHeader({ t, mode, query = "" }) {
         {[
           { id: "ingredient", label: "식재료", count: counts.ingredient },
           { id: "recipe", label: "레시피", count: counts.recipe },
-          { id: "producer", label: "농가", count: counts.producer },
         ].map((tab) => {
           const active = mode === tab.id;
           return (
@@ -1030,17 +1104,6 @@ function RecipeListBody({ t, query = "" }) {
 // DETAIL — 식재료 상세 (열무 reference 기반)
 // ─────────────────────────────────────────────────────────────
 export function ScreenDetail({ t }) {
-  // Price trend bars
-  const months = [
-    { m: "1월", v: 0.5 },
-    { m: "2월", v: 0.48 },
-    { m: "3월", v: 0.55 },
-    { m: "4월", v: 0.7 },
-    { m: "5월", v: 0.4, now: true },
-    { m: "6월", v: 0.66, future: true },
-    { m: "7월", v: 0.72, future: true },
-  ];
-  const maxBar = 120;
   return (
     <Phone t={t}>
       <div
@@ -1148,7 +1211,7 @@ export function ScreenDetail({ t }) {
               />
               <rect x="10" y="8" width="2.5" height="4" fill={t.chartGreen} />
             </svg>
-            가격 동향
+            현재 가격
           </div>
           <div
             style={{
@@ -1193,194 +1256,6 @@ export function ScreenDetail({ t }) {
             }}
           >
             주요 매장 기준
-          </div>
-
-          {/* Bar chart */}
-          <div
-            style={{
-              marginTop: 22,
-              display: "flex",
-              alignItems: "flex-end",
-              gap: 8,
-              height: maxBar,
-            }}
-          >
-            {months.map((m, i) => (
-              <div
-                key={i}
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 6,
-                }}
-              >
-                {m.now && (
-                  <div
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 700,
-                      color: t.primaryDark,
-                      marginBottom: -2,
-                    }}
-                  >
-                    ▼ 최저
-                  </div>
-                )}
-                <div
-                  style={{
-                    width: "100%",
-                    height: m.v * maxBar,
-                    borderRadius: 4,
-                    background: m.future
-                      ? t.chartGray
-                      : m.now
-                        ? t.chartGreenDark
-                        : t.chartGreen,
-                  }}
-                />
-                <div
-                  style={{ fontSize: 10, color: t.textSoft, fontWeight: 600 }}
-                >
-                  {m.m}
-                </div>
-              </div>
-            ))}
-          </div>
-          {/* Legend */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: 12,
-              marginTop: 8,
-              fontSize: 10.5,
-              color: t.textSoft,
-            }}
-          >
-            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: 3,
-                  background: t.chartGreenDark,
-                }}
-              />
-              현재
-            </span>
-            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: 3,
-                  background: t.chartGreen,
-                }}
-              />
-              실측
-            </span>
-            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: 3,
-                  background: t.chartGray,
-                }}
-              />
-              예측
-            </span>
-          </div>
-
-          {/* Mini metrics — 3 in a row */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr",
-              gap: 6,
-              marginTop: 16,
-            }}
-          >
-            <div
-              style={{ background: t.bgSoft, borderRadius: 12, padding: 10 }}
-            >
-              <div
-                style={{ fontSize: 10.5, color: t.textMid, fontWeight: 600 }}
-              >
-                전월 대비
-              </div>
-              <div
-                style={{
-                  fontSize: 15,
-                  fontWeight: 800,
-                  color: t.primary,
-                  marginTop: 3,
-                }}
-              >
-                ▼ 8%
-              </div>
-            </div>
-            <div
-              style={{ background: t.bgSoft, borderRadius: 12, padding: 10 }}
-            >
-              <div
-                style={{ fontSize: 10.5, color: t.textMid, fontWeight: 600 }}
-              >
-                공급 상태
-              </div>
-              <div
-                style={{
-                  fontSize: 15,
-                  fontWeight: 800,
-                  color: t.text,
-                  marginTop: 3,
-                }}
-              >
-                과잉
-              </div>
-              <div style={{ fontSize: 10, color: t.textSoft, marginTop: 2 }}>
-                출하량 +18%
-              </div>
-            </div>
-            <div
-              style={{
-                background: `linear-gradient(135deg, ${t.primaryBg}, ${t.primarySoft})`,
-                borderRadius: 12,
-                padding: 10,
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 10.5,
-                  color: t.primaryDark,
-                  fontWeight: 700,
-                }}
-              >
-                AI 판단
-              </div>
-              <div
-                style={{
-                  fontSize: 15,
-                  fontWeight: 800,
-                  color: t.primaryDark,
-                  marginTop: 3,
-                }}
-              >
-                구매 적기
-              </div>
-              <div
-                style={{
-                  fontSize: 10,
-                  color: t.primaryDark,
-                  marginTop: 2,
-                  opacity: 0.85,
-                }}
-              >
-                가격↓ + 트렌드↑
-              </div>
-            </div>
           </div>
 
           <div

@@ -161,7 +161,7 @@ export function Phone({
   );
 }
 
-// Bottom tab bar — 5 슬롯: 홈 / 탐색 / [AI 셰프 동그라미 ·중앙] / 릴스 / 마이
+// Bottom tab bar — 5 균등 슬롯: 홈 / 상품 / 정보 / 릴스 / 마이
 export function BottomTabBar({ active = "home", t, dark }) {
   const tabs = [
     {
@@ -180,8 +180,30 @@ export function BottomTabBar({ active = "home", t, dark }) {
       ),
     },
     {
-      id: "list",
-      label: "탐색",
+      id: "product",
+      label: "상품",
+      icon: (c) => (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path
+            d="M5 7h12l-1 11a1 1 0 01-1 1H7a1 1 0 01-1-1L5 7z"
+            stroke={c === "active" ? t.primary : t.textSoft}
+            fill={c === "active" ? t.primaryBg : "none"}
+            strokeWidth="1.7"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M8 7.5V6a3 3 0 016 0v1.5"
+            stroke={c === "active" ? t.primary : t.textSoft}
+            strokeWidth="1.7"
+            fill="none"
+            strokeLinecap="round"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: "info",
+      label: "정보",
       icon: (c) => (
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
           <rect
@@ -263,10 +285,6 @@ export function BottomTabBar({ active = "home", t, dark }) {
       ),
     },
   ];
-  const isAiActive = active === "ai";
-  // 좌측 2개, 우측 2개로 분리해 중앙에 AI 버튼을 배치
-  const leftTabs = tabs.slice(0, 2);
-  const rightTabs = tabs.slice(2);
 
   const renderTab = (tab) => {
     const isActive = active === tab.id;
@@ -317,99 +335,7 @@ export function BottomTabBar({ active = "home", t, dark }) {
         zIndex: 100,
       }}
     >
-      {leftTabs.map(renderTab)}
-
-      {/* 중앙 AI 셰프 버튼 — 동그라미, 살짝 위로 솟음 */}
-      <div
-        style={{
-          width: 80,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "flex-start",
-          position: "relative",
-          zIndex: 999,
-        }}
-      >
-        <div
-          className="tap"
-          style={{
-            width: 70,
-            height: 70,
-            borderRadius: 35,
-            background: isAiActive
-              ? `linear-gradient(135deg, ${t.primaryDark}, ${t.primary})`
-              : `linear-gradient(135deg, ${t.primary}, ${t.primaryDark})`,
-            marginTop: -14,
-            display: "grid",
-            placeItems: "center",
-            boxShadow: `0 8px 20px ${t.primary}66, 0 2px 6px rgba(0,0,0,0.12)`,
-            border: `3px solid ${dark ? "#0a0a0a" : "#fff"}`,
-            position: "relative",
-            zIndex: 999,
-          }}
-        >
-          {/* AI chef face */}
-          <svg
-            width="36"
-            height="36"
-            viewBox="0 0 26 26"
-            fill="none"
-            style={{ marginBottom: 15 }}
-          >
-            <path
-              d="M13 4c-2 0-3.5 1.5-3.5 3.5 0 0-3 0-4.5 2.5C3.5 12.5 5 15.5 7.5 17c-0.5 3 1.5 5 5.5 5s6-2 5.5-5c2.5-1.5 4-4.5 2.5-7-1.5-2.5-4.5-2.5-4.5-2.5C16.5 5.5 15 4 13 4z"
-              fill="#fff"
-              stroke="#fff"
-              strokeWidth="1"
-            />
-            <circle cx="10" cy="11" r="1.2" fill={t.primary} />
-            <circle cx="16" cy="11" r="1.2" fill={t.primary} />
-            <path
-              d="M10 15c1 1.5 5 1.5 6 0"
-              stroke={t.primary}
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              fill="none"
-            />
-          </svg>
-          {/* sparkle */}
-          <div
-            style={{
-              position: "absolute",
-              top: -4,
-              right: -4,
-              width: 22,
-              height: 22,
-              borderRadius: 11,
-              background: "#fff",
-              color: t.primary,
-              fontSize: 13,
-              fontWeight: 800,
-              display: "grid",
-              placeItems: "center",
-              boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-              zIndex: 1000,
-            }}
-          >
-            ✨
-          </div>
-          {/* label below */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: 9,
-              fontSize: 9.5,
-              fontWeight: 900,
-              color: "rgba(255,255,255,0.75)",
-              letterSpacing: -0.2,
-            }}
-          >
-            AI 셰프
-          </div>
-        </div>
-      </div>
-
-      {rightTabs.map(renderTab)}
+      {tabs.map(renderTab)}
     </div>
   );
 }

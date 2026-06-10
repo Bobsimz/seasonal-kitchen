@@ -125,6 +125,35 @@ export function ScreenReels({ t }) {
           ))}
         </div>
 
+        {/* Top-right 검색 아이콘 — 릴스에서만 노출 */}
+        <div
+          className="tap"
+          style={{
+            position: "absolute",
+            top: 44,
+            right: 14,
+            width: 38,
+            height: 38,
+            borderRadius: 19,
+            background: "rgba(255,255,255,0.18)",
+            backdropFilter: "blur(10px)",
+            border: "1px solid rgba(255,255,255,0.25)",
+            display: "grid",
+            placeItems: "center",
+            zIndex: 11,
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="8" cy="8" r="5.5" stroke="#fff" strokeWidth="1.6" />
+            <path
+              d="M12 12l3 3"
+              stroke="#fff"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+
         {/* Center play indicator */}
         <div
           style={{

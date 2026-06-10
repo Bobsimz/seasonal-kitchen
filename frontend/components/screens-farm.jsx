@@ -380,7 +380,7 @@ export function ScreenPurchase({ t }) {
   ];
   return (
     <Phone t={t}>
-      <AppHeader t={t} title="구매하기" leftBack />
+      <AppHeader t={t} title="상품 상세" leftBack />
       <div
         className="phone-scroll"
         style={{ flex: 1, overflow: "auto", background: t.bgSoft }}
@@ -695,24 +695,7 @@ export function ScreenFarmUpload({ t }) {
   };
   return (
     <Phone t={t}>
-      <AppHeader
-        t={t}
-        title="상품 등록"
-        leftBack
-        rightIcons={
-          <div
-            className="tap"
-            style={{
-              fontSize: 12.5,
-              fontWeight: 700,
-              color: t.textSoft,
-              padding: "6px 8px",
-            }}
-          >
-            임시저장
-          </div>
-        }
-      />
+      <AppHeader t={t} title="상품 등록" leftBack />
       <div
         className="phone-scroll"
         style={{ flex: 1, overflow: "auto", background: t.bg }}
@@ -786,12 +769,125 @@ export function ScreenFarmUpload({ t }) {
             </div>
           </Field>
 
+          {/* AI 작성 도움 — 선택 가능 (AI 추천 ⇄ 직접 작성) */}
+          <div
+            style={{
+              marginBottom: 16,
+              padding: 14,
+              borderRadius: 14,
+              background: `linear-gradient(135deg, ${t.primaryBg}, #fff)`,
+              border: `1px solid ${t.primarySoft}`,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 4,
+              }}
+            >
+              <div
+                style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: 8,
+                  background: t.primary,
+                  color: "#fff",
+                  fontSize: 13,
+                  display: "grid",
+                  placeItems: "center",
+                }}
+              >
+                ✨
+              </div>
+              <div
+                style={{
+                  fontSize: 13.5,
+                  fontWeight: 800,
+                  color: t.text,
+                  letterSpacing: -0.3,
+                }}
+              >
+                AI로 상품 정보 작성
+              </div>
+            </div>
+            <div
+              style={{
+                fontSize: 11.5,
+                color: t.textSoft,
+                lineHeight: 1.5,
+                marginBottom: 10,
+              }}
+            >
+              사진·카테고리를 분석해 상품명·설명·추천 가격을 자동으로 채워드려요
+            </div>
+            <div
+              style={{
+                display: "flex",
+                gap: 4,
+                background: t.bgSoft,
+                padding: 4,
+                borderRadius: 12,
+              }}
+            >
+              {[
+                { label: "AI 추천", active: true },
+                { label: "직접 작성", active: false },
+              ].map((m) => (
+                <div
+                  key={m.label}
+                  className="tap"
+                  style={{
+                    flex: 1,
+                    height: 38,
+                    borderRadius: 9,
+                    display: "grid",
+                    placeItems: "center",
+                    fontSize: 13,
+                    fontWeight: m.active ? 800 : 600,
+                    color: m.active ? "#fff" : t.textMid,
+                    background: m.active ? t.primary : "transparent",
+                    boxShadow: m.active
+                      ? `0 2px 6px ${t.primary}55`
+                      : "none",
+                    letterSpacing: -0.3,
+                  }}
+                >
+                  {m.label}
+                </div>
+              ))}
+            </div>
+          </div>
+
           <Field label="상품명">
-            <input
-              style={inputBox}
-              placeholder="예: 해남 황토밭 가을무"
-              defaultValue=""
-            />
+            <div style={{ position: "relative" }}>
+              <input
+                style={inputBox}
+                placeholder="예: 해남 황토밭 가을무"
+                defaultValue="해남 황토밭 가을무 1.5kg"
+              />
+              <div
+                className="tap"
+                style={{
+                  position: "absolute",
+                  right: 8,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 3,
+                  padding: "5px 9px",
+                  borderRadius: 8,
+                  background: t.primaryBg,
+                  color: t.primaryDark,
+                  fontSize: 11,
+                  fontWeight: 800,
+                }}
+              >
+                ✨ AI 추천
+              </div>
+            </div>
           </Field>
 
           <Field label="식재료 카테고리">

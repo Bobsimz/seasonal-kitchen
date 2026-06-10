@@ -183,14 +183,6 @@ export function ScreenOnboard({ t }) {
               background: t.borderSoft,
             }}
           />
-          <div
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: 3,
-              background: t.borderSoft,
-            }}
-          />
         </div>
 
         <button
@@ -396,6 +388,16 @@ export function ScreenSignupSurvey({ t }) {
     "잣",
   ];
   const selectedAllergens = new Set(["새우", "땅콩"]);
+  // 선호 소비 유형 — 페르소나 & 농가 연결(저렴/프리미엄/유기농 농가 매칭)에 활용
+  const lifestyles = [
+    { label: "신선한", emoji: "🌿" },
+    { label: "저렴한", emoji: "💰" },
+    { label: "유기농", emoji: "🍃" },
+    { label: "프리미엄", emoji: "✨" },
+    { label: "친환경", emoji: "♻️" },
+    { label: "빠른 배송", emoji: "⚡" },
+  ];
+  const selectedLifestyles = new Set(["신선한", "저렴한"]);
 
   return (
     <Phone t={t}>
@@ -507,7 +509,60 @@ export function ScreenSignupSurvey({ t }) {
             </div>
           </div>
 
-          {/* ② 매운 음식 비선호 */}
+          {/* ② 선호 소비 유형 — 페르소나 & 농가 매칭 */}
+          <div style={{ marginTop: 24 }}>
+            <div
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: t.text,
+                letterSpacing: -0.3,
+              }}
+            >
+              선호하는 소비 유형
+            </div>
+            <div style={{ marginTop: 4, fontSize: 12, color: t.textSoft }}>
+              취향에 맞는 농가와 상품을 먼저 보여드려요
+            </div>
+            <div
+              style={{
+                marginTop: 12,
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 8,
+              }}
+            >
+              {lifestyles.map((l) => {
+                const on = selectedLifestyles.has(l.label);
+                return (
+                  <div
+                    key={l.label}
+                    className="tap"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                      padding: "8px 14px",
+                      borderRadius: 999,
+                      fontSize: 13,
+                      fontWeight: on ? 700 : 500,
+                      letterSpacing: -0.3,
+                      color: on ? t.primaryDark : t.textMid,
+                      background: on ? t.primaryBg : "#fff",
+                      border: on
+                        ? `1px solid ${t.primary}`
+                        : `1px solid ${t.borderSoft}`,
+                    }}
+                  >
+                    <span style={{ fontSize: 14 }}>{l.emoji}</span>
+                    {l.label}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ③ 매운 음식 비선호 */}
           <div
             style={{
               marginTop: 24,
@@ -893,263 +948,6 @@ export function ScreenOnboard2({ t }) {
             marginBottom: 16,
           }}
         >
-          <div
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: 3,
-              background: t.borderSoft,
-            }}
-          />
-          <div
-            style={{
-              width: 22,
-              height: 6,
-              borderRadius: 3,
-              background: t.primary,
-            }}
-          />
-          <div
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: 3,
-              background: t.borderSoft,
-            }}
-          />
-        </div>
-
-        <button
-          className="tap"
-          style={{
-            width: "100%",
-            height: 56,
-            borderRadius: 16,
-            border: "none",
-            background: t.primary,
-            color: "#fff",
-            fontSize: 16,
-            fontWeight: 700,
-            letterSpacing: -0.3,
-          }}
-        >
-          다음
-        </button>
-        <div
-          style={{
-            textAlign: "center",
-            marginTop: 14,
-            fontSize: 13,
-            color: t.textSoft,
-          }}
-        >
-          이미 계정이 있어요 ·{" "}
-          <span style={{ color: t.primary, fontWeight: 600 }}>로그인</span>
-        </div>
-      </div>
-    </Phone>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-// Onboard 3 — AI 셰프 소개 (요리가 어렵다구요?)
-//   대화 한 줄로 장보기·메뉴 추천이 완성되는 데모
-// ─────────────────────────────────────────────────────────────
-export function ScreenOnboard3({ t }) {
-  return (
-    <Phone t={t} hideStatus={false}>
-      <div
-        style={{
-          flex: 1,
-          padding: "60px 24px 24px",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <div
-          style={{
-            fontFamily: TITLE_FONT,
-            paddingTop: 24,
-            fontSize: 28,
-            fontWeight: 700,
-            letterSpacing: -1,
-            lineHeight: 1.25,
-            color: t.text,
-          }}
-        >
-          요리가 어렵다구요?
-          <br />
-          <span style={{ color: t.primary }}>AI 셰프</span>와 함께하세요
-        </div>
-        <div
-          style={{
-            marginTop: 12,
-            fontSize: 14,
-            color: t.textMid,
-            lineHeight: 1.55,
-          }}
-        >
-          예산 · 인원 · 취향만 알려주시면 5분 만에
-          <br />
-          이번 주 장바구니와 5일치 메뉴까지 짜드려요.
-        </div>
-
-        {/* Hero — chat conversation mock */}
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: 12,
-            marginBottom: 12,
-          }}
-        >
-          <div style={{ position: "relative", width: 304, height: 358 }}>
-            {/* User bubble */}
-            <div
-              style={{
-                position: "absolute",
-                right: 0,
-                top: 18,
-                maxWidth: 300,
-                width: 180,
-                padding: "12px 14px",
-                borderRadius: "18px 18px 4px 18px",
-                background: t.primary,
-                color: "#fff",
-                fontSize: 13,
-                fontWeight: 600,
-                lineHeight: 1.45,
-                boxShadow: "0 6px 18px rgba(20,40,30,0.18)",
-              }}
-            >
-              5일치 2인 가족,
-              <br />
-              가성비 위주로 짜줘
-            </div>
-
-            {/* AI avatar + bubble */}
-            <div
-              style={{
-                position: "absolute",
-                left: 0,
-                top: 102,
-                display: "flex",
-                alignItems: "flex-start",
-                gap: 10,
-                maxWidth: 270,
-              }}
-            >
-              <div
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 20,
-                  background: `linear-gradient(135deg, ${t.primary}, ${t.primaryDark})`,
-                  display: "grid",
-                  placeItems: "center",
-                  fontSize: 20,
-                  flexShrink: 0,
-                  boxShadow: `0 6px 18px ${t.primary}55`,
-                }}
-              >
-                🧑‍🍳
-              </div>
-              <div
-                style={{
-                  padding: "12px 14px",
-                  borderRadius: "18px 18px 18px 4px",
-                  background: "#fff",
-                  fontSize: 13,
-                  color: t.text,
-                  lineHeight: 1.45,
-                  border: `1px solid ${t.borderSoft}`,
-                  boxShadow: "0 6px 18px rgba(20,40,30,0.10)",
-                }}
-              >
-                <b style={{ color: t.primary }}>제철 무·배추</b>가<br />
-                평년 -22%라 활용하기 딱이에요!
-              </div>
-            </div>
-
-            {/* Generated cart card */}
-            <div
-              style={{
-                position: "absolute",
-                left: 14,
-                right: 0,
-                bottom: 70,
-                background: t.text,
-                color: "#fff",
-                borderRadius: 16,
-                padding: "12px 14px",
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                boxShadow: "0 12px 28px rgba(20,40,30,0.28)",
-              }}
-            >
-              <div
-                style={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: 11,
-                  background: "rgba(255,255,255,0.15)",
-                  display: "grid",
-                  placeItems: "center",
-                  fontSize: 19,
-                  flexShrink: 0,
-                }}
-              >
-                🛒
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 800,
-                    color: t.primary,
-                    letterSpacing: 0.5,
-                  }}
-                >
-                  AI 셰프가 완성한
-                </div>
-                <div
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 800,
-                    letterSpacing: -0.2,
-                    marginTop: 1,
-                  }}
-                >
-                  식재료 9개 · ₩{priceRange(38400)}
-                </div>
-                <div style={{ fontSize: 10.5, opacity: 0.7, marginTop: 2 }}>
-                  쿠팡 · 마켓컬리 자동 분배
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Dots */}
-        <div
-          style={{
-            display: "flex",
-            gap: 6,
-            justifyContent: "center",
-            marginBottom: 16,
-          }}
-        >
-          <div
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: 3,
-              background: t.borderSoft,
-            }}
-          />
           <div
             style={{
               width: 6,

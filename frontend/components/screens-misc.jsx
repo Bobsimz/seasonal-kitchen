@@ -54,15 +54,49 @@ export function ScreenMyPage({ t }) {
               마이페이지
             </div>
             <div style={{ display: "flex", gap: 6 }}>
+              {/* 장바구니만 노출 */}
               <div
                 className="tap"
                 style={{
+                  position: "relative",
                   width: 32,
                   height: 32,
                   display: "grid",
                   placeItems: "center",
                 }}
-              ></div>
+              >
+                <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M2 2h2l1.7 9.5a1 1 0 001 .8h7a1 1 0 001-.8L17 5.5H5.2"
+                    stroke={t.text}
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="8" cy="16.5" r="1.3" fill={t.text} />
+                  <circle cx="14.5" cy="16.5" r="1.3" fill={t.text} />
+                </svg>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: -2,
+                    right: -2,
+                    minWidth: 14,
+                    height: 14,
+                    padding: "0 3px",
+                    borderRadius: 7,
+                    background: t.hot,
+                    border: "1.5px solid #fff",
+                    color: "#fff",
+                    fontSize: 8.5,
+                    fontWeight: 800,
+                    display: "grid",
+                    placeItems: "center",
+                  }}
+                >
+                  3
+                </div>
+              </div>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
