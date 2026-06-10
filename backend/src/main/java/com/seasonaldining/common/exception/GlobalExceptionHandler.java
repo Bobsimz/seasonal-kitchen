@@ -4,6 +4,8 @@ import com.seasonaldining.common.response.ApiResponse;
 import com.seasonaldining.common.response.ErrorResponse;
 import com.seasonaldining.common.response.FieldErrorResponse;
 import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -17,6 +19,7 @@ import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException ex) {
@@ -93,6 +96,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
+        log.error("Unhandled exception", ex);
         return ResponseEntity.status(ErrorCode.COMMON_INTERNAL_ERROR.status())
                 .body(ApiResponse.failure(
                         new ErrorResponse(
@@ -112,4 +116,3 @@ public class GlobalExceptionHandler {
         return MDC.get("traceId");
     }
 }
-

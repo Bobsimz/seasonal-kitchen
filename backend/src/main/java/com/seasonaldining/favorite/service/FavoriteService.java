@@ -7,6 +7,7 @@ import com.seasonaldining.favorite.dto.response.FavoriteResponse;
 import com.seasonaldining.favorite.entity.Favorite;
 import com.seasonaldining.favorite.repository.FavoriteRepository;
 import com.seasonaldining.ingredient.repository.IngredientRepository;
+import com.seasonaldining.producer.service.ProducerService;
 import com.seasonaldining.recipe.repository.RecipeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +18,13 @@ public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
     private final IngredientRepository ingredientRepository;
     private final RecipeRepository recipeRepository;
+    private final ProducerService producerService;
 
-    public FavoriteService(FavoriteRepository favoriteRepository, IngredientRepository ingredientRepository, RecipeRepository recipeRepository) {
+    public FavoriteService(FavoriteRepository favoriteRepository, IngredientRepository ingredientRepository, RecipeRepository recipeRepository, ProducerService producerService) {
         this.favoriteRepository = favoriteRepository;
         this.ingredientRepository = ingredientRepository;
         this.recipeRepository = recipeRepository;
+        this.producerService = producerService;
     }
 
     @Transactional(readOnly = true)
@@ -45,7 +48,12 @@ public class FavoriteService {
     private void validateTarget(String type, Long id) {
         if ("INGREDIENT".equals(type) && ingredientRepository.findByIdAndActiveTrue(id).isPresent()) return;
         if ("RECIPE".equals(type) && recipeRepository.findByIdAndStatus(id, "PUBLISHED").isPresent()) return;
-        throw new BusinessException("INGREDIENT".equals(type) ? ErrorCode.INGREDIENT_NOT_FOUND : ErrorCode.RECIPE_NOT_FOUND);
+        if ("PRODUCER".equals(type) && producerService.existsById(id)) return;
+        throw new BusinessException(switch (type == null ? "" : type) {
+            case "RECIPE" -> ErrorCode.RECIPE_NOT_FOUND;
+            case "PRODUCER" -> ErrorCode.PRODUCER_NOT_FOUND;
+            default -> ErrorCode.INGREDIENT_NOT_FOUND;
+        });
     }
 
     private FavoriteResponse toResponse(Favorite favorite) {
