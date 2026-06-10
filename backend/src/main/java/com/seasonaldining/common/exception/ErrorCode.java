@@ -21,6 +21,7 @@ public enum ErrorCode {
     REEL_COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "REEL_COMMENT_NOT_FOUND", "릴스 댓글을 찾을 수 없습니다."),
     RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "RECIPE_NOT_FOUND", "레시피를 찾을 수 없습니다."),
     PRODUCER_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCER_NOT_FOUND", "농가를 찾을 수 없습니다."),
+    PRODUCER_ALREADY_REGISTERED(HttpStatus.CONFLICT, "PRODUCER_ALREADY_REGISTERED", "이미 농가로 등록되어 있습니다."),
     PRODUCER_OFFER_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCER_OFFER_NOT_FOUND", "농가 판매 상품을 찾을 수 없습니다."),
     CART_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "CART_ITEM_NOT_FOUND", "장바구니 항목을 찾을 수 없습니다."),
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_NOT_FOUND", "주문을 찾을 수 없습니다.");

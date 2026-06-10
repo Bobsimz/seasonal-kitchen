@@ -4,7 +4,9 @@ import com.seasonaldining.common.exception.BusinessException;
 import com.seasonaldining.common.exception.ErrorCode;
 import com.seasonaldining.common.response.ListResponse;
 import com.seasonaldining.ingredient.repository.IngredientRepository;
+import com.seasonaldining.producer.dto.request.CreateOfferRequest;
 import com.seasonaldining.producer.dto.request.CreateProducerReviewRequest;
+import com.seasonaldining.producer.dto.request.RegisterProducerRequest;
 import com.seasonaldining.producer.dto.response.*;
 import com.seasonaldining.producer.entity.*;
 import com.seasonaldining.producer.repository.*;
@@ -65,10 +67,69 @@ public class ProducerService {
     public ProducerDetailResponse getProducerDetail(Long producerId) {
         Producer p = producerRepository.findById(producerId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCER_NOT_FOUND));
-        return new ProducerDetailResponse(
-                p.getId(), p.getName(), p.getRegion(), p.getTagline(), p.getPhotoUrl(),
-                p.getStyle(), p.getPriceLevel(), p.getFreshnessLevel(), p.getRating(),
-                p.getReviewCount(), p.isHonorary(), specialties(p.getId()), badges(p.getId()));
+        return toDetail(p);
+    }
+
+    // ── 농가 자가등록 (마이페이지 → 농가로 등록) ──────────────
+    @Transactional
+    public ProducerDetailResponse registerMyProducer(Long userId, RegisterProducerRequest req) {
+        if (producerRepository.existsByUserId(userId)) {
+            throw new BusinessException(ErrorCode.PRODUCER_ALREADY_REGISTERED);
+        }
+        int priceLevel = req.priceLevel() != null ? req.priceLevel() : 3;
+        int freshnessLevel = req.freshnessLevel() != null ? req.freshnessLevel() : 4;
+        Producer saved = producerRepository.save(Producer.register(
+                userId, req.name(), req.region(), req.tagline(), req.photoUrl(),
+                req.style().toUpperCase(), priceLevel, freshnessLevel));
+        if (req.specialties() != null) {
+            req.specialties().stream().filter(s -> s != null && !s.isBlank()).distinct()
+                    .forEach(s -> specialtyRepository.save(
+                            ProducerSpecialty.of(saved.getId(), s.trim(), resolveIngredientId(s.trim()))));
+        }
+        if (req.badges() != null) {
+            req.badges().stream().filter(b -> b != null && !b.isBlank()).distinct()
+                    .forEach(b -> badgeRepository.save(ProducerBadge.of(saved.getId(), b.trim())));
+        }
+        return toDetail(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public ProducerDetailResponse getMyProducer(Long userId) {
+        Producer p = producerRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCER_NOT_FOUND));
+        return toDetail(p);
+    }
+
+    @Transactional
+    public ProducerOfferResponse addMyOffer(Long userId, CreateOfferRequest req) {
+        Producer producer = producerRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCER_NOT_FOUND));
+
+        // ingredientId가 오면 실제 활성 식재료인지 검증, 없으면 이름으로 해석 시도(없으면 null)
+        Long ingredientId = req.ingredientId();
+        if (ingredientId != null) {
+            if (ingredientRepository.findByIdAndActiveTrue(ingredientId).isEmpty()) {
+                throw new BusinessException(ErrorCode.INGREDIENT_NOT_FOUND);
+            }
+        } else {
+            ingredientId = resolveIngredientId(req.ingredientName());
+        }
+
+        ProducerOffer saved = offerRepository.save(ProducerOffer.create(
+                producer.getId(), ingredientId, req.ingredientName(),
+                req.price(), req.unit(), req.freshnessLabel()));
+
+        // 검색/목록(specialty 기준)에서 새 상품이 누락되지 않도록 specialty도 upsert
+        if (!specialtyRepository.existsByProducerIdAndIngredientName(producer.getId(), req.ingredientName())) {
+            specialtyRepository.save(ProducerSpecialty.of(producer.getId(), req.ingredientName(), ingredientId));
+        }
+        return toOffer(saved, producer.getId());
+    }
+
+    /** 식재료명으로 ingredient_id 해석 (정확히 일치하는 활성 식재료가 있으면 연결, 없으면 null) */
+    private Long resolveIngredientId(String name) {
+        return ingredientRepository.findTop20ByActiveTrueAndNameContainingIgnoreCaseOrderByIdDesc(name)
+                .stream().filter(i -> i.getName().equals(name)).map(i -> i.getId()).findFirst().orElse(null);
     }
 
     @Transactional(readOnly = true)
@@ -177,6 +238,13 @@ public class ProducerService {
     private List<String> badges(Long producerId) {
         return badgeRepository.findByProducerId(producerId)
                 .stream().map(ProducerBadge::getLabel).toList();
+    }
+
+    private ProducerDetailResponse toDetail(Producer p) {
+        return new ProducerDetailResponse(
+                p.getId(), p.getName(), p.getRegion(), p.getTagline(), p.getPhotoUrl(),
+                p.getStyle(), p.getPriceLevel(), p.getFreshnessLevel(), p.getRating(),
+                p.getReviewCount(), p.isHonorary(), specialties(p.getId()), badges(p.getId()));
     }
 
     private ProducerCardResponse toCard(Producer p) {

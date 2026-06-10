@@ -35,6 +35,16 @@ public final class UserDataCleaner {
         jdbcTemplate.update("DELETE FROM user_allergies");
         jdbcTemplate.update("DELETE FROM refresh_tokens");
         jdbcTemplate.update("DELETE FROM oauth_accounts");
+        // 자가등록 농가(user_id 보유)와 하위 데이터 정리. 시드 농가(user_id IS NULL)는 유지.
+        String selfProducers = "SELECT id FROM producers WHERE user_id IS NOT NULL";
+        jdbcTemplate.update("DELETE FROM cart_items WHERE offer_id IN "
+                + "(SELECT id FROM producer_offers WHERE producer_id IN (" + selfProducers + "))");
+        jdbcTemplate.update("DELETE FROM producer_offers WHERE producer_id IN (" + selfProducers + ")");
+        jdbcTemplate.update("DELETE FROM producer_specialties WHERE producer_id IN (" + selfProducers + ")");
+        jdbcTemplate.update("DELETE FROM producer_badges WHERE producer_id IN (" + selfProducers + ")");
+        jdbcTemplate.update("DELETE FROM producer_news WHERE producer_id IN (" + selfProducers + ")");
+        jdbcTemplate.update("DELETE FROM producer_reviews WHERE producer_id IN (" + selfProducers + ")");
+        jdbcTemplate.update("DELETE FROM producers WHERE user_id IS NOT NULL");
         jdbcTemplate.update("DELETE FROM users");
     }
 }

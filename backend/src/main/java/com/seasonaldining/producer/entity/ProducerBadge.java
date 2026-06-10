@@ -14,6 +14,13 @@ public class ProducerBadge {
 
     protected ProducerBadge() {}
 
+    public static ProducerBadge of(Long producerId, String label) {
+        ProducerBadge b = new ProducerBadge();
+        b.producerId = producerId;
+        b.label = label;
+        return b;
+    }
+
     public Long getId() { return id; }
     public Long getProducerId() { return producerId; }
     public String getLabel() { return label; }

@@ -26,6 +26,19 @@ public class ProducerOffer {
 
     protected ProducerOffer() {}
 
+    public static ProducerOffer create(Long producerId, Long ingredientId, String ingredientName,
+                                       BigDecimal price, String unit, String freshnessLabel) {
+        ProducerOffer o = new ProducerOffer();
+        o.producerId = producerId;
+        o.ingredientId = ingredientId;
+        o.ingredientName = ingredientName;
+        o.price = price;
+        o.unit = unit;
+        o.freshnessLabel = freshnessLabel;
+        o.observedAt = OffsetDateTime.now();
+        return o;
+    }
+
     public Long getId() { return id; }
     public Long getProducerId() { return producerId; }
     public Long getIngredientId() { return ingredientId; }

@@ -31,8 +31,29 @@ public class Producer {
     private boolean honorary;
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
+    @Column(name = "user_id")
+    private Long userId;
 
     protected Producer() {}
+
+    /** 마이페이지 자가등록용 팩토리. rating/review_count=0, honorary=false. */
+    public static Producer register(Long userId, String name, String region, String tagline,
+                                    String photoUrl, String style, int priceLevel, int freshnessLevel) {
+        Producer p = new Producer();
+        p.userId = userId;
+        p.name = name;
+        p.region = region;
+        p.tagline = tagline;
+        p.photoUrl = photoUrl;
+        p.style = style;
+        p.priceLevel = priceLevel;
+        p.freshnessLevel = freshnessLevel;
+        p.rating = BigDecimal.ZERO;
+        p.reviewCount = 0;
+        p.honorary = false;
+        p.createdAt = OffsetDateTime.now();
+        return p;
+    }
 
     /** 리뷰 작성 시 평점/리뷰수 집계 갱신 */
     public void applyReviewStats(BigDecimal rating, int reviewCount) {
@@ -41,6 +62,7 @@ public class Producer {
     }
 
     public Long getId() { return id; }
+    public Long getUserId() { return userId; }
     public String getName() { return name; }
     public String getRegion() { return region; }
     public String getTagline() { return tagline; }

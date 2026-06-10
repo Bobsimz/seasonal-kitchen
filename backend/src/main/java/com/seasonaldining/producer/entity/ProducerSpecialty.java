@@ -16,6 +16,14 @@ public class ProducerSpecialty {
 
     protected ProducerSpecialty() {}
 
+    public static ProducerSpecialty of(Long producerId, String ingredientName, Long ingredientId) {
+        ProducerSpecialty s = new ProducerSpecialty();
+        s.producerId = producerId;
+        s.ingredientName = ingredientName;
+        s.ingredientId = ingredientId;
+        return s;
+    }
+
     public Long getId() { return id; }
     public Long getProducerId() { return producerId; }
     public String getIngredientName() { return ingredientName; }
