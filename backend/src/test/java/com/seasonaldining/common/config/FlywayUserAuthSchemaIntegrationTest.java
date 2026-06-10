@@ -43,7 +43,7 @@ class FlywayUserAuthSchemaIntegrationTest {
         assertThat(count("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'refresh_tokens'")).isEqualTo(1);
         assertThat(count("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'user_preferences'")).isEqualTo(1);
         assertThat(count("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'user_allergies'")).isEqualTo(1);
-        assertThat(count("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'pantry_items'")).isEqualTo(1);
+        assertThat(count("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'pantry_items'")).isZero();
         assertThat(count("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'favorites'")).isEqualTo(1);
         assertThat(count("SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'price_alerts'")).isEqualTo(1);
     }

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-현재 사용자 프로필, 선호도, 보유 재료, 마이페이지 요약 API의 동작을 정의한다. 모든 사용자별 조회와 수정은 JWT 현재 사용자 기준으로 동작해야 한다.
+현재 사용자 프로필, 선호도, 마이페이지 요약 API의 동작을 정의한다. 모든 사용자별 조회와 수정은 JWT 현재 사용자 기준으로 동작해야 한다.
 
 ## Requirements
 
@@ -32,16 +32,6 @@
 - **WHEN** `PUT /api/v1/users/me/preferences`를 호출한다
 - **THEN** 시스템은 `user_preferences`를 생성 또는 갱신해야 한다
 
-### Requirement: 내 보유 재료 관리
-
-시스템은 SHALL 현재 사용자의 보유 재료를 조회, 추가, 수정, 삭제할 수 있어야 한다.
-
-#### Scenario: 보유 재료를 추가한다
-
-- **GIVEN** 인증된 사용자와 활성 식재료가 존재한다
-- **WHEN** `POST /api/v1/users/me/pantry`를 호출한다
-- **THEN** 시스템은 `pantry_items`에 현재 사용자 소유 항목을 저장해야 한다
-
 ### Requirement: 마이페이지 요약 제공
 
 시스템은 SHALL 프론트엔드 마이페이지에 필요한 프로필, 통계, 선호도 요약, 개인화 식재료, 메뉴 행을 제공해야 한다.
@@ -58,17 +48,12 @@
 - `PATCH /api/v1/users/me`
 - `GET /api/v1/users/me/summary`
 - `PUT /api/v1/users/me/preferences`
-- `GET /api/v1/users/me/pantry`
-- `POST /api/v1/users/me/pantry`
-- `PATCH /api/v1/users/me/pantry/{itemId}`
-- `DELETE /api/v1/users/me/pantry/{itemId}`
 
 ## Related database tables
 
 - `users`
 - `user_preferences`
 - `user_allergies`
-- `pantry_items`
 - `ingredients`
 - `favorites`
 - `price_alerts`
@@ -78,3 +63,4 @@
 
 - 알레르기 코드 카탈로그 API는 별도 구현되어 있지 않다.
 - 월간 절약액, 주문 횟수 등 일부 통계는 실제 결제/주문 데이터가 없어 placeholder 또는 단순 계산일 수 있다.
+- 보유 재료(pantry) 기능은 현재 제품 범위에서 제외되었다.

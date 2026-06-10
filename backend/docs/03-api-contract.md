@@ -115,10 +115,6 @@ GET    /api/v1/users/me
 PATCH  /api/v1/users/me
 GET    /api/v1/users/me/summary
 PUT    /api/v1/users/me/preferences
-GET    /api/v1/users/me/pantry
-POST   /api/v1/users/me/pantry
-PATCH  /api/v1/users/me/pantry/{itemId}
-DELETE /api/v1/users/me/pantry/{itemId}
 ```
 
 ### Home and Search

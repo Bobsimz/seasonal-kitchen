@@ -16,13 +16,6 @@
 - `budget` must be zero or greater.
 - `priority` must be one of the supported preference priorities when used for personalization.
 
-### Pantry Item
-
-- `ingredientId` is required.
-- `quantity` must be positive when provided.
-- `unit` is required when `quantity` is provided.
-- `expiresAt` must be today or a future date when provided.
-
 ## Ingredient
 
 - `name` is required.

@@ -56,7 +56,6 @@ class OpenApiEndpointsIntegrationTest {
         mockMvc.perform(get("/v3/api-docs"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("\"/api/v1/users/me/preferences\"")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("\"/api/v1/users/me/pantry\"")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("\"/api/v1/favorites\"")))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("\"/api/v1/price-alerts\"")));
     }

@@ -30,11 +30,9 @@ import com.seasonaldining.store.entity.Store;
 import com.seasonaldining.store.entity.StoreOffer;
 import com.seasonaldining.store.repository.StoreOfferRepository;
 import com.seasonaldining.store.repository.StoreRepository;
-import com.seasonaldining.user.entity.PantryItem;
 import com.seasonaldining.user.entity.User;
 import com.seasonaldining.user.entity.UserAllergy;
 import com.seasonaldining.user.entity.UserPreference;
-import com.seasonaldining.user.repository.PantryItemRepository;
 import com.seasonaldining.user.repository.UserAllergyRepository;
 import com.seasonaldining.user.repository.UserPreferenceRepository;
 import com.seasonaldining.user.repository.UserRepository;
@@ -67,7 +65,6 @@ public class DemoDataService {
     private final UserRepository users;
     private final UserPreferenceRepository preferences;
     private final UserAllergyRepository allergies;
-    private final PantryItemRepository pantryItems;
     private final FavoriteRepository favorites;
     private final PriceAlertRepository priceAlerts;
     private final NotificationRepository notifications;
@@ -88,7 +85,6 @@ public class DemoDataService {
             UserRepository users,
             UserPreferenceRepository preferences,
             UserAllergyRepository allergies,
-            PantryItemRepository pantryItems,
             FavoriteRepository favorites,
             PriceAlertRepository priceAlerts,
             NotificationRepository notifications
@@ -108,7 +104,6 @@ public class DemoDataService {
         this.users = users;
         this.preferences = preferences;
         this.allergies = allergies;
-        this.pantryItems = pantryItems;
         this.favorites = favorites;
         this.priceAlerts = priceAlerts;
         this.notifications = notifications;
@@ -254,9 +249,6 @@ public class DemoDataService {
     }
 
     private void userData(User user, Ingredient bomdong, Ingredient radish, Recipe recipe) {
-        if (pantryItems.findByUserIdOrderByIdDesc(user.getId()).isEmpty()) {
-            pantryItems.save(new PantryItem(user.getId(), bomdong.getId(), BigDecimal.ONE, "봉", LocalDate.of(2026, 6, 10)));
-        }
         if (favorites.findByUserIdOrderByIdDesc(user.getId()).isEmpty()) {
             favorites.save(new Favorite(user.getId(), "RECIPE", recipe.getId()));
         }

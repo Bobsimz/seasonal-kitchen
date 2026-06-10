@@ -30,7 +30,6 @@ public final class UserDataCleaner {
         jdbcTemplate.update("DELETE FROM recent_searches");
         jdbcTemplate.update("DELETE FROM price_alerts");
         jdbcTemplate.update("DELETE FROM favorites");
-        jdbcTemplate.update("DELETE FROM pantry_items");
         jdbcTemplate.update("DELETE FROM user_preferences");
         jdbcTemplate.update("DELETE FROM user_allergies");
         jdbcTemplate.update("DELETE FROM refresh_tokens");

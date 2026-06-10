@@ -110,7 +110,7 @@ public class OpenApiConfig {
                           "success": true,
                           "data": {
                             "profile": {"id": 1, "nickname": "제철데모", "profileImageUrl": "https://example.com/demo-profile.png"},
-                            "stats": {"monthlySaving": 0, "favoriteCount": 1, "activeAlertCount": 1, "pantryCount": 1, "recentOrderCount": 0},
+                            "stats": {"monthlySaving": 0, "favoriteCount": 1, "activeAlertCount": 1, "recentOrderCount": 0},
                             "preferences": {"householdSize": 2, "spicyAvoid": true, "priority": "LOW_PRICE"},
                             "allergyCodes": ["EGG", "MILK"],
                             "personalizedIngredients": [{"id": 1, "name": "봄동", "tags": ["추천", "채소"]}],

@@ -14,7 +14,6 @@ import com.seasonaldining.user.dto.response.UserPreferenceResponse;
 import com.seasonaldining.user.entity.User;
 import com.seasonaldining.user.entity.UserAllergy;
 import com.seasonaldining.user.entity.UserPreference;
-import com.seasonaldining.user.repository.PantryItemRepository;
 import com.seasonaldining.user.repository.UserAllergyRepository;
 import com.seasonaldining.user.repository.UserRepository;
 import com.seasonaldining.user.repository.UserPreferenceRepository;
@@ -33,7 +32,6 @@ public class UserService {
     private final UserAllergyRepository userAllergyRepository;
     private final FavoriteRepository favoriteRepository;
     private final PriceAlertRepository priceAlertRepository;
-    private final PantryItemRepository pantryItemRepository;
     private final IngredientRepository ingredientRepository;
 
     public UserService(
@@ -42,7 +40,6 @@ public class UserService {
             UserAllergyRepository userAllergyRepository,
             FavoriteRepository favoriteRepository,
             PriceAlertRepository priceAlertRepository,
-            PantryItemRepository pantryItemRepository,
             IngredientRepository ingredientRepository
     ) {
         this.userRepository = userRepository;
@@ -50,7 +47,6 @@ public class UserService {
         this.userAllergyRepository = userAllergyRepository;
         this.favoriteRepository = favoriteRepository;
         this.priceAlertRepository = priceAlertRepository;
-        this.pantryItemRepository = pantryItemRepository;
         this.ingredientRepository = ingredientRepository;
     }
 
@@ -95,7 +91,6 @@ public class UserService {
         UserPreference preference = userPreferenceRepository.findById(userId).orElse(null);
         long favoriteCount = favoriteRepository.countByUserId(userId);
         long activeAlertCount = priceAlertRepository.countByUserIdAndActiveTrue(userId);
-        long pantryCount = pantryItemRepository.countByUserId(userId);
         List<MyPageSummaryResponse.PersonalizedIngredientResponse> personalizedIngredients =
                 ingredientRepository.findByActiveTrue(PageRequest.of(0, 4)).getContent().stream()
                         .map(this::toPersonalizedIngredientResponse)
@@ -103,7 +98,7 @@ public class UserService {
 
         return new MyPageSummaryResponse(
                 new MyPageSummaryResponse.ProfileResponse(user.getId(), user.getNickname(), user.getProfileImageUrl()),
-                new MyPageSummaryResponse.StatsResponse(BigDecimal.ZERO, favoriteCount, activeAlertCount, pantryCount, 0),
+                new MyPageSummaryResponse.StatsResponse(BigDecimal.ZERO, favoriteCount, activeAlertCount, 0),
                 preference == null
                         ? new MyPageSummaryResponse.PreferenceSummaryResponse(null, null, null)
                         : new MyPageSummaryResponse.PreferenceSummaryResponse(
@@ -115,8 +110,7 @@ public class UserService {
                 personalizedIngredients,
                 List.of(
                         new MyPageSummaryResponse.MenuRowResponse("favorites", "찜한 콘텐츠", favoriteCount),
-                        new MyPageSummaryResponse.MenuRowResponse("priceAlerts", "가격 알림", activeAlertCount),
-                        new MyPageSummaryResponse.MenuRowResponse("pantry", "냉장고", pantryCount)
+                        new MyPageSummaryResponse.MenuRowResponse("priceAlerts", "가격 알림", activeAlertCount)
                 )
         );
     }

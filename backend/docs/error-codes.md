@@ -35,7 +35,6 @@ All error responses must follow the common error response format defined in `doc
 | `USER_NOT_FOUND` | 404 | 사용자를 찾을 수 없습니다. |
 | `USER_NICKNAME_DUPLICATED` | 409 | 이미 사용 중인 닉네임입니다. |
 | `USER_PREFERENCE_NOT_FOUND` | 404 | 사용자 추천 설정을 찾을 수 없습니다. |
-| `PANTRY_ITEM_NOT_FOUND` | 404 | 보유 재료를 찾을 수 없습니다. |
 
 ## Ingredient / Season / Price / Store
 

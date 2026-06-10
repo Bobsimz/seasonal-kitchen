@@ -62,7 +62,6 @@ This document does not evaluate frontend code quality and does not require front
 - `GET /api/v1/search`, `GET /api/v1/search/trending`, `GET /api/v1/users/me/recent-searches`: exist.
 - `GET /api/v1/users/me`, `PATCH /api/v1/users/me`: exist.
 - `PUT /api/v1/users/me/preferences`: exists.
-- `GET/POST/PATCH/DELETE /api/v1/users/me/pantry`: exist.
 - `GET/POST/DELETE /api/v1/favorites`: exist.
 - `GET/POST/PATCH/DELETE /api/v1/price-alerts`: exist.
 - Product and seller listing APIs are not implemented yet and replace the prior AI recommendation/shopping plan direction.
@@ -82,7 +81,7 @@ The visible prototype needs enough demo data to avoid empty screens:
 - Recipes: 봄동 비빔밥, 무생채, 봄동 새우전, 배추전, 봄동 쌈밥, 시금치 페스토, 깍두기, 비빔밥, 나물 무침
 - Reels: 봄동 비빔밥 1분, 배추전 황금레시피, 깍두기 모음, 시금치 페스토
 - Store offers: 쿠팡, 마켓컬리, 오아시스, 네이버 장보기, 이마트몰
-- User data: demo user, preferences, allergies, pantry, favorites, price alerts, notifications
+- User data: demo user, preferences, allergies, favorites, price alerts, notifications
 - Products: product listings linked to ingredients, with seller, price, unit, origin, stock/status, and related recipe coverage
 
 ## Assumptions

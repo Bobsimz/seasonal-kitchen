@@ -661,7 +661,7 @@ Response:
 | 🔒 | GET | `/api/v1/orders` | 주문 내역 |
 | 🔒 | GET | `/api/v1/orders/{id}` | 주문 상세/완료 |
 
-### 찜 / 가격알림 / 알림 / 보유재료 (🔒)
+### 찜 / 가격알림 / 알림 (🔒)
 | | 메서드 | 경로 | 설명 |
 |---|---|---|---|
 | 🔒 | GET/POST | `/api/v1/favorites`, `/favorites/{id}`(DELETE) | 찜(targetType: INGREDIENT/RECIPE/PRODUCER) |
@@ -669,8 +669,6 @@ Response:
 | 🔒 | PATCH/DELETE | `/api/v1/price-alerts/{id}` | 알림 수정/삭제 |
 | 🔒 | GET | `/api/v1/notifications` | 알림 목록(+탭 카운트) |
 | 🔒 | PATCH | `/api/v1/notifications/{id}/read` · `/read-all` | 읽음 처리 |
-| 🔒 | GET/POST | `/api/v1/users/me/pantry` | 보유 재료 |
-| 🔒 | PATCH/DELETE | `/api/v1/users/me/pantry/{itemId}` | 보유 재료 수정/삭제 |
 
 ### 기타
 | | 메서드 | 경로 | 설명 |
@@ -680,4 +678,4 @@ Response:
 
 ### 미구현(프론트 화면은 있으나 백엔드 없음)
 - 전용 상품 도메인 `GET /api/v1/products`, `/products/{id}` → 농가/오퍼로 대체
-- 판매자 AI(가격추천·홍보글), 검색 `PRODUCT` 타입, refresh token → future
+- 판매자 AI(가격추천·홍보글), 검색 `PRODUCT` 타입, 보유 재료(pantry), refresh token → future 또는 범위 제외

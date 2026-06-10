@@ -130,8 +130,7 @@ flowchart TD
 + 제철성 20%
 + 사용자 조건 적합도 20%
 + 레시피 및 릴스 활용도 15%
-+ 보유 재료 매칭도 10%
-+ 구매처 접근성 5%
++ 구매처 접근성 15%
 ```
 
 ## 6. 비동기 처리
@@ -152,7 +151,7 @@ flowchart TD
 
 - MVP는 이메일/비밀번호 로그인 후 JWT access token만 발급합니다.
 - Refresh token 재발급, logout token revoke, OAuth는 고도화 단계에서 도입합니다.
-- 사용자 위치, 알레르기, 보유 재료는 최소 범위만 저장합니다.
+- 사용자 위치와 알레르기는 최소 범위만 저장합니다.
 - 관리자 API는 별도 권한을 요구합니다.
 - 모든 외부 API 호출은 timeout, retry, circuit breaker 정책을 둡니다.
 - 응답 오류에는 요청 추적용 `traceId`를 포함합니다.

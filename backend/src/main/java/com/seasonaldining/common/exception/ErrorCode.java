@@ -13,7 +13,6 @@ public enum ErrorCode {
     AUTH_INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH_INVALID_CREDENTIALS", "이메일 또는 비밀번호가 올바르지 않습니다."),
     INGREDIENT_NOT_FOUND(HttpStatus.NOT_FOUND, "INGREDIENT_NOT_FOUND", "식재료를 찾을 수 없습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "사용자를 찾을 수 없습니다."),
-    PANTRY_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "PANTRY_ITEM_NOT_FOUND", "보유 재료를 찾을 수 없습니다."),
     FAVORITE_NOT_FOUND(HttpStatus.NOT_FOUND, "FAVORITE_NOT_FOUND", "찜 정보를 찾을 수 없습니다."),
     PRICE_ALERT_NOT_FOUND(HttpStatus.NOT_FOUND, "PRICE_ALERT_NOT_FOUND", "가격 알림을 찾을 수 없습니다."),
     NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTIFICATION_NOT_FOUND", "알림을 찾을 수 없습니다."),

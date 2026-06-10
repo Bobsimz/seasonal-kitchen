@@ -5,7 +5,7 @@
 | 도메인 | 핵심 역할 |
 | --- | --- |
 | `auth` | 이메일/비밀번호 로그인, JWT access token. OAuth/refresh token은 future |
-| `user` | 프로필, 가구원 수, 취향, 알레르기, 보유 재료 |
+| `user` | 프로필, 가구원 수, 취향, 알레르기 |
 | `ingredient` | 표준 식재료, 품목 별칭, 영양 정보 |
 | `season` | 월별 및 지역별 제철 정보 |
 | `price` | 공공 시세, 가격 이력, 전망, 단위 환산 |
@@ -27,7 +27,6 @@
 erDiagram
     USERS ||--|| USER_PREFERENCES : has
     USERS ||--o{ USER_ALLERGIES : has
-    USERS ||--o{ PANTRY_ITEMS : owns
     USERS ||--o{ FAVORITES : creates
     USERS ||--o{ PRICE_ALERTS : configures
     USERS ||--o{ PRODUCTS : sells
@@ -65,7 +64,6 @@ erDiagram
 | `refresh_tokens` | `id`, `user_id`, `token_hash`, `expires_at`, `revoked_at` (future) |
 | `user_preferences` | `user_id`, `household_size`, `budget`, `spicy_avoid`, `priority` |
 | `user_allergies` | `user_id`, `allergy_code` |
-| `pantry_items` | `id`, `user_id`, `ingredient_id`, `quantity`, `unit`, `expires_at` |
 
 ### 식재료와 가격
 

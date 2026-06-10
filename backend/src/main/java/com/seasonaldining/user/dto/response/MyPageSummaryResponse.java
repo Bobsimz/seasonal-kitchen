@@ -26,7 +26,6 @@ public record MyPageSummaryResponse(
             @Schema(example = "12000") BigDecimal monthlySaving,
             @Schema(example = "3") long favoriteCount,
             @Schema(example = "2") long activeAlertCount,
-            @Schema(example = "4") long pantryCount,
             @Schema(example = "0") long recentOrderCount
     ) {
     }

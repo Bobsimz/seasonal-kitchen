@@ -8,9 +8,7 @@ import com.seasonaldining.ingredient.entity.Ingredient;
 import com.seasonaldining.ingredient.repository.IngredientRepository;
 import com.seasonaldining.price.entity.PriceAlert;
 import com.seasonaldining.price.repository.PriceAlertRepository;
-import com.seasonaldining.user.entity.PantryItem;
 import com.seasonaldining.user.entity.User;
-import com.seasonaldining.user.repository.PantryItemRepository;
 import com.seasonaldining.user.repository.UserRepository;
 import com.seasonaldining.user.repository.UserPreferenceRepository;
 import com.seasonaldining.support.UserDataCleaner;
@@ -25,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -55,9 +52,6 @@ class UserControllerTest {
 
     @Autowired
     private PriceAlertRepository priceAlertRepository;
-
-    @Autowired
-    private PantryItemRepository pantryItemRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -163,7 +157,6 @@ class UserControllerTest {
         Ingredient ingredient = ingredientRepository.save(new Ingredient("봄동", "채소", "https://example.com/bomdong.png", "봉", true));
         favoriteRepository.save(new Favorite(user.getId(), "INGREDIENT", ingredient.getId()));
         priceAlertRepository.save(new PriceAlert(user.getId(), ingredient.getId(), new BigDecimal("3000.00"), true));
-        pantryItemRepository.save(new PantryItem(user.getId(), ingredient.getId(), BigDecimal.ONE, "봉", LocalDate.of(2026, 6, 10)));
 
         mockMvc.perform(put("/api/v1/users/me/preferences")
                         .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(user.getId()))
@@ -180,11 +173,10 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.data.profile.nickname").value("사용자"))
                 .andExpect(jsonPath("$.data.stats.favoriteCount").value(1))
                 .andExpect(jsonPath("$.data.stats.activeAlertCount").value(1))
-                .andExpect(jsonPath("$.data.stats.pantryCount").value(1))
                 .andExpect(jsonPath("$.data.preferences.householdSize").value(2))
                 .andExpect(jsonPath("$.data.allergyCodes[0]").value("EGG"))
                 .andExpect(jsonPath("$.data.personalizedIngredients[0].name").value("봄동"))
-                .andExpect(jsonPath("$.data.menuRows.length()").value(3));
+                .andExpect(jsonPath("$.data.menuRows.length()").value(2));
     }
 
     @Test
@@ -196,7 +188,6 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.stats.favoriteCount").value(0))
                 .andExpect(jsonPath("$.data.stats.activeAlertCount").value(0))
-                .andExpect(jsonPath("$.data.stats.pantryCount").value(0))
                 .andExpect(jsonPath("$.data.allergyCodes.length()").value(0))
                 .andExpect(jsonPath("$.data.personalizedIngredients.length()").value(0));
     }
