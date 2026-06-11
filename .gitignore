@@ -62,3 +62,6 @@ replay_pid*
 next-env.d.ts
 __pycache__/
 *.pyc
+
+# Gradle 공유 캐시 (호스트↔샌드박스 테스트용, 커밋 금지)
+.gradle-shared/
