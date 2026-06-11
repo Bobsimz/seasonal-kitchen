@@ -11,7 +11,7 @@ import { ScreenHomeB, ScreenHomeSearch, ScreenHomeSearchResult } from './screens
 import { ScreenList, ScreenRecipeList, ScreenListSearchResult, ScreenRecipeListSearchResult, ScreenDetail, ScreenCompare } from './screens-detail';
 import { ScreenProductList, ScreenProductListSeller, ScreenProductListSearchResult } from './screens-product';
 import { ScreenReels, ScreenRecipeDetail, ScreenRecipeSteps } from './screens-reels';
-import { ScreenMyPage, ScreenOrders, ScreenWishlist, ScreenReviews, ScreenWriteReview } from './screens-misc';
+import { ScreenMyPage, ScreenOrders, ScreenWishlist, ScreenReviews, ScreenWriteReview, ScreenSellerRegister } from './screens-misc';
 import { ScreenCart, ScreenPurchase, ScreenFarmUpload, ScreenProducerDetail, ScreenOrderComplete } from './screens-farm';
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
@@ -67,7 +67,6 @@ export function App() {
           <DCArtboard id="product-list-seller" label="16a 상품 리스트 · 판매자(+ 버튼)" width={W} height={H}><ScreenProductListSeller t={t}/></DCArtboard>
           <DCArtboard id="product-list-search" label="16b 상품 검색 결과 (봄동)" width={W} height={H}><ScreenProductListSearchResult t={t}/></DCArtboard>
           <DCArtboard id="product-detail" label="17 상품 상세"             width={W} height={H}><ScreenPurchase          t={t}/></DCArtboard>
-          <DCArtboard id="product-detail-mob" label="17′ 상품 상세 · 모바일" width={W} height={H}><div className="dc-phone-clip"><ScreenPurchase t={t}/></div></DCArtboard>
         </DCSection>
 
         <DCSection id="reels" title="05 · 레시피 릴스 & 상세" subtitle="↕ 새 레시피 · ↔ 좌우 스와이프로 레시피 상세로 전환">
@@ -84,12 +83,13 @@ export function App() {
           <DCArtboard id="wishlist" label="21b 찜 목록"           width={W} height={H}><ScreenWishlist  t={t}/></DCArtboard>
           <DCArtboard id="reviews"  label="21c 리뷰 관리"         width={W} height={H}><ScreenReviews   t={t}/></DCArtboard>
           <DCArtboard id="write-review" label="21d 리뷰 작성"     width={W} height={H}><ScreenWriteReview t={t}/></DCArtboard>
+          <DCArtboard id="seller-register" label="21e 판매자 등록"  width={W} height={H}><ScreenSellerRegister t={t}/></DCArtboard>
         </DCSection>
 
         <DCSection id="farm" title="07 · 농가 연결 & 주문" subtitle="장바구니 · 주문 완료 · 판매 등록(AI 작성 도움)">
-          <DCArtboard id="cart"        label="23 장바구니"        width={W} height={H}><ScreenCart       t={t}/></DCArtboard>
-          <DCArtboard id="order-complete" label="24 주문 완료"   width={W} height={H}><ScreenOrderComplete t={t}/></DCArtboard>
-          <DCArtboard id="farm-upload" label="25 판매 등록 (AI 작성 도움)"   width={W} height={H}><ScreenFarmUpload t={t}/></DCArtboard>
+          <DCArtboard id="cart"        label="22 장바구니"        width={W} height={H}><ScreenCart       t={t}/></DCArtboard>
+          <DCArtboard id="order-complete" label="23 주문 완료"   width={W} height={H}><ScreenOrderComplete t={t}/></DCArtboard>
+          <DCArtboard id="farm-upload" label="24 판매 등록 (AI 작성 도움)"   width={W} height={H}><ScreenFarmUpload t={t}/></DCArtboard>
         </DCSection>
 
         {/* 섹션 교차 화살표 — 09 홈 검색결과 더보기 → 11/13 정보 검색결과 (의미대로 매핑) */}

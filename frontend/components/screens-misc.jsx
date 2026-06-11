@@ -298,8 +298,8 @@ export function ScreenMyPage({ t }) {
               { ic: "📦", label: "주문 내역", sub: "최근 3건" },
               { ic: "❤️", label: "찜한 농가", sub: "8곳" },
               { ic: "⭐", label: "리뷰 관리", sub: "작성 가능 2건", tag: "NEW" },
-              { ic: "🔔", label: "가격 알림 설정", sub: "5건 활성" },
               { ic: "🌱", label: "제철 캘린더", sub: "11월 알림" },
+              { ic: "🧑‍🌾", label: "판매자 등록", sub: "농가 판매 시작하기" },
             ].map((r, i, arr) => (
               <div
                 key={i}
@@ -358,6 +358,265 @@ export function ScreenMyPage({ t }) {
 
         <div style={{ height: 24 }} />
       </div>
+    </Phone>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 21e — 판매자 등록 (마이페이지 → 농가 판매자 신청)
+// ─────────────────────────────────────────────────────────────
+export function ScreenSellerRegister({ t }) {
+  const items = ["무", "배추", "봄동", "시금치", "감귤", "대파"];
+  const selected = new Set(["무", "배추"]);
+  const Field = ({ label, value, placeholder, badge }) => (
+    <div style={{ padding: "16px 16px 0" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          fontSize: 12.5,
+          fontWeight: 800,
+          color: t.text,
+          marginBottom: 8,
+        }}
+      >
+        {label}
+        {badge && (
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 800,
+              color: t.primaryDark,
+              background: t.primaryBg,
+              padding: "2px 7px",
+              borderRadius: 999,
+            }}
+          >
+            {badge}
+          </span>
+        )}
+      </div>
+      <div
+        style={{
+          height: 48,
+          borderRadius: 12,
+          border: `1px solid ${t.border}`,
+          background: t.bgSoft,
+          display: "flex",
+          alignItems: "center",
+          padding: "0 14px",
+          fontSize: 13.5,
+          color: value ? t.text : t.textSoft,
+          fontWeight: value ? 700 : 500,
+        }}
+      >
+        {value || placeholder}
+      </div>
+    </div>
+  );
+  return (
+    <Phone t={t}>
+      <AppHeader t={t} title="판매자 등록" leftBack />
+      <div
+        className="phone-scroll"
+        style={{ flex: 1, overflow: "auto", background: t.bg }}
+      >
+        {/* 안내 카드 */}
+        <div style={{ padding: "14px 16px 0" }}>
+          <div
+            style={{
+              borderRadius: 18,
+              padding: 18,
+              background: `linear-gradient(135deg, ${t.primary}, ${t.primaryDark})`,
+              color: "#fff",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                right: -16,
+                top: -16,
+                fontSize: 80,
+                opacity: 0.15,
+              }}
+            >
+              🧑‍🌾
+            </div>
+            <div
+              style={{
+                fontSize: 12,
+                fontWeight: 800,
+                opacity: 0.9,
+                letterSpacing: 0.5,
+              }}
+            >
+              농가 판매자 신청
+            </div>
+            <div
+              style={{
+                fontSize: 18,
+                fontWeight: 800,
+                marginTop: 4,
+                letterSpacing: -0.4,
+              }}
+            >
+              내 농가 상품을
+              <br />
+              직접 판매해보세요
+            </div>
+            <div style={{ fontSize: 11.5, marginTop: 6, opacity: 0.9, lineHeight: 1.5 }}>
+              인증 후 상품 탭에서 바로 판매 등록할 수 있어요
+            </div>
+          </div>
+        </div>
+
+        {/* 입력 폼 */}
+        <Field label="농가/농장 이름" placeholder="예) 해남 송지농원" />
+        <Field label="대표자 이름" placeholder="실명을 입력해주세요" />
+        <Field label="대표 지역" placeholder="예) 전남 해남" />
+        <Field label="연락처" placeholder="010-0000-0000" />
+
+        {/* 주요 판매 품목 */}
+        <div style={{ padding: "16px 16px 0" }}>
+          <div style={{ fontSize: 12.5, fontWeight: 800, color: t.text, marginBottom: 8 }}>
+            주요 판매 품목
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {items.map((it) => {
+              const on = selected.has(it);
+              return (
+                <div
+                  key={it}
+                  className="tap"
+                  style={{
+                    padding: "9px 16px",
+                    borderRadius: 999,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    background: on ? t.primaryBg : "#fff",
+                    border: `1px solid ${on ? t.primary : t.border}`,
+                    color: on ? t.primaryDark : t.textMid,
+                  }}
+                >
+                  {it}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 농가 인증 업로드 */}
+        <div style={{ padding: "16px 16px 0" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              fontSize: 12.5,
+              fontWeight: 800,
+              color: t.text,
+              marginBottom: 8,
+            }}
+          >
+            농가 인증
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 800,
+                color: t.primaryDark,
+                background: t.primaryBg,
+                padding: "2px 7px",
+                borderRadius: 999,
+              }}
+            >
+              필수
+            </span>
+          </div>
+          <div
+            className="tap"
+            style={{
+              height: 96,
+              borderRadius: 14,
+              border: `1.5px dashed ${t.border}`,
+              background: t.bgSoft,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 6,
+              color: t.textSoft,
+            }}
+          >
+            <span style={{ fontSize: 24 }}>＋</span>
+            <span style={{ fontSize: 11.5, fontWeight: 700 }}>
+              농업경영체 등록확인서 첨부
+            </span>
+          </div>
+        </div>
+
+        {/* 약관 동의 */}
+        <div style={{ padding: "18px 16px 0" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "12px 14px",
+              borderRadius: 12,
+              background: t.bgSoft,
+            }}
+          >
+            <div
+              style={{
+                width: 22,
+                height: 22,
+                borderRadius: 6,
+                background: t.primary,
+                display: "grid",
+                placeItems: "center",
+                flexShrink: 0,
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 14 14">
+                <path
+                  d="M3 7.5l2.5 2.5L11 4"
+                  stroke="#fff"
+                  strokeWidth="2"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <span style={{ fontSize: 12.5, color: t.textMid, fontWeight: 600 }}>
+              판매자 이용약관 및 정산 정책에 동의합니다
+            </span>
+          </div>
+        </div>
+
+        <div style={{ height: 110 }} />
+      </div>
+
+      <StickyBar t={t}>
+        <button
+          className="tap"
+          style={{
+            width: "100%",
+            height: 52,
+            borderRadius: 14,
+            border: "none",
+            background: t.primary,
+            color: "#fff",
+            fontSize: 15,
+            fontWeight: 800,
+          }}
+        >
+          판매자 신청하기
+        </button>
+      </StickyBar>
     </Phone>
   );
 }
