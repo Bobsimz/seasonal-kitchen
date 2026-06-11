@@ -33,21 +33,36 @@ public class Producer {
     private OffsetDateTime createdAt = OffsetDateTime.now();
     @Column(name = "user_id")
     private Long userId;
+    // 판매자 등록 화면(21e) 필드
+    @Column(name = "representative_name", length = 50)
+    private String representativeName;
+    @Column(length = 30)
+    private String contact;
+    @Column(name = "certification_image_url", length = 500)
+    private String certificationImageUrl;
+    @Column(name = "agreed_to_terms", nullable = false)
+    private boolean agreedToTerms;
 
     protected Producer() {}
 
-    /** 마이페이지 자가등록용 팩토리. rating/review_count=0, honorary=false. */
-    public static Producer register(Long userId, String name, String region, String tagline,
-                                    String photoUrl, String style, int priceLevel, int freshnessLevel) {
+    /**
+     * 마이페이지 자가등록용 팩토리. 화면(21e)에서 받는 값만 입력받고,
+     * style/priceLevel/freshnessLevel은 화면에 없으므로 기본값으로 채운다.
+     * rating/review_count=0, honorary=false.
+     */
+    public static Producer register(Long userId, String name, String representativeName, String region,
+                                    String contact, String certificationImageUrl, boolean agreedToTerms) {
         Producer p = new Producer();
         p.userId = userId;
         p.name = name;
+        p.representativeName = representativeName;
         p.region = region;
-        p.tagline = tagline;
-        p.photoUrl = photoUrl;
-        p.style = style;
-        p.priceLevel = priceLevel;
-        p.freshnessLevel = freshnessLevel;
+        p.contact = contact;
+        p.certificationImageUrl = certificationImageUrl;
+        p.agreedToTerms = agreedToTerms;
+        p.style = "VALUE";       // 기본값(화면 미입력)
+        p.priceLevel = 3;
+        p.freshnessLevel = 4;
         p.rating = BigDecimal.ZERO;
         p.reviewCount = 0;
         p.honorary = false;
@@ -74,4 +89,8 @@ public class Producer {
     public int getReviewCount() { return reviewCount; }
     public boolean isHonorary() { return honorary; }
     public OffsetDateTime getCreatedAt() { return createdAt; }
+    public String getRepresentativeName() { return representativeName; }
+    public String getContact() { return contact; }
+    public String getCertificationImageUrl() { return certificationImageUrl; }
+    public boolean isAgreedToTerms() { return agreedToTerms; }
 }

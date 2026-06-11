@@ -4,34 +4,29 @@
 프론트가 드롭다운/체크박스로 쓸 값 목록입니다.
 요청/응답 예시와 화면별 호출 흐름은 canonical 문서인 `frontend-api-guide.md`를 기준으로 봅니다.
 
-## 농가 등록 (RegisterProducerRequest)
+## 농가 등록 (RegisterProducerRequest) — `POST /api/v1/producers/me`
 
-| 필드 | 타입 | 필수 | 허용/권장 값 | 비고 |
-| --- | --- | --- | --- | --- |
-| `name` | string(≤100) | ✅ | 자유 | 농가/생산자명 |
-| `region` | string(≤100) | ✅ | 자유 | 시·군 단위 권장 ("경북 영천") |
-| `tagline` | string(≤300) | — | 자유 | 한 줄 소개 |
-| `photoUrl` | string(≤500) | — | URL | 대표 사진 |
-| `style` | enum | ✅ | **`VALUE` / `ORGANIC` / `PREMIUM`** | 아래 표 참고 |
-| `priceLevel` | int 1~5 | — | 1~5 (기본 3) | 가격대 자가표시 |
-| `freshnessLevel` | int 1~5 | — | 1~5 (기본 4) | 신선도 자가표시 |
-| `specialties` | string[] | — | 식재료명 | `GET /api/v1/ingredients`의 name 사용 권장 |
-| `badges` | string[] | — | 아래 권장 목록 | 자유 텍스트(자기신고). enum 강제 아님 |
+판매자 등록 화면(21e)에 맞춘 필드. **스타일/가격대/신선도/배지/한줄소개/대표사진은 등록 화면에서 받지 않으며**,
+자가등록 시 기본값(style=VALUE, priceLevel=3, freshnessLevel=4)으로 채워진다(컬럼은 유지).
 
-### style (enum, 고정)
-| 코드 | 라벨(프론트 표시 예) |
-| --- | --- |
-| `VALUE` | 저렴이·실속형 |
-| `ORGANIC` | 유기농·무농약 |
-| `PREMIUM` | 프리미엄·싱싱 |
+| 필드 | 타입 | 필수 | 비고 |
+| --- | --- | --- | --- |
+| `name` | string(≤100) | ✅ | 농가/농장 이름 |
+| `representativeName` | string(≤50) | ✅ | 대표자 실명 |
+| `region` | string(≤100) | ✅ | 대표 지역 |
+| `contact` | string(≤30) | ✅ | 연락처 (예: 010-1234-5678) |
+| `specialties` | string[] | — | 주요 판매 품목(식재료명). `GET /api/v1/ingredients`의 name 권장 |
+| `certificationImageUrl` | string(≤500) | ✅ | 농가 인증 서류 이미지 URL(화면 필수). 심사는 추후 |
+| `agreedToTerms` | boolean | ✅ (true) | 판매자 약관·정산정책 동의. false면 400 검증 오류 |
 
-### badges (권장 목록 — 자유 텍스트라 강제는 아님)
-시드/디자인에서 쓰인 값:
-
-`산지직송`, `당일수확`, `유기농 인증`, `무농약`, `대량 할인`, `가성비`, `프리미엄`, `고랭지`, `새벽 출고`, `콜드체인`
-
-> 프론트는 위 목록을 체크박스로 제공하고, 필요 시 자유 입력도 허용 가능.
-> "유기농 인증" 등 검증이 필요한 배지도 현재는 자기신고(인증 심사는 future).
+요청 예:
+```jsonc
+{ "name":"해남 송지농원", "representativeName":"김상도", "region":"전남 해남",
+  "contact":"010-1234-5678", "specialties":["무","배추","봄동"],
+  "certificationImageUrl":"https://cert/test.png", "agreedToTerms":true }
+```
+> 응답은 `ProducerDetailResponse`(기존 그대로). style/priceLevel/badges 등은 기본값으로 반환된다.
+> 대표자명·연락처·인증서류는 판매자 비공개 정보라 공개 농가 상세 응답에는 노출하지 않고 저장만 한다.
 
 ## 상품 등록 (CreateOfferRequest)
 

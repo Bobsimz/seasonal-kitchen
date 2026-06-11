@@ -87,20 +87,15 @@ public class ProducerService {
         if (producerRepository.existsByUserId(userId)) {
             throw new BusinessException(ErrorCode.PRODUCER_ALREADY_REGISTERED);
         }
-        int priceLevel = req.priceLevel() != null ? req.priceLevel() : 3;
-        int freshnessLevel = req.freshnessLevel() != null ? req.freshnessLevel() : 4;
         Producer saved = producerRepository.save(Producer.register(
-                userId, req.name(), req.region(), req.tagline(), req.photoUrl(),
-                req.style().toUpperCase(), priceLevel, freshnessLevel));
+                userId, req.name(), req.representativeName(), req.region(),
+                req.contact(), req.certificationImageUrl(), req.agreedToTerms()));
         if (req.specialties() != null) {
             req.specialties().stream().filter(s -> s != null && !s.isBlank()).distinct()
                     .forEach(s -> specialtyRepository.save(
                             ProducerSpecialty.of(saved.getId(), s.trim(), resolveIngredientId(s.trim()))));
         }
-        if (req.badges() != null) {
-            req.badges().stream().filter(b -> b != null && !b.isBlank()).distinct()
-                    .forEach(b -> badgeRepository.save(ProducerBadge.of(saved.getId(), b.trim())));
-        }
+        // 배지/스타일/가격대는 등록 화면(21e)에서 받지 않음 — 기본값 처리
         return toDetail(saved);
     }
 

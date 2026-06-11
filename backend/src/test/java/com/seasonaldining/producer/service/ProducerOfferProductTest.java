@@ -46,8 +46,8 @@ class ProducerOfferProductTest {
         jdbc.update("INSERT INTO users (email, nickname, status) VALUES (?, '상품판매자', 'ACTIVE')", EMAIL);
         userId = jdbc.queryForObject("SELECT id FROM users WHERE email = ?", Long.class, EMAIL);
         producerService.registerMyProducer(userId, new RegisterProducerRequest(
-                "상품농가", "전남 해남", "산지직송", null, "VALUE", 3, 4,
-                List.of("봄동"), List.of("산지직송")));
+                "상품농가", "김상도", "전남 해남", "010-0000-0000",
+                List.of("봄동"), "https://cert/test.png", true));
     }
 
     @Test

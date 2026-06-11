@@ -52,17 +52,16 @@ class ProducerSelfRegistrationTest {
     }
 
     private RegisterProducerRequest sampleReq() {
-        return new RegisterProducerRequest("테스트농가", "강원 평창", "고랭지 무농약", null,
-                "ORGANIC", 4, 5, List.of("봄동", "시금치"), List.of("산지직송", "무농약"));
+        return new RegisterProducerRequest("테스트농가", "김농부", "강원 평창", "010-1234-5678",
+                List.of("봄동", "시금치"), "https://cert/test.png", true);
     }
 
     @Test
     void register_createsProducerLinkedToUser() {
         ProducerDetailResponse d = producerService.registerMyProducer(userId, sampleReq());
         assertThat(d.name()).isEqualTo("테스트농가");
-        assertThat(d.style()).isEqualTo("ORGANIC");
         assertThat(d.specialties()).contains("봄동", "시금치");
-        assertThat(d.badges()).contains("산지직송");
+        assertThat(d.badges()).isEmpty(); // 등록 화면에 배지 없음 → 기본 없음
         assertThat(d.rating()).isEqualByComparingTo("0");
         assertThat(d.reviewCount()).isZero();
 

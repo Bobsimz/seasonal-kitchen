@@ -134,7 +134,7 @@ Response:
 | --- | --- | --- |
 | `AUTH_EMAIL_DUPLICATE` | 409 | 이미 가입된 이메일 |
 | `AUTH_NICKNAME_DUPLICATE` | 409 | 이미 사용 중인 닉네임 |
-| `COMMON_VALIDATION_ERROR` | 400 | 이메일 형식, 비밀번호 길이 등 검증 실패 |
+| `COMMON_VALIDATION_FAILED` | 400 | 이메일 형식, 비밀번호 길이 등 검증 실패 |
 
 ### POST `/api/v1/auth/login`
 
