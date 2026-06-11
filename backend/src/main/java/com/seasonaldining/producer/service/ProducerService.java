@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 농가(생산자) 도메인 서비스 — farm-direct-commerce 스켈레톤.
@@ -35,6 +37,9 @@ public class ProducerService {
     private final ProducerNewsRepository newsRepository;
     private final ProducerReviewRepository reviewRepository;
     private final IngredientRepository ingredientRepository;
+    private final OfferPhotoRepository offerPhotoRepository;
+    private final OfferTagRepository offerTagRepository;
+    private final OfferOptionRepository offerOptionRepository;
 
     public ProducerService(ProducerRepository producerRepository,
                            ProducerSpecialtyRepository specialtyRepository,
@@ -42,7 +47,10 @@ public class ProducerService {
                            ProducerOfferRepository offerRepository,
                            ProducerNewsRepository newsRepository,
                            ProducerReviewRepository reviewRepository,
-                           IngredientRepository ingredientRepository) {
+                           IngredientRepository ingredientRepository,
+                           OfferPhotoRepository offerPhotoRepository,
+                           OfferTagRepository offerTagRepository,
+                           OfferOptionRepository offerOptionRepository) {
         this.producerRepository = producerRepository;
         this.specialtyRepository = specialtyRepository;
         this.badgeRepository = badgeRepository;
@@ -50,6 +58,9 @@ public class ProducerService {
         this.newsRepository = newsRepository;
         this.reviewRepository = reviewRepository;
         this.ingredientRepository = ingredientRepository;
+        this.offerPhotoRepository = offerPhotoRepository;
+        this.offerTagRepository = offerTagRepository;
+        this.offerOptionRepository = offerOptionRepository;
     }
 
     @Transactional(readOnly = true)
@@ -117,7 +128,35 @@ public class ProducerService {
 
         ProducerOffer saved = offerRepository.save(ProducerOffer.create(
                 producer.getId(), ingredientId, req.ingredientName(),
-                req.price(), req.unit(), req.freshnessLabel()));
+                req.price(), req.unit(), req.freshnessLabel(),
+                req.title(), req.description(), req.category()));
+
+        // 상품 사진(첫 번째가 대표) 저장
+        if (req.photoUrls() != null) {
+            int order = 0;
+            for (String url : req.photoUrls()) {
+                if (url == null || url.isBlank()) continue;
+                offerPhotoRepository.save(OfferPhoto.of(saved.getId(), url.trim(), order, order == 0));
+                order++;
+            }
+        }
+        // 상품 태그 저장
+        if (req.tags() != null) {
+            for (String label : req.tags()) {
+                if (label == null || label.isBlank()) continue;
+                offerTagRepository.save(OfferTag.of(saved.getId(), label.trim()));
+            }
+        }
+        // price는 API validation에서 필수로 검증된다. null check는 내부 호출 대비 방어다.
+        if (req.options() != null) {
+            int oi = 0;
+            for (CreateOfferRequest.OptionInput opt : req.options()) {
+                if (opt == null || opt.price() == null) continue;
+                String ou = (opt.unit() == null || opt.unit().isBlank()) ? null : opt.unit().trim();
+                offerOptionRepository.save(OfferOption.of(saved.getId(), opt.quantity(), ou, opt.price(), oi));
+                oi++;
+            }
+        }
 
         // 검색/목록(specialty 기준)에서 새 상품이 누락되지 않도록 specialty도 upsert
         if (!specialtyRepository.existsByProducerIdAndIngredientName(producer.getId(), req.ingredientName())) {
@@ -135,8 +174,7 @@ public class ProducerService {
     @Transactional(readOnly = true)
     public List<ProducerOfferResponse> getProducerOffers(Long producerId) {
         requireProducer(producerId);
-        return offerRepository.findByProducerIdOrderByPriceAsc(producerId)
-                .stream().map(o -> toOffer(o, producerId)).toList();
+        return toOffers(offerRepository.findByProducerIdOrderByPriceAsc(producerId));
     }
 
     @Transactional(readOnly = true)
@@ -145,19 +183,17 @@ public class ProducerService {
         // 1) offer가 ingredient_id로 링크된 경우 그대로 사용
         List<ProducerOffer> byId = offerRepository.findByIngredientIdOrderByPriceAsc(ingredientId);
         if (!byId.isEmpty()) {
-            return byId.stream().map(o -> toOffer(o, o.getProducerId())).toList();
+            return toOffers(byId);
         }
         // 2) 폴백: 아직 ingredient_id 백필 전이면 식재료명으로 매칭 (시드만 있어도 동작)
-        return ingredientRepository.findById(ingredientId)
+        return toOffers(ingredientRepository.findById(ingredientId)
                 .map(ing -> offerRepository.findByIngredientNameOrderByPriceAsc(ing.getName()))
-                .orElseGet(List::of)
-                .stream().map(o -> toOffer(o, o.getProducerId())).toList();
+                .orElseGet(List::of));
     }
 
     @Transactional(readOnly = true)
     public List<ProducerOfferResponse> getOffersForIngredientName(String ingredientName) {
-        return offerRepository.findByIngredientNameOrderByPriceAsc(ingredientName)
-                .stream().map(o -> toOffer(o, o.getProducerId())).toList();
+        return toOffers(offerRepository.findByIngredientNameOrderByPriceAsc(ingredientName));
     }
 
     @Transactional(readOnly = true)
@@ -254,14 +290,56 @@ public class ProducerService {
                 specialties(p.getId()), badges(p.getId()));
     }
 
+    /** 목록용 배치 매핑 — 사진/태그/농가를 한 번에 로드해 N+1 방지 */
+    private List<ProducerOfferResponse> toOffers(List<ProducerOffer> offers) {
+        if (offers.isEmpty()) return List.of();
+        List<Long> offerIds = offers.stream().map(ProducerOffer::getId).toList();
+        Map<Long, List<String>> photosByOffer = offerPhotoRepository.findByOfferIdInOrderBySortOrderAsc(offerIds)
+                .stream().collect(Collectors.groupingBy(OfferPhoto::getOfferId,
+                        Collectors.mapping(OfferPhoto::getUrl, Collectors.toList())));
+        Map<Long, List<String>> tagsByOffer = offerTagRepository.findByOfferIdInOrderByIdAsc(offerIds)
+                .stream().collect(Collectors.groupingBy(OfferTag::getOfferId,
+                        Collectors.mapping(OfferTag::getLabel, Collectors.toList())));
+        Map<Long, List<ProducerOfferResponse.OptionResponse>> optionsByOffer =
+                offerOptionRepository.findByOfferIdInOrderBySortOrderAsc(offerIds)
+                .stream().collect(Collectors.groupingBy(OfferOption::getOfferId,
+                        Collectors.mapping(op -> new ProducerOfferResponse.OptionResponse(
+                                op.getId(), op.getQuantity(), op.getUnit(), op.getPrice()), Collectors.toList())));
+        List<Long> producerIds = offers.stream().map(ProducerOffer::getProducerId).distinct().toList();
+        Map<Long, Producer> producers = producerRepository.findAllById(producerIds).stream()
+                .collect(Collectors.toMap(Producer::getId, pp -> pp));
+        return offers.stream().map(o -> {
+            Producer p = producers.get(o.getProducerId());
+            return new ProducerOfferResponse(
+                    o.getId(), o.getProducerId(),
+                    p != null ? p.getName() : null,
+                    p != null ? p.getRegion() : null,
+                    o.getIngredientName(), o.getIngredientId(),
+                    o.getPrice(), o.getUnit(), o.getFreshnessLabel(),
+                    o.getTitle(), o.getDescription(), o.getCategory(),
+                    photosByOffer.getOrDefault(o.getId(), List.of()),
+                    tagsByOffer.getOrDefault(o.getId(), List.of()),
+                    optionsByOffer.getOrDefault(o.getId(), List.of()));
+        }).toList();
+    }
+
     private ProducerOfferResponse toOffer(ProducerOffer o, Long producerId) {
         Producer p = producerRepository.findById(producerId).orElse(null);
+        List<String> photoUrls = offerPhotoRepository.findByOfferIdOrderBySortOrderAsc(o.getId())
+                .stream().map(OfferPhoto::getUrl).toList();
+        List<String> tags = offerTagRepository.findByOfferIdOrderByIdAsc(o.getId())
+                .stream().map(OfferTag::getLabel).toList();
+        List<ProducerOfferResponse.OptionResponse> options = offerOptionRepository.findByOfferIdOrderBySortOrderAsc(o.getId())
+                .stream().map(op -> new ProducerOfferResponse.OptionResponse(
+                        op.getId(), op.getQuantity(), op.getUnit(), op.getPrice())).toList();
         return new ProducerOfferResponse(
                 o.getId(), producerId,
                 p != null ? p.getName() : null,
                 p != null ? p.getRegion() : null,
                 o.getIngredientName(), o.getIngredientId(),
-                o.getPrice(), o.getUnit(), o.getFreshnessLabel());
+                o.getPrice(), o.getUnit(), o.getFreshnessLabel(),
+                o.getTitle(), o.getDescription(), o.getCategory(),
+                photoUrls, tags, options);
     }
 
     private ProducerReviewResponse toReview(ProducerReview r) {

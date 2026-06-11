@@ -21,6 +21,13 @@ public class ProducerOffer {
     private String unit;
     @Column(name = "freshness_label", length = 50)
     private String freshnessLabel;
+    // 상품 속성 (offer→상품 확장, V23) — nullable
+    @Column(length = 150)
+    private String title;
+    @Column(length = 1000)
+    private String description;
+    @Column(length = 30)
+    private String category;
     @Column(name = "observed_at", nullable = false)
     private OffsetDateTime observedAt = OffsetDateTime.now();
 
@@ -28,6 +35,13 @@ public class ProducerOffer {
 
     public static ProducerOffer create(Long producerId, Long ingredientId, String ingredientName,
                                        BigDecimal price, String unit, String freshnessLabel) {
+        return create(producerId, ingredientId, ingredientName, price, unit, freshnessLabel,
+                null, null, null);
+    }
+
+    public static ProducerOffer create(Long producerId, Long ingredientId, String ingredientName,
+                                       BigDecimal price, String unit, String freshnessLabel,
+                                       String title, String description, String category) {
         ProducerOffer o = new ProducerOffer();
         o.producerId = producerId;
         o.ingredientId = ingredientId;
@@ -35,6 +49,9 @@ public class ProducerOffer {
         o.price = price;
         o.unit = unit;
         o.freshnessLabel = freshnessLabel;
+        o.title = title;
+        o.description = description;
+        o.category = category;
         o.observedAt = OffsetDateTime.now();
         return o;
     }
@@ -46,5 +63,8 @@ public class ProducerOffer {
     public BigDecimal getPrice() { return price; }
     public String getUnit() { return unit; }
     public String getFreshnessLabel() { return freshnessLabel; }
+    public String getTitle() { return title; }
+    public String getDescription() { return description; }
+    public String getCategory() { return category; }
     public OffsetDateTime getObservedAt() { return observedAt; }
 }

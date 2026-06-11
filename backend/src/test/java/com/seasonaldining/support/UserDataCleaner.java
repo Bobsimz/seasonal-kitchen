@@ -38,6 +38,13 @@ public final class UserDataCleaner {
         String selfProducers = "SELECT id FROM producers WHERE user_id IS NOT NULL";
         jdbcTemplate.update("DELETE FROM cart_items WHERE offer_id IN "
                 + "(SELECT id FROM producer_offers WHERE producer_id IN (" + selfProducers + "))");
+        // offer_photos/offer_tags가 producer_offers를 참조 → 부모 삭제 전에 먼저 삭제
+        jdbcTemplate.update("DELETE FROM offer_photos WHERE offer_id IN "
+                + "(SELECT id FROM producer_offers WHERE producer_id IN (" + selfProducers + "))");
+        jdbcTemplate.update("DELETE FROM offer_tags WHERE offer_id IN "
+                + "(SELECT id FROM producer_offers WHERE producer_id IN (" + selfProducers + "))");
+        jdbcTemplate.update("DELETE FROM offer_options WHERE offer_id IN "
+                + "(SELECT id FROM producer_offers WHERE producer_id IN (" + selfProducers + "))");
         jdbcTemplate.update("DELETE FROM producer_offers WHERE producer_id IN (" + selfProducers + ")");
         jdbcTemplate.update("DELETE FROM producer_specialties WHERE producer_id IN (" + selfProducers + ")");
         jdbcTemplate.update("DELETE FROM producer_badges WHERE producer_id IN (" + selfProducers + ")");
