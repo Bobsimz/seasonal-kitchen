@@ -246,7 +246,17 @@ Response:
       "ingredientId": 12,
       "price": 5310,
       "unit": "봉",
-      "freshnessLabel": "당일수확"
+      "freshnessLabel": "당일수확",
+      "title": "햇 봄동 1.5kg 산지직송",
+      "description": "남도 텃밭에서 새벽 수확",
+      "category": "잎채소",
+      "photoUrls": ["https://img/1.png"],
+      "tags": ["산지직송", "무료배송"],
+      "options": [{ "id": 100, "quantity": 1.5, "unit": "kg", "price": 6900 }],
+      "certifications": ["무농약", "유기농(유기농산물)"],
+      "stockQuantity": 120,
+      "storageMethod": "냉장 보관",
+      "storageNote": "신문지에 싸서 냉장 보관하면 2주까지 신선해요."
     }
   ],
   "error": null,
@@ -568,6 +578,7 @@ Response:
 | `POST` | `/api/v1/producers/me` | 농가로 등록. 이미 등록 시 `PRODUCER_ALREADY_REGISTERED`(409) |
 | `GET` | `/api/v1/producers/me` | 내 농가 조회. 미등록 시 `PRODUCER_NOT_FOUND`(404) → "농가 등록" 버튼 노출 판단에 사용 |
 | `POST` | `/api/v1/producers/me/offers` | 내 농가 상품(offer) 등록. 미등록 상태면 404 |
+| `GET` | `/api/v1/producers/me/stats` | 내 농가 판매 통계(21f 판매자 통계 / 마이 판매자 센터 카드) |
 
 ```jsonc
 // POST /api/v1/producers/me  (요청)
@@ -577,12 +588,38 @@ Response:
 // 응답 data: ProducerDetailResponse (id, name, region, tagline, photoUrl, style,
 //   priceLevel, freshnessLevel, rating=0, reviewCount=0, honorary=false, specialties[], badges[])
 
-// POST /api/v1/producers/me/offers  (요청)
-{ "ingredientId":12, "ingredientName":"봄동", "price":4500, "unit":"봉", "freshnessLabel":"당일수확" }
-// 응답 data: ProducerOfferResponse (id, producerId, producerName, region, ingredientName, ingredientId, price, unit, freshnessLabel)
+// POST /api/v1/producers/me/offers  (요청) — V26 필드 포함
+{ "ingredientId":12, "ingredientName":"봄동", "price":4500, "unit":"봉", "freshnessLabel":"당일수확",
+  "title":"햇 봄동 1.5kg 산지직송", "description":"남도 텃밭에서 새벽 수확", "category":"잎채소",
+  "photoUrls":["https://img/1.png"], "tags":["산지직송","무료배송"],
+  "options":[{ "quantity":1.5, "unit":"kg", "price":6900 }],
+  "certifications":["무농약","유기농(유기농산물)"],   // ★ 필수(1개 이상). 빈 배열/누락 시 400
+  "stockQuantity":120,                                // 선택(>=0)
+  "storageMethod":"냉장 보관",                         // ★ 필수(비면 400)
+  "storageNote":"신문지에 싸서 냉장 보관하면 2주까지 신선해요." } // 선택
+// 응답 data: ProducerOfferResponse (… 기존 필드 + certifications[], stockQuantity, storageMethod, storageNote)
 ```
 - 상품 등록 시 해당 ingredientName이 specialty에 없으면 자동 추가 → 농가 검색에도 노출.
 - `ingredientId`를 주면 활성 식재료 검증(없으면 `INGREDIENT_NOT_FOUND`), 안 주면 이름으로 자동 연결.
+- **필수 필드 주의**: `certifications`(1개 이상)·`storageMethod`는 V26부터 필수. 누락 시 400(검증 실패).
+
+```jsonc
+// GET /api/v1/producers/me/stats  (응답 data: SellerStatsResponse)
+{ "summary": {
+    "monthlyRevenue":4820000, "orderCount":186,
+    "monthlyRevenueChangeRate":12.0, "orderCountChangeRate":8.0,   // 전월대비 %(전월 0이면 null)
+    "todayRevenue":184000, "todayOrderCount":7,                    // 마이 판매자 센터 카드
+    "viewCount":null, "conversionRate":null,                       // 조회 이벤트 미수집 → 후속(null)
+    "nextSettlementDate":"2026-06-25" },
+  "revenueSeries":[ { "date":"2026-06-06", "amount":62000 }, … 7일(과거→오늘) ],
+  "dailyAverage":689000,
+  "topProducts":[ { "offerId":10, "title":"햇 봄동 1.5kg 산지직송", "ingredientName":"봄동", "soldCount":64, "amount":537600 }, … 상위 5 ] }
+```
+- **인기상품은 상품(offer) 단위로 집계**된다(V27). 주문 시 `order_items`에 `offer_id`·`offer_title` 스냅샷을 남기고, 통계는 `offer_id` 기준으로 묶는다.
+- 표시: **`title` 우선**, `title`이 null이면 `ingredientName`을 fallback으로 사용. (`title`은 주문 시점 상품명 스냅샷)
+- V27 이전 과거 주문(`offer_id` null)은 `offerId`·`title`이 `null`이고 **식재료명 기준으로 fallback** 집계된다.
+- 조회수·전환율은 상품 조회 이벤트 수집 후 채워짐(후속, 현재 null).
+- 날짜 기준은 `Asia/Seoul`로 고정되어 있다. `todayRevenue`/`todayOrderCount`, 이번 달·전월, 최근 7일 시리즈는 주문 시각을 한국 달력 날짜로 환산해 집계한다.
 
 ## 12. 전체 엔드포인트 인벤토리
 
@@ -648,7 +685,8 @@ Response:
 | 🔒 | POST | `/api/v1/producers/{id}/reviews` | 리뷰 작성(자유) |
 | 🔒 | POST | `/api/v1/producers/me` | 농가 자가등록 (§11) |
 | 🔒 | GET | `/api/v1/producers/me` | 내 농가 조회 (§11) |
-| 🔒 | POST | `/api/v1/producers/me/offers` | 내 농가 상품 등록 (§11) |
+| 🔒 | POST | `/api/v1/producers/me/offers` | 내 농가 상품 등록 (§11). 인증마크·보관방법 필수 |
+| 🔒 | GET | `/api/v1/producers/me/stats` | 내 농가 판매 통계 (§11) |
 
 ### 장바구니 / 주문 (🔒)
 | | 메서드 | 경로 | 설명 |

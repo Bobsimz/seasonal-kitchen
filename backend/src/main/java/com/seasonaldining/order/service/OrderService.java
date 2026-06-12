@@ -13,6 +13,8 @@ import com.seasonaldining.order.entity.OrderItem;
 import com.seasonaldining.order.repository.OrderItemRepository;
 import com.seasonaldining.order.repository.OrderRepository;
 import com.seasonaldining.producer.entity.Producer;
+import com.seasonaldining.producer.entity.ProducerOffer;
+import com.seasonaldining.producer.repository.ProducerOfferRepository;
 import com.seasonaldining.producer.repository.ProducerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,15 +44,17 @@ public class OrderService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final ProducerRepository producerRepository;
+    private final ProducerOfferRepository offerRepository;
 
     public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository,
                         CartRepository cartRepository, CartItemRepository cartItemRepository,
-                        ProducerRepository producerRepository) {
+                        ProducerRepository producerRepository, ProducerOfferRepository offerRepository) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.producerRepository = producerRepository;
+        this.offerRepository = offerRepository;
     }
 
     @Transactional
@@ -69,11 +73,23 @@ public class OrderService {
 
         Order order = orderRepository.save(new Order(userId, generateOrderNumber(), total, shipping, points));
         Map<Long, String> producerNames = new HashMap<>();
+        // 상품 스냅샷(offer title)을 위해 offer를 일괄 로드(N+1 회피)
+        List<Long> offerIds = items.stream().map(CartItem::getOfferId).filter(Objects::nonNull).distinct().toList();
+        Map<Long, ProducerOffer> offers = offerRepository.findAllById(offerIds).stream()
+                .collect(Collectors.toMap(ProducerOffer::getId, o -> o));
         for (CartItem ci : items) {
             String pname = producerNames.computeIfAbsent(ci.getProducerId(),
                     pid -> producerRepository.findById(pid).map(Producer::getName).orElse(null));
+            ProducerOffer offer = ci.getOfferId() == null ? null : offers.get(ci.getOfferId());
+            // 상품명: offer.title이 있으면 그것을, 없으면(또는 공백) ingredientName fallback
+            String offerTitle = (offer != null && offer.getTitle() != null && !offer.getTitle().isBlank())
+                    ? offer.getTitle() : ci.getIngredientName();
+            // 단위: cart item의 unit(=offer 단위 스냅샷) 사용
+            String offerUnit = (ci.getUnit() != null && !ci.getUnit().isBlank()) ? ci.getUnit()
+                    : (offer != null ? offer.getUnit() : null);
             orderItemRepository.save(new OrderItem(order.getId(), ci.getProducerId(), pname,
-                    ci.getIngredientName(), ci.getQty(), ci.getUnitPrice()));
+                    ci.getIngredientName(), ci.getQty(), ci.getUnitPrice(),
+                    ci.getOfferId(), offerTitle, offerUnit));
         }
         // 주문 후 장바구니 비우기
         cartItemRepository.deleteAll(items);

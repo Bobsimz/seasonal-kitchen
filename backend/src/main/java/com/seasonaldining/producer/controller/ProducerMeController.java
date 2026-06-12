@@ -6,7 +6,9 @@ import com.seasonaldining.producer.dto.request.CreateOfferRequest;
 import com.seasonaldining.producer.dto.request.RegisterProducerRequest;
 import com.seasonaldining.producer.dto.response.ProducerDetailResponse;
 import com.seasonaldining.producer.dto.response.ProducerOfferResponse;
+import com.seasonaldining.producer.dto.response.SellerStatsResponse;
 import com.seasonaldining.producer.service.ProducerService;
+import com.seasonaldining.producer.service.SellerStatsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,10 +23,14 @@ import org.springframework.web.bind.annotation.*;
 public class ProducerMeController {
 
     private final ProducerService producerService;
+    private final SellerStatsService sellerStatsService;
     private final CurrentUserProvider currentUserProvider;
 
-    public ProducerMeController(ProducerService producerService, CurrentUserProvider currentUserProvider) {
+    public ProducerMeController(ProducerService producerService,
+                                SellerStatsService sellerStatsService,
+                                CurrentUserProvider currentUserProvider) {
         this.producerService = producerService;
+        this.sellerStatsService = sellerStatsService;
         this.currentUserProvider = currentUserProvider;
     }
 
@@ -47,5 +53,12 @@ public class ProducerMeController {
     public ApiResponse<ProducerOfferResponse> addOffer(@Valid @RequestBody CreateOfferRequest request) {
         return ApiResponse.success(
                 producerService.addMyOffer(currentUserProvider.getCurrentUserId(), request), null);
+    }
+
+    @GetMapping("/stats")
+    @Operation(summary = "내 농가 판매 통계", description = "매출·주문·인기상품·7일 매출추이·정산일을 집계합니다. 조회수·전환율은 후속(미수집 시 null).")
+    public ApiResponse<SellerStatsResponse> getMyStats() {
+        return ApiResponse.success(
+                sellerStatsService.getMyStats(currentUserProvider.getCurrentUserId()), null);
     }
 }

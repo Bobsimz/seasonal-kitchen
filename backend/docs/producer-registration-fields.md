@@ -85,3 +85,31 @@
 응답(`ProducerOfferResponse.options[]`)은 `{id, quantity, unit, price}`를 정렬 순서대로 반환(없으면 빈 배열).
 > 입력 오류 대비: 가격/수량 같은 **숫자·연결값(ingredientId)은 엄격 검증**, 표시용 단위 라벨은 느슨(자유)하게. 가격비교/정렬은 ingredientId+price 기반이라 단위 라벨 오타에 영향 없음.
 > 장바구니의 옵션 선택(option_id)은 후속 작업.
+
+## 인증마크 · 재고 · 보관방법 — V26, `POST /api/v1/producers/me/offers`
+
+판매등록 화면(24 `ScreenFarmUpload`, 2026-06-12)에 맞춰 추가된 필드. **`certifications`·`storageMethod`는 필수.**
+
+| 필드 | 타입 | 필수 | 허용/권장 값 | 비고 |
+| --- | --- | --- | --- | --- |
+| `certifications` | string[] | ✅ **1개 이상** | 무농약 / 유기농(유기농산물) / GAP(우수관리) / 친환경 / 지리적표시 (각 ≤40) | 빈 배열·누락 시 400(`@NotEmpty`) |
+| `stockQuantity` | int ≥0 | — | 실시간 판매 가능 수량 | 미설정 시 null |
+| `storageMethod` | string(≤30) | ✅ | 냉장 보관 / 냉동 보관 / 실온 보관 / 서늘한 그늘 | 비면 400(`@NotBlank`) |
+| `storageNote` | string(≤500) | — | 구매자 안내 설명 | 예) "신문지에 싸서 냉장 보관하면 2주까지 신선해요." |
+
+요청 예:
+```jsonc
+"certifications": ["무농약", "유기농(유기농산물)"],
+"stockQuantity": 120,
+"storageMethod": "냉장 보관",
+"storageNote": "신문지에 싸서 냉장 보관하면 2주까지 신선해요. 흙은 털지 말고 보관하세요."
+```
+응답(`ProducerOfferResponse`)에도 `certifications[]`(없으면 빈 배열)·`stockQuantity`·`storageMethod`·`storageNote`가 포함된다.
+> ⚠️ V26부터 상품 등록 요청에 `certifications`(1개+)·`storageMethod`가 **필수**다. 기존 연동 코드가 이 두 필드를 안 보내면 400이 난다.
+
+## 판매자 통계 — `GET /api/v1/producers/me/stats`
+
+화면 21f(판매자 통계)·마이 판매자 센터 카드용. 응답 `SellerStatsResponse`:
+`summary`(monthlyRevenue·orderCount·전월대비 changeRate·todayRevenue·todayOrderCount·viewCount/conversionRate(후속 null)·nextSettlementDate), `revenueSeries[]`(최근 7일 {date, amount}), `dailyAverage`, `topProducts[]`({offerId, title, ingredientName, soldCount, amount} 상위 5).
+> **인기상품은 상품(offer) 단위 집계**(V27). 주문 시 `order_items.offer_id`·`offer_title` 스냅샷을 남겨 offer별로 묶는다. 프론트는 `title` 우선, 없으면 `ingredientName` fallback. V27 이전 과거 주문(offer_id null)만 식재료명 기준 fallback 집계되고 `offerId`·`title`은 null. 조회수·전환율은 상품 조회 이벤트 수집 후 제공(현재 null).
+> 날짜 기준은 `Asia/Seoul`로 고정된다. `todayRevenue`/`todayOrderCount`, 이번 달·전월, 최근 7일 시리즈는 주문 시각을 한국 달력 날짜로 환산해 집계한다.

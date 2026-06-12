@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,6 +52,35 @@ class OrderServiceTest {
         assertThat(order.items()).singleElement()
                 .satisfies(i -> assertThat(i.ingredientName()).isEqualTo("시금치"));
         assertThat(order.itemsTotal()).isEqualByComparingTo("7600"); // 3800 * 2
+    }
+
+    @Test
+    void createOrder_savesOfferSnapshot_titleFallsBackToIngredientName() {
+        // OFFER_ID 시드 오퍼는 title이 없음 → offer_title은 ingredient_name fallback
+        cartService.addItem(USER_ID, new AddCartItemRequest(OFFER_ID, 2));
+        orderService.createOrder(USER_ID);
+
+        Map<String, Object> row = jdbc.queryForMap(
+                "SELECT oi.offer_id, oi.offer_title, oi.offer_unit FROM order_items oi " +
+                "JOIN orders o ON oi.order_id = o.id WHERE o.user_id = ?", USER_ID);
+        assertThat(((Number) row.get("offer_id")).longValue()).isEqualTo(OFFER_ID);
+        assertThat(row.get("offer_title")).isEqualTo("시금치");
+        assertThat(row.get("offer_unit")).isEqualTo("단");
+    }
+
+    @Test
+    void createOrder_savesOfferTitle_whenOfferHasTitle() {
+        long titledOffer = 82101L;
+        jdbc.update("INSERT INTO producer_offers (id, producer_id, ingredient_name, price, unit, freshness_label, title) " +
+                "VALUES (?, ?, '봄동', 6900, '박스', '당일수확', '햇 봄동 1.5kg 산지직송')", titledOffer, PRODUCER_ID);
+        cartService.addItem(USER_ID, new AddCartItemRequest(titledOffer, 1));
+        orderService.createOrder(USER_ID);
+
+        Map<String, Object> row = jdbc.queryForMap(
+                "SELECT oi.offer_id, oi.offer_title FROM order_items oi " +
+                "JOIN orders o ON oi.order_id = o.id WHERE o.user_id = ?", USER_ID);
+        assertThat(((Number) row.get("offer_id")).longValue()).isEqualTo(titledOffer);
+        assertThat(row.get("offer_title")).isEqualTo("햇 봄동 1.5kg 산지직송");
     }
 
     @Test
