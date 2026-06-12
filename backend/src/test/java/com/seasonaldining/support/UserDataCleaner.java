@@ -53,6 +53,7 @@ public final class UserDataCleaner {
         jdbcTemplate.update("DELETE FROM producer_news WHERE producer_id IN (" + selfProducers + ")");
         jdbcTemplate.update("DELETE FROM producer_reviews WHERE producer_id IN (" + selfProducers + ")");
         jdbcTemplate.update("DELETE FROM producers WHERE user_id IS NOT NULL");
+        jdbcTemplate.update("DELETE FROM user_addresses");  // users FK 참조 → 사용자 삭제 전에 정리
         jdbcTemplate.update("DELETE FROM users");
     }
 }
