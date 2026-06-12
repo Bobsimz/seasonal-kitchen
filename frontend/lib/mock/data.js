@@ -125,7 +125,8 @@ export function getIngredient(id) {
   const card = toIngredientCard(i);
   return {
     ...card,
-    buyingSignal: i.change <= -10 ? '구매 적기' : i.change >= 5 ? '가격 상승 중' : '평년 수준',
+    // 구매 신호 enum (UI가 코드→라벨/톤 매핑). GOOD=구매적기, HIGH=비싼시기, HOLD=평년수준
+    buyingSignal: i.change <= -10 ? 'GOOD' : i.change >= 5 ? 'HIGH' : 'HOLD',
     nutrition: NUTRITION[i.name] || NUTRITION['무'],
     careTips: ['겉잎을 한 겹 벗겨 흐르는 물에 헹굽니다.', `용도에 맞게 ${i.unit} 단위로 손질해 보관하세요.`],
     storageTips: ['신문지에 싸서 냉장 보관하면 더 오래갑니다.', '잘라둔 것은 밀폐용기에 담아 2~3일 내 사용.'],

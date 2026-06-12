@@ -133,7 +133,7 @@ const { user, isAuthenticated, login, signup, logout, ready } = useAuth();
 상품 `/products` · 상품 상세 `/products/[id]` · 장바구니 `/cart` · 결제 `/checkout` · 주문완료/상세 `/orders/[id]`
 릴스 `/reels`
 마이 `/my` · 주문내역 `/my/orders` · 찜 `/my/wishlist` · 리뷰 `/my/reviews` · 리뷰작성 `/my/reviews/new`
-가격알림 `/my/price-alerts` · 설정 `/my/settings` · 알림 `/notifications`
+가격알림 `/my/price-alerts` · 설정 `/my/settings` · 알림 `/notifications` · 이용약관 `/legal/terms` · 개인정보처리방침 `/legal/privacy`
 판매자등록 `/my/seller/register` · 판매상품등록 `/my/seller/offers/new` · 판매통계 `/my/seller/dashboard`
 온보딩 `/onboarding` · 로그인 `/login` · 가입 `/signup` · 가입설문 `/signup/survey`
 
