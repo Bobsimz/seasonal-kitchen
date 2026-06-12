@@ -54,13 +54,21 @@ Swagger:
 
 ## Frontend
 
-- Next.js prototype UI
+- Next.js 14 (App Router) 모바일 웹앱 — Tailwind CSS, TanStack Query, JWT 인증
+- 백엔드가 없어도 동작하는 **데모 폴백** 내장 (mock 데이터)
 
-```powershell
+```bash
 cd frontend
 npm install
-npm run dev
+npm run dev   # http://localhost:3000
 ```
+
+실제 백엔드 연동/구조/추가 개발 요청은 아래 문서를 참고하세요.
+
+- `frontend/FRONTEND-CHANGES.md` — 개편 내용·아키텍처·폴더 구조·실행법
+- `frontend/CONVENTIONS.md` — 페이지 구현 규칙(개발자 필독)
+- `frontend/BACKEND-REQUIREMENTS.md` — 프론트 기준 백엔드 추가 개발 요청서
+- `frontend/.env.local.example` — 백엔드 URL / 데모 폴백 설정
 
 ## Specs
 
