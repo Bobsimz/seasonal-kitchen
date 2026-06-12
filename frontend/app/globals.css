@@ -42,7 +42,8 @@
   }
 
   body {
-    @apply bg-[#0c1f15] font-sans text-ink;
+    /* 배경(AmbientBackground)이 화면을 덮지만, 로드 전/오버스크롤 시 보이는 폴백색 */
+    @apply bg-[#F3E4CE] font-sans text-ink;
   }
 
   button {
