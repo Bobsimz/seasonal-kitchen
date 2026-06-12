@@ -15,12 +15,21 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    /** 멀티파트 한도(spring.servlet.multipart.max-file-size) 초과 — 컨트롤러 진입 전 발생. 업로드 크기 초과로 매핑. */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMaxUploadSizeExceeded(MaxUploadSizeExceededException ex) {
+        ErrorCode errorCode = ErrorCode.FILE_TOO_LARGE;
+        return ResponseEntity.status(errorCode.status())
+                .body(ApiResponse.failure(new ErrorResponse(errorCode.code(), errorCode.message(), List.of()), traceId()));
+    }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException ex) {

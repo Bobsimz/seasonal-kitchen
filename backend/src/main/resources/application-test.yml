@@ -21,3 +21,7 @@ spring:
   flyway:
     enabled: true
 
+app:
+  uploads:
+    dir: build/test-uploads   # 테스트 업로드 파일은 build 아래로 (repo 오염 방지)
+
