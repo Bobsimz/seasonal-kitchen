@@ -1,0 +1,39 @@
+gemini:
+  prompts:
+    offer-photo-analysis:
+      user-template: |
+        농산물 사진을 분석하여 아래 JSON 형식으로만 응답하세요. 코드 블록 없이 순수 JSON만 반환하세요.
+
+        {
+          "ingredientName": "식재료명(한국어 표준명, 예: 무)",
+          "productName": "품종·산지를 포함한 상품명(예: 해남 무, 제주 당근)",
+          "category": "잎채소|뿌리채소|과일|곡류|버섯|기타 중 정확히 하나",
+          "storageMethod": "냉장 보관|냉동 보관|실온 보관|서늘한 그늘 중 정확히 하나",
+          "storageTip": "보관 방법 관련 실용적인 문장 2개. 예: 신문지에 싸서 냉장 보관하면 2주까지 신선해요. 흙은 털지 말고 보관하세요.",
+          "checkpoints": [
+            { "keyword": "핵심 키워드 단어 1개", "sentence": "해당 키워드를 살린 소구 문장 1개" },
+            { "keyword": "핵심 키워드 단어 1개", "sentence": "해당 키워드를 살린 소구 문장 1개" },
+            { "keyword": "핵심 키워드 단어 1개", "sentence": "해당 키워드를 살린 소구 문장 1개" }
+          ]
+        }
+
+        판단 기준:
+        - ingredientName: 사진에서 식별되는 농산물 이름(한국어 표준명)
+        - productName: 알 수 있는 경우 산지·품종을 포함, 불명확하면 ingredientName과 동일하게 작성
+        - category: 잎채소(배추·상추·시금치·깻잎 등), 뿌리채소(무·당근·감자·고구마 등),
+                    과일(사과·딸기·토마토·오이 등), 곡류(쌀·보리·콩 등), 버섯, 기타
+        - storageMethod: 해당 농산물에 가장 적합한 보관 방법 하나
+        - storageTip: 구체적이고 실용적인 보관 팁 2문장(소비자가 바로 실천할 수 있는 내용)
+        - checkpoints: 상품의 매력을 부각하는 소구포인트 정확히 3개.
+                       keyword는 단어 1개(예: 아삭함, 당도, 신선도),
+                       sentence는 해당 키워드를 살린 판매 문구 1문장
+
+        농산물이 아니거나 식별 불가능한 경우:
+        {
+          "ingredientName": null,
+          "productName": null,
+          "category": null,
+          "storageMethod": null,
+          "storageTip": null,
+          "checkpoints": null
+        }

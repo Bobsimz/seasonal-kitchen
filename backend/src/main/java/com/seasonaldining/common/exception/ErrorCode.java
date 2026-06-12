@@ -23,7 +23,10 @@ public enum ErrorCode {
     PRODUCER_ALREADY_REGISTERED(HttpStatus.CONFLICT, "PRODUCER_ALREADY_REGISTERED", "이미 농가로 등록되어 있습니다."),
     PRODUCER_OFFER_NOT_FOUND(HttpStatus.NOT_FOUND, "PRODUCER_OFFER_NOT_FOUND", "농가 판매 상품을 찾을 수 없습니다."),
     CART_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "CART_ITEM_NOT_FOUND", "장바구니 항목을 찾을 수 없습니다."),
-    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_NOT_FOUND", "주문을 찾을 수 없습니다.");
+    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_NOT_FOUND", "주문을 찾을 수 없습니다."),
+    GEMINI_API_NOT_CONFIGURED(HttpStatus.SERVICE_UNAVAILABLE, "GEMINI_API_NOT_CONFIGURED", "AI 분석 서비스가 설정되지 않았습니다."),
+    GEMINI_API_ERROR(HttpStatus.BAD_GATEWAY, "GEMINI_API_ERROR", "AI 분석 중 오류가 발생했습니다."),
+    GEMINI_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "GEMINI_PARSE_ERROR", "AI 분석 결과를 처리할 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;
