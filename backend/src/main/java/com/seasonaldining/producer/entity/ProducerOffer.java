@@ -28,6 +28,13 @@ public class ProducerOffer {
     private String description;
     @Column(length = 30)
     private String category;
+    // 판매등록 필드 (V26) — nullable
+    @Column(name = "stock_quantity")
+    private Integer stockQuantity;
+    @Column(name = "storage_method", length = 30)
+    private String storageMethod;
+    @Column(name = "storage_note", length = 500)
+    private String storageNote;
     @Column(name = "observed_at", nullable = false)
     private OffsetDateTime observedAt = OffsetDateTime.now();
 
@@ -42,6 +49,14 @@ public class ProducerOffer {
     public static ProducerOffer create(Long producerId, Long ingredientId, String ingredientName,
                                        BigDecimal price, String unit, String freshnessLabel,
                                        String title, String description, String category) {
+        return create(producerId, ingredientId, ingredientName, price, unit, freshnessLabel,
+                title, description, category, null, null, null);
+    }
+
+    public static ProducerOffer create(Long producerId, Long ingredientId, String ingredientName,
+                                       BigDecimal price, String unit, String freshnessLabel,
+                                       String title, String description, String category,
+                                       Integer stockQuantity, String storageMethod, String storageNote) {
         ProducerOffer o = new ProducerOffer();
         o.producerId = producerId;
         o.ingredientId = ingredientId;
@@ -52,6 +67,9 @@ public class ProducerOffer {
         o.title = title;
         o.description = description;
         o.category = category;
+        o.stockQuantity = stockQuantity;
+        o.storageMethod = storageMethod;
+        o.storageNote = storageNote;
         o.observedAt = OffsetDateTime.now();
         return o;
     }
@@ -66,5 +84,8 @@ public class ProducerOffer {
     public String getTitle() { return title; }
     public String getDescription() { return description; }
     public String getCategory() { return category; }
+    public Integer getStockQuantity() { return stockQuantity; }
+    public String getStorageMethod() { return storageMethod; }
+    public String getStorageNote() { return storageNote; }
     public OffsetDateTime getObservedAt() { return observedAt; }
 }

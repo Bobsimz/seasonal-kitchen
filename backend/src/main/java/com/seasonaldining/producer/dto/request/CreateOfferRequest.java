@@ -3,7 +3,9 @@ package com.seasonaldining.producer.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -43,7 +45,19 @@ public record CreateOfferRequest(
         List<@Size(max = 40) String> tags,
 
         @Schema(description = "상품 옵션(규격/variant) 목록(선택). 각 옵션 = 수량+단위+가격", nullable = true)
-        @Valid List<OptionInput> options
+        @Valid List<OptionInput> options,
+
+        @Schema(description = "인증마크(필수, 1개 이상)", example = "[\"무농약\",\"유기농(유기농산물)\"]")
+        @NotEmpty List<@NotBlank @Size(max = 40) String> certifications,
+
+        @Schema(description = "재고 수량(실시간 판매 가능 수량, 선택)", example = "120", nullable = true)
+        @Min(0) Integer stockQuantity,
+
+        @Schema(description = "보관방법(필수, 냉장 보관/냉동 보관/실온 보관/서늘한 그늘 등)", example = "냉장 보관")
+        @NotBlank @Size(max = 30) String storageMethod,
+
+        @Schema(description = "보관 안내 설명(선택)", example = "신문지에 싸서 냉장 보관하면 2주까지 신선해요.", nullable = true)
+        @Size(max = 500) String storageNote
 ) {
     @Schema(description = "상품 옵션 입력 — 라벨을 강제하지 않고 수량+단위(자유)+가격으로 받음")
     public record OptionInput(

@@ -35,6 +35,7 @@ class ProducerOfferProductTest {
         jdbc.update("DELETE FROM offer_photos WHERE offer_id IN (" + selfOffers + ")", EMAIL);
         jdbc.update("DELETE FROM offer_tags WHERE offer_id IN (" + selfOffers + ")", EMAIL);
         jdbc.update("DELETE FROM offer_options WHERE offer_id IN (" + selfOffers + ")", EMAIL);
+        jdbc.update("DELETE FROM offer_certifications WHERE offer_id IN (" + selfOffers + ")", EMAIL);
         jdbc.update("DELETE FROM producer_offers WHERE producer_id IN " +
                 "(SELECT p.id FROM producers p JOIN users u ON p.user_id = u.id WHERE u.email = ?)", EMAIL);
         jdbc.update("DELETE FROM producer_specialties WHERE producer_id IN " +
@@ -56,7 +57,9 @@ class ProducerOfferProductTest {
                 null, "봄동", new BigDecimal("6900"), "박스", "당일수확",
                 "햇 봄동 1.5kg 산지직송", "남도 텃밭에서 새벽 수확", "잎채소",
                 List.of("https://img/1.png", "https://img/2.png"),
-                List.of("산지직송", "무료배송"), null));
+                List.of("산지직송", "무료배송"), null,
+                List.of("무농약", "유기농(유기농산물)"), 120, "냉장 보관",
+                "신문지에 싸서 냉장 보관하면 2주까지 신선해요."));
 
         assertThat(o.title()).isEqualTo("햇 봄동 1.5kg 산지직송");
         assertThat(o.description()).contains("새벽 수확");
@@ -64,18 +67,26 @@ class ProducerOfferProductTest {
         assertThat(o.photoUrls()).containsExactly("https://img/1.png", "https://img/2.png");
         assertThat(o.tags()).containsExactly("산지직송", "무료배송");
         assertThat(o.options()).isEmpty();
+        assertThat(o.certifications()).containsExactly("무농약", "유기농(유기농산물)");
+        assertThat(o.stockQuantity()).isEqualTo(120);
+        assertThat(o.storageMethod()).isEqualTo("냉장 보관");
+        assertThat(o.storageNote()).contains("신문지");
     }
 
     @Test
     void addMyOffer_withoutProductFields_returnsEmptyLists() {
         ProducerOfferResponse o = producerService.addMyOffer(userId, new CreateOfferRequest(
                 null, "봄동", new BigDecimal("4500"), "봉", null,
-                null, null, null, null, null, null));
+                null, null, null, null, null, null,
+                List.of("무농약"), null, "실온 보관", null));
 
         assertThat(o.title()).isNull();
         assertThat(o.photoUrls()).isEmpty();
         assertThat(o.tags()).isEmpty();
         assertThat(o.options()).isEmpty();
+        assertThat(o.certifications()).containsExactly("무농약");
+        assertThat(o.stockQuantity()).isNull();
+        assertThat(o.storageMethod()).isEqualTo("실온 보관");
     }
 
     @Test
@@ -84,7 +95,8 @@ class ProducerOfferProductTest {
                 null, "무", new BigDecimal("2200"), "개", null,
                 "해남 무", null, "뿌리채소", null, null,
                 List.of(new OptionInput(new BigDecimal("1.5"), "kg", new BigDecimal("6900")),
-                        new OptionInput(null, "단", new BigDecimal("4500")))));
+                        new OptionInput(null, "단", new BigDecimal("4500"))),
+                List.of("GAP(우수관리)"), 50, "서늘한 그늘", null));
 
         assertThat(o.options()).hasSize(2);
         assertThat(o.options().get(0).unit()).isEqualTo("kg");
@@ -101,7 +113,8 @@ class ProducerOfferProductTest {
                 null, "봄동", new BigDecimal("6900"), "박스", "당일수확",
                 "햇 봄동 1.5kg", "설명", "잎채소",
                 List.of("https://img/a.png"), List.of("콜드체인"),
-                List.of(new OptionInput(new BigDecimal("3"), "kg", new BigDecimal("12000")))));
+                List.of(new OptionInput(new BigDecimal("3"), "kg", new BigDecimal("12000"))),
+                List.of("친환경"), 30, "냉장 보관", "흙은 털지 말고 보관하세요."));
 
         List<ProducerOfferResponse> offers = producerService.getProducerOffers(me.id());
         assertThat(offers).anySatisfy(o -> {
@@ -110,6 +123,9 @@ class ProducerOfferProductTest {
             assertThat(o.tags()).containsExactly("콜드체인");
             assertThat(o.options()).hasSize(1);
             assertThat(o.options().get(0).price()).isEqualByComparingTo("12000");
+            assertThat(o.certifications()).containsExactly("친환경");
+            assertThat(o.stockQuantity()).isEqualTo(30);
+            assertThat(o.storageMethod()).isEqualTo("냉장 보관");
         });
     }
 }

@@ -20,7 +20,11 @@ public record ProducerOfferResponse(
         @Schema(description = "카테고리", example = "잎채소", nullable = true) String category,
         @Schema(description = "상품 사진 URL 목록(첫 번째가 대표)") List<String> photoUrls,
         @Schema(description = "상품 태그 목록", example = "[\"산지직송\",\"무료배송\"]") List<String> tags,
-        @Schema(description = "상품 옵션 목록(규격/variant)") List<OptionResponse> options
+        @Schema(description = "상품 옵션 목록(규격/variant)") List<OptionResponse> options,
+        @Schema(description = "인증마크 목록", example = "[\"무농약\",\"유기농(유기농산물)\"]") List<String> certifications,
+        @Schema(description = "재고 수량(미설정 시 null)", example = "120", nullable = true) Integer stockQuantity,
+        @Schema(description = "보관방법", example = "냉장 보관", nullable = true) String storageMethod,
+        @Schema(description = "보관 안내 설명", nullable = true) String storageNote
 ) {
     @Schema(description = "상품 옵션")
     public record OptionResponse(

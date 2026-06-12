@@ -40,6 +40,7 @@ public class ProducerService {
     private final OfferPhotoRepository offerPhotoRepository;
     private final OfferTagRepository offerTagRepository;
     private final OfferOptionRepository offerOptionRepository;
+    private final OfferCertificationRepository offerCertificationRepository;
 
     public ProducerService(ProducerRepository producerRepository,
                            ProducerSpecialtyRepository specialtyRepository,
@@ -50,7 +51,8 @@ public class ProducerService {
                            IngredientRepository ingredientRepository,
                            OfferPhotoRepository offerPhotoRepository,
                            OfferTagRepository offerTagRepository,
-                           OfferOptionRepository offerOptionRepository) {
+                           OfferOptionRepository offerOptionRepository,
+                           OfferCertificationRepository offerCertificationRepository) {
         this.producerRepository = producerRepository;
         this.specialtyRepository = specialtyRepository;
         this.badgeRepository = badgeRepository;
@@ -61,6 +63,7 @@ public class ProducerService {
         this.offerPhotoRepository = offerPhotoRepository;
         this.offerTagRepository = offerTagRepository;
         this.offerOptionRepository = offerOptionRepository;
+        this.offerCertificationRepository = offerCertificationRepository;
     }
 
     @Transactional(readOnly = true)
@@ -124,7 +127,8 @@ public class ProducerService {
         ProducerOffer saved = offerRepository.save(ProducerOffer.create(
                 producer.getId(), ingredientId, req.ingredientName(),
                 req.price(), req.unit(), req.freshnessLabel(),
-                req.title(), req.description(), req.category()));
+                req.title(), req.description(), req.category(),
+                req.stockQuantity(), req.storageMethod(), req.storageNote()));
 
         // 상품 사진(첫 번째가 대표) 저장
         if (req.photoUrls() != null) {
@@ -140,6 +144,13 @@ public class ProducerService {
             for (String label : req.tags()) {
                 if (label == null || label.isBlank()) continue;
                 offerTagRepository.save(OfferTag.of(saved.getId(), label.trim()));
+            }
+        }
+        // 인증마크 저장 (필수 1개 이상 — 요청 검증 @NotEmpty)
+        if (req.certifications() != null) {
+            for (String label : req.certifications()) {
+                if (label == null || label.isBlank()) continue;
+                offerCertificationRepository.save(OfferCertification.of(saved.getId(), label.trim()));
             }
         }
         // price는 API validation에서 필수로 검증된다. null check는 내부 호출 대비 방어다.
@@ -300,6 +311,9 @@ public class ProducerService {
                 .stream().collect(Collectors.groupingBy(OfferOption::getOfferId,
                         Collectors.mapping(op -> new ProducerOfferResponse.OptionResponse(
                                 op.getId(), op.getQuantity(), op.getUnit(), op.getPrice()), Collectors.toList())));
+        Map<Long, List<String>> certsByOffer = offerCertificationRepository.findByOfferIdInOrderByIdAsc(offerIds)
+                .stream().collect(Collectors.groupingBy(OfferCertification::getOfferId,
+                        Collectors.mapping(OfferCertification::getLabel, Collectors.toList())));
         List<Long> producerIds = offers.stream().map(ProducerOffer::getProducerId).distinct().toList();
         Map<Long, Producer> producers = producerRepository.findAllById(producerIds).stream()
                 .collect(Collectors.toMap(Producer::getId, pp -> pp));
@@ -314,7 +328,9 @@ public class ProducerService {
                     o.getTitle(), o.getDescription(), o.getCategory(),
                     photosByOffer.getOrDefault(o.getId(), List.of()),
                     tagsByOffer.getOrDefault(o.getId(), List.of()),
-                    optionsByOffer.getOrDefault(o.getId(), List.of()));
+                    optionsByOffer.getOrDefault(o.getId(), List.of()),
+                    certsByOffer.getOrDefault(o.getId(), List.of()),
+                    o.getStockQuantity(), o.getStorageMethod(), o.getStorageNote());
         }).toList();
     }
 
@@ -327,6 +343,8 @@ public class ProducerService {
         List<ProducerOfferResponse.OptionResponse> options = offerOptionRepository.findByOfferIdOrderBySortOrderAsc(o.getId())
                 .stream().map(op -> new ProducerOfferResponse.OptionResponse(
                         op.getId(), op.getQuantity(), op.getUnit(), op.getPrice())).toList();
+        List<String> certifications = offerCertificationRepository.findByOfferIdOrderByIdAsc(o.getId())
+                .stream().map(OfferCertification::getLabel).toList();
         return new ProducerOfferResponse(
                 o.getId(), producerId,
                 p != null ? p.getName() : null,
@@ -334,7 +352,8 @@ public class ProducerService {
                 o.getIngredientName(), o.getIngredientId(),
                 o.getPrice(), o.getUnit(), o.getFreshnessLabel(),
                 o.getTitle(), o.getDescription(), o.getCategory(),
-                photoUrls, tags, options);
+                photoUrls, tags, options,
+                certifications, o.getStockQuantity(), o.getStorageMethod(), o.getStorageNote());
     }
 
     private ProducerReviewResponse toReview(ProducerReview r) {

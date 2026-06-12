@@ -36,6 +36,12 @@ class ProducerSelfRegistrationTest {
     void setUp() {
         // 이전 데이터 정리 (FK 순서)
         for (String email : List.of(EMAIL, EMAIL2)) {
+            String selfOffers = "SELECT po.id FROM producer_offers po JOIN producers p ON po.producer_id = p.id " +
+                    "JOIN users u ON p.user_id = u.id WHERE u.email = ?";
+            jdbc.update("DELETE FROM offer_certifications WHERE offer_id IN (" + selfOffers + ")", email);
+            jdbc.update("DELETE FROM offer_photos WHERE offer_id IN (" + selfOffers + ")", email);
+            jdbc.update("DELETE FROM offer_tags WHERE offer_id IN (" + selfOffers + ")", email);
+            jdbc.update("DELETE FROM offer_options WHERE offer_id IN (" + selfOffers + ")", email);
             jdbc.update("DELETE FROM producer_offers WHERE producer_id IN " +
                     "(SELECT p.id FROM producers p JOIN users u ON p.user_id = u.id WHERE u.email = ?)", email);
             jdbc.update("DELETE FROM producer_specialties WHERE producer_id IN " +
@@ -82,7 +88,8 @@ class ProducerSelfRegistrationTest {
     void addMyOffer_createsOffer() {
         producerService.registerMyProducer(userId, sampleReq());
         var offer = producerService.addMyOffer(userId,
-                new CreateOfferRequest(null, "봄동", new BigDecimal("4500"), "봉", "당일수확", null, null, null, null, null, null));
+                new CreateOfferRequest(null, "봄동", new BigDecimal("4500"), "봉", "당일수확", null, null, null, null, null, null,
+                        List.of("무농약"), null, "냉장 보관", null));
         assertThat(offer.ingredientName()).isEqualTo("봄동");
         assertThat(offer.price()).isEqualByComparingTo("4500");
         assertThat(offer.unit()).isEqualTo("봉");
@@ -92,7 +99,8 @@ class ProducerSelfRegistrationTest {
     void addMyOffer_withoutProducerProfile_throwsNotFound() {
         // userId2는 농가 등록을 안 했음
         assertThatThrownBy(() -> producerService.addMyOffer(userId2,
-                new CreateOfferRequest(null, "무", new BigDecimal("2200"), "개", null, null, null, null, null, null, null)))
+                new CreateOfferRequest(null, "무", new BigDecimal("2200"), "개", null, null, null, null, null, null, null,
+                        List.of("무농약"), null, "냉장 보관", null)))
                 .isInstanceOf(BusinessException.class)
                 .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
                         .isEqualTo(ErrorCode.PRODUCER_NOT_FOUND));
@@ -102,7 +110,8 @@ class ProducerSelfRegistrationTest {
     void addMyOffer_invalidIngredientId_throwsIngredientNotFound() {
         producerService.registerMyProducer(userId, sampleReq());
         assertThatThrownBy(() -> producerService.addMyOffer(userId,
-                new CreateOfferRequest(999999L, "봄동", new BigDecimal("4500"), "봉", null, null, null, null, null, null, null)))
+                new CreateOfferRequest(999999L, "봄동", new BigDecimal("4500"), "봉", null, null, null, null, null, null, null,
+                        List.of("무농약"), null, "냉장 보관", null)))
                 .isInstanceOf(BusinessException.class)
                 .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
                         .isEqualTo(ErrorCode.INGREDIENT_NOT_FOUND));
@@ -113,7 +122,8 @@ class ProducerSelfRegistrationTest {
         ProducerDetailResponse d = producerService.registerMyProducer(userId, sampleReq());
         // 초기 specialties에 없던 '당근' 상품을 등록
         producerService.addMyOffer(userId,
-                new CreateOfferRequest(null, "당근", new BigDecimal("3000"), "kg", null, null, null, null, null, null, null));
+                new CreateOfferRequest(null, "당근", new BigDecimal("3000"), "kg", null, null, null, null, null, null, null,
+                        List.of("무농약"), null, "냉장 보관", null));
         // q='당근' 검색에서 내 농가가 나와야 한다 (specialty upsert 덕분)
         assertThat(producerService.getProducers("당근", null, null, PageRequest.of(0, 50)).items())
                 .anySatisfy(c -> assertThat(c.id()).isEqualTo(d.id()));

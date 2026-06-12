@@ -45,6 +45,8 @@ public final class UserDataCleaner {
                 + "(SELECT id FROM producer_offers WHERE producer_id IN (" + selfProducers + "))");
         jdbcTemplate.update("DELETE FROM offer_options WHERE offer_id IN "
                 + "(SELECT id FROM producer_offers WHERE producer_id IN (" + selfProducers + "))");
+        jdbcTemplate.update("DELETE FROM offer_certifications WHERE offer_id IN "
+                + "(SELECT id FROM producer_offers WHERE producer_id IN (" + selfProducers + "))");
         jdbcTemplate.update("DELETE FROM producer_offers WHERE producer_id IN (" + selfProducers + ")");
         jdbcTemplate.update("DELETE FROM producer_specialties WHERE producer_id IN (" + selfProducers + ")");
         jdbcTemplate.update("DELETE FROM producer_badges WHERE producer_id IN (" + selfProducers + ")");
