@@ -14,7 +14,8 @@ export function AppHeader({ title, back = false, onBack, right, transparent = fa
   return (
     <header
       className={cn(
-        'sticky top-0 z-30 flex h-14 items-center gap-1 px-2',
+        // 데스크탑(sm+)에서는 둥근 프레임 상단 코너에서 살짝 내려오도록 위쪽 패딩을 더한다.
+        'sticky top-0 z-30 flex min-h-14 items-center gap-1 px-2 sm:pt-3',
         transparent ? 'bg-transparent text-white' : 'border-b border-line-soft bg-white/95 text-ink backdrop-blur-xl',
         className,
       )}

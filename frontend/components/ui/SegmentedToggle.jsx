@@ -35,10 +35,18 @@ export function SegmentedToggle({ options, value, onChange, className }) {
 }
 
 // 카테고리 칩 줄 (가로 스크롤). options: string[] | [{value,label}]
-export function ChipTabs({ options, value, onChange, className }) {
+// shrink-0: 스크롤 컬럼(flex-col) 안에서 overflow 때문에 min-height가 0이 되어
+//   세로로 찌그러지는 것을 방지. sticky: 헤더 아래 고정되는 필터 바 스타일(배경/블러/구분선).
+export function ChipTabs({ options, value, onChange, className, sticky = false }) {
   const items = options.map((o) => (typeof o === 'string' ? { value: o, label: o } : o));
   return (
-    <div className={cn('flex gap-2 overflow-x-auto phone-scroll px-4 pb-1', className)}>
+    <div
+      className={cn(
+        'flex shrink-0 gap-2 overflow-x-auto phone-scroll px-4',
+        sticky ? 'z-20 border-b border-line-soft bg-white/95 py-2.5 backdrop-blur-xl' : 'pb-1',
+        className,
+      )}
+    >
       {items.map((opt) => {
         const active = opt.value === value;
         return (

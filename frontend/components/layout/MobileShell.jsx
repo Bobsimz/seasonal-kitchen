@@ -12,7 +12,10 @@ export function MobileShell({ children, className }) {
       <div className="flex min-h-[100dvh] w-full justify-center sm:items-center">
         <div
           className={cn(
-            'relative flex h-[100dvh] w-full max-w-phone flex-col overflow-hidden bg-surface',
+            // [transform:translateZ(0)] 로 프레임을 fixed 자식들의 컨테이닝 블록으로 만든다.
+            // → 데스크탑/태블릿에서 position:fixed 요소(판매 등록 FAB 등)가 뷰포트가 아닌
+            //   이 폰 프레임 기준으로 고정되어 프레임 안에 머문다. (모바일에선 프레임=뷰포트라 무영향)
+            'relative flex h-[100dvh] w-full max-w-phone flex-col overflow-hidden bg-surface [transform:translateZ(0)]',
             'sm:h-[min(880px,calc(100dvh-48px))] sm:rounded-[44px] sm:shadow-device',
             className,
           )}

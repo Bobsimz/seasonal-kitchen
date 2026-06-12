@@ -39,7 +39,7 @@ export default function ProducersPage() {
     <>
       <AppHeader title="농가" back />
 
-      <div className="px-4 pb-3 pt-1">
+      <div className="px-4 pb-3 pt-3">
         <SearchBar readOnly onClick={() => router.push('/search')} placeholder="농가 이름·지역으로 검색" />
       </div>
 

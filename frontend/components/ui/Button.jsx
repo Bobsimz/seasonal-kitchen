@@ -7,7 +7,7 @@ import { Spinner } from './Spinner';
 // size: sm | md | lg | block(가로 꽉 채움)
 const VARIANTS = {
   primary: 'bg-brand text-white shadow-[0_6px_16px_rgba(22,193,114,0.28)] hover:brightness-105 active:brightness-95',
-  secondary: 'bg-ink text-white hover:brightness-110',
+  secondary: 'bg-ink text-white hover:brightness-105',
   soft: 'bg-brand-bg text-brand-dark hover:bg-brand-soft/60',
   ghost: 'bg-transparent text-ink-mid hover:bg-line-soft',
   outline: 'bg-white text-ink border border-line hover:bg-line-soft',
@@ -34,7 +34,7 @@ export function Button({
     <button
       disabled={disabled || loading}
       className={cn(
-        'tap inline-flex items-center justify-center gap-1.5 font-bold tracking-tight transition disabled:cursor-not-allowed disabled:opacity-50',
+        'tap inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-bold tracking-tight transition disabled:cursor-not-allowed disabled:opacity-50',
         VARIANTS[variant],
         SIZES[size],
         block && 'w-full',

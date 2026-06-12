@@ -59,7 +59,7 @@ function SearchInner() {
     <>
       <AppHeader title="검색" back />
 
-      <div className="border-b border-line-soft bg-white px-4 pb-3 pt-1">
+      <div className="border-b border-line-soft bg-white px-4 pb-3 pt-3">
         <SearchBar
           value={input}
           onChange={setInput}

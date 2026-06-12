@@ -423,7 +423,7 @@ export function ScreenProductList({ t, seller = false, query = "" }) {
               alignItems: "center",
               gap: 6,
               height: 52,
-              padding: "0 20px 0 16px",
+              padding: "0 20px 0 12px",
               borderRadius: 26,
               background: `linear-gradient(135deg, ${t.primary}, ${t.primaryDark})`,
               color: "#fff",

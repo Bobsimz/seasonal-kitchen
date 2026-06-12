@@ -36,7 +36,7 @@ export default function HomePage() {
         }
       />
 
-      <div className="px-4 pb-3 pt-1">
+      <div className="px-4 pb-3 pt-3">
         <SearchBar readOnly onClick={() => router.push('/search')} />
       </div>
 

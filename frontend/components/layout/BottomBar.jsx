@@ -6,7 +6,8 @@ export function BottomBar({ children, className }) {
   return (
     <div
       className={cn(
-        'sticky bottom-0 z-30 flex items-center gap-3 border-t border-line-soft bg-white/95 px-4 py-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-xl',
+        // 데스크탑(sm+)에서는 둥근 프레임 하단 코너에서 CTA가 떨어지도록 아래쪽 패딩을 더한다.
+        'sticky bottom-0 z-30 flex items-center gap-3 border-t border-line-soft bg-white/95 px-4 py-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-xl sm:pb-[max(22px,env(safe-area-inset-bottom))]',
         className,
       )}
     >

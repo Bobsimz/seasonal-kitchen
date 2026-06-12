@@ -143,7 +143,7 @@ export default function RecipeStepsPage({ params }) {
           size="lg"
           onClick={goPrev}
           disabled={current === 0}
-          className="!w-[88px] shrink-0"
+          className="shrink-0 !px-4"
         >
           <ArrowLeft size={18} className="mr-1" />
           이전

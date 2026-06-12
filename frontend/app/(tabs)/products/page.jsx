@@ -39,11 +39,12 @@ export default function ProductsPage() {
         right={<HeaderIconButton icon={ShoppingBag} href="/cart" label="장바구니" />}
       />
 
-      <div className="px-4 pb-3 pt-1">
+      <div className="px-4 pb-3 pt-3">
         <SearchBar readOnly onClick={() => router.push('/search')} placeholder="농가·상품 검색" />
       </div>
 
-      <ChipTabs options={FILTERS} value={filter} onChange={setFilter} />
+      {/* 필터 칩 — 스크롤 시 헤더 바로 아래 고정 (검색바는 위로 사라짐) */}
+      <ChipTabs options={FILTERS} value={filter} onChange={setFilter} sticky className="sticky top-14" />
 
       {isLoading && <LoadingScreen />}
       {error && <ErrorState onRetry={refetch} />}
@@ -82,7 +83,7 @@ export default function ProductsPage() {
       <Link
         href={sellHref}
         aria-label="판매 등록"
-        className="tap fixed bottom-[88px] right-4 z-30 flex h-[52px] items-center gap-1.5 rounded-full bg-gradient-to-br from-brand to-brand-dark pl-4 pr-5 text-white shadow-[0_8px_20px_rgba(22,193,114,0.4)]"
+        className="tap fixed bottom-[96px] right-4 z-30 flex h-[52px] items-center gap-1.5 rounded-full bg-gradient-to-br from-brand to-brand-dark pl-4 pr-5 text-white shadow-[0_8px_20px_rgba(22,193,114,0.4)] sm:bottom-[102px]"
       >
         <Plus size={20} strokeWidth={2.4} />
         <span className="text-[14.5px] font-extrabold tracking-tight">판매 등록</span>

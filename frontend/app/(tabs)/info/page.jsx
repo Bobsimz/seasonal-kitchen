@@ -34,7 +34,7 @@ function InfoShell({ children }) {
   return (
     <>
       <AppHeader title="정보" />
-      <div className="px-4 pb-3 pt-1">
+      <div className="px-4 pb-3 pt-3">
         <SearchBar readOnly onClick={() => router.push('/search')} />
       </div>
       {children}
@@ -49,8 +49,9 @@ function InfoInner() {
 
   return (
     <InfoShell>
-      <div className="px-4 pb-3">
-        <SegmentedToggle options={TABS} value={tab} onChange={setTab} />
+      {/* 탭 토글 — 스크롤 시 헤더(56px) 바로 아래 고정. 높이를 h-14로 고정해 칩 줄의 top-28(112px) 오프셋과 맞춘다. */}
+      <div className="sticky top-14 z-20 flex h-14 shrink-0 items-center bg-white/95 px-4 backdrop-blur-xl">
+        <SegmentedToggle options={TABS} value={tab} onChange={setTab} className="w-full" />
       </div>
       {tab === 'ingredient' && <IngredientTab />}
       {tab === 'recipe' && <RecipeTab />}
@@ -90,19 +91,21 @@ function IngredientTab() {
   if (error) return <ErrorState onRetry={refetch} />;
 
   return (
-    <div className="animate-fade-up pb-6">
-      <ChipTabs options={cats} value={cat} onChange={setCat} />
-      <SortRow count={`${filtered.length}개`} label="의 제철 식재료" sortLabel="가격 낮은 순" />
-      {filtered.length === 0 ? (
-        <EmptyState title="식재료가 없어요" description="다른 카테고리를 선택해 보세요." />
-      ) : (
-        <div className="mx-4 overflow-hidden rounded-2xl border border-line-soft bg-white">
-          {filtered.map((i, idx) => (
-            <IngredientRow key={i.id} ingredient={i} divider={idx < filtered.length - 1} />
-          ))}
-        </div>
-      )}
-    </div>
+    <>
+      <ChipTabs options={cats} value={cat} onChange={setCat} sticky className="sticky top-28" />
+      <div className="animate-fade-up pb-6">
+        <SortRow count={`${filtered.length}개`} label="의 제철 식재료" sortLabel="가격 낮은 순" />
+        {filtered.length === 0 ? (
+          <EmptyState title="식재료가 없어요" description="다른 카테고리를 선택해 보세요." />
+        ) : (
+          <div className="mx-4 overflow-hidden rounded-2xl border border-line-soft bg-white">
+            {filtered.map((i, idx) => (
+              <IngredientRow key={i.id} ingredient={i} divider={idx < filtered.length - 1} />
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -121,19 +124,21 @@ function RecipeTab() {
   if (error) return <ErrorState onRetry={refetch} />;
 
   return (
-    <div className="animate-fade-up pb-6">
-      <ChipTabs options={tags} value={tag} onChange={setTag} />
-      <SortRow count={`${filtered.length}개`} label="의 레시피" sortLabel="좋아요 많은 순" />
-      {filtered.length === 0 ? (
-        <EmptyState title="레시피가 없어요" description="다른 태그를 선택해 보세요." />
-      ) : (
-        <div className="grid grid-cols-2 gap-x-3 gap-y-4 px-4">
-          {filtered.map((r) => (
-            <RecipeCard key={r.id} recipe={r} />
-          ))}
-        </div>
-      )}
-    </div>
+    <>
+      <ChipTabs options={tags} value={tag} onChange={setTag} sticky className="sticky top-28" />
+      <div className="animate-fade-up pb-6">
+        <SortRow count={`${filtered.length}개`} label="의 레시피" sortLabel="좋아요 많은 순" />
+        {filtered.length === 0 ? (
+          <EmptyState title="레시피가 없어요" description="다른 태그를 선택해 보세요." />
+        ) : (
+          <div className="grid grid-cols-2 gap-x-3 gap-y-4 px-4">
+            {filtered.map((r) => (
+              <RecipeCard key={r.id} recipe={r} />
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -152,18 +157,20 @@ function ProducerTab() {
   if (error) return <ErrorState onRetry={refetch} />;
 
   return (
-    <div className="animate-fade-up pb-6">
-      <ChipTabs options={regions} value={region} onChange={setRegion} />
-      <SortRow count={`${filtered.length}곳`} label="의 추천 농가" sortLabel="평점 높은 순" />
-      {filtered.length === 0 ? (
-        <EmptyState title="농가가 없어요" description="다른 지역을 선택해 보세요." />
-      ) : (
-        <div className="mx-4 overflow-hidden rounded-2xl border border-line-soft bg-white">
-          {filtered.map((p, idx) => (
-            <ProducerRow key={p.id} producer={p} divider={idx < filtered.length - 1} />
-          ))}
-        </div>
-      )}
-    </div>
+    <>
+      <ChipTabs options={regions} value={region} onChange={setRegion} sticky className="sticky top-28" />
+      <div className="animate-fade-up pb-6">
+        <SortRow count={`${filtered.length}곳`} label="의 추천 농가" sortLabel="평점 높은 순" />
+        {filtered.length === 0 ? (
+          <EmptyState title="농가가 없어요" description="다른 지역을 선택해 보세요." />
+        ) : (
+          <div className="mx-4 overflow-hidden rounded-2xl border border-line-soft bg-white">
+            {filtered.map((p, idx) => (
+              <ProducerRow key={p.id} producer={p} divider={idx < filtered.length - 1} />
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 }

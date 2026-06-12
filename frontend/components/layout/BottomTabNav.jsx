@@ -19,7 +19,7 @@ export function BottomTabNav() {
   const pathname = usePathname() || '/';
 
   return (
-    <nav className="relative z-50 flex shrink-0 items-stretch border-t border-line-soft bg-white/95 pb-[max(8px,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur-xl shadow-nav">
+    <nav className="relative z-50 flex shrink-0 items-stretch border-t border-line-soft bg-white/95 pb-[max(8px,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur-xl shadow-nav sm:pb-[max(20px,env(safe-area-inset-bottom))]">
       {TABS.map((tab) => {
         const active = tab.match(pathname);
         const Icon = tab.icon;

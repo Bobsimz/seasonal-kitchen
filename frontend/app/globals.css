@@ -68,9 +68,9 @@
     display: none;
   }
 
-  /* 탭 마이크로 인터랙션 */
+  /* 탭 마이크로 인터랙션 — 누를 때 살짝만 눌리도록 (과한 스케일·투명도 제거) */
   .tap {
-    @apply cursor-pointer transition-transform duration-100 ease-out active:scale-[0.97] active:opacity-85;
+    @apply cursor-pointer transition-transform duration-100 ease-out active:scale-[0.98];
   }
 
   /* 이미지 플레이스홀더 (이미지 없을 때) */
