@@ -8,4 +8,5 @@ import java.util.List;
 public interface OfferCertificationRepository extends JpaRepository<OfferCertification, Long> {
     List<OfferCertification> findByOfferIdOrderByIdAsc(Long offerId);
     List<OfferCertification> findByOfferIdInOrderByIdAsc(List<Long> offerIds);
+    void deleteByOfferId(Long offerId);
 }

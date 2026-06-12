@@ -8,4 +8,5 @@ import java.util.List;
 public interface OfferOptionRepository extends JpaRepository<OfferOption, Long> {
     List<OfferOption> findByOfferIdOrderBySortOrderAsc(Long offerId);
     List<OfferOption> findByOfferIdInOrderBySortOrderAsc(List<Long> offerIds);
+    void deleteByOfferId(Long offerId);
 }

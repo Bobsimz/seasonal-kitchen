@@ -7,6 +7,7 @@ import com.seasonaldining.ingredient.repository.IngredientRepository;
 import com.seasonaldining.producer.dto.request.CreateOfferRequest;
 import com.seasonaldining.producer.dto.request.CreateProducerReviewRequest;
 import com.seasonaldining.producer.dto.request.RegisterProducerRequest;
+import com.seasonaldining.producer.dto.request.UpdateOfferRequest;
 import com.seasonaldining.producer.dto.response.*;
 import com.seasonaldining.producer.entity.*;
 import com.seasonaldining.producer.repository.*;
@@ -171,6 +172,99 @@ public class ProducerService {
         return toOffer(saved, producer.getId());
     }
 
+    // ── 판매자 상품 관리 (내 농가) ─────────────────────────────
+    /** 내 판매 상품 목록(ACTIVE만). 미등록 판매자는 PRODUCER_NOT_FOUND. */
+    @Transactional(readOnly = true)
+    public List<ProducerOfferResponse> getMyOffers(Long userId) {
+        Producer producer = producerRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCER_NOT_FOUND));
+        return toOffers(offerRepository.findByProducerIdAndStatusOrderByPriceAsc(producer.getId(), ProducerOffer.STATUS_ACTIVE));
+    }
+
+    /** 내 상품 수정(부분). null=미수정, 컬렉션 제공 시 전체 교체. 타 농가/숨김은 PRODUCER_OFFER_NOT_FOUND. */
+    @Transactional
+    public ProducerOfferResponse updateMyOffer(Long userId, Long offerId, UpdateOfferRequest req) {
+        Producer producer = producerRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCER_NOT_FOUND));
+        ProducerOffer offer = requireMyActiveOffer(producer, offerId);
+
+        offer.changePrice(req.price());
+        offer.changeUnit(req.unit());
+        offer.changeFreshnessLabel(req.freshnessLabel());
+        offer.changeTitle(req.title());
+        offer.changeDescription(req.description());
+        offer.changeCategory(req.category());
+        offer.changeStockQuantity(req.stockQuantity());
+        offer.changeStorageMethod(req.storageMethod());
+        offer.changeStorageNote(req.storageNote());
+        offerRepository.save(offer);
+
+        if (req.photoUrls() != null) replacePhotos(offerId, req.photoUrls());
+        if (req.tags() != null) replaceTags(offerId, req.tags());
+        if (req.certifications() != null) replaceCertifications(offerId, req.certifications());
+        if (req.options() != null) replaceOptions(offerId, req.options());
+
+        return toOffer(offer, producer.getId());
+    }
+
+    /** 내 상품 숨김(소프트 삭제). 공개 목록/검색에서 제외. */
+    @Transactional
+    public void deleteMyOffer(Long userId, Long offerId) {
+        Producer producer = producerRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCER_NOT_FOUND));
+        ProducerOffer offer = requireMyActiveOffer(producer, offerId);
+        offer.hide();
+        offerRepository.save(offer);
+    }
+
+    /** 내 농가 + ACTIVE 상품만 반환. 타 농가/존재X/숨김은 존재 노출 없이 NOT_FOUND. */
+    private ProducerOffer requireMyActiveOffer(Producer producer, Long offerId) {
+        ProducerOffer offer = offerRepository.findById(offerId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCER_OFFER_NOT_FOUND));
+        if (!offer.getProducerId().equals(producer.getId())
+                || ProducerOffer.STATUS_HIDDEN.equals(offer.getStatus())) {
+            throw new BusinessException(ErrorCode.PRODUCER_OFFER_NOT_FOUND);
+        }
+        return offer;
+    }
+
+    private void replacePhotos(Long offerId, List<String> urls) {
+        offerPhotoRepository.deleteByOfferId(offerId);
+        int order = 0;
+        for (String url : urls) {
+            if (url == null || url.isBlank()) continue;
+            offerPhotoRepository.save(OfferPhoto.of(offerId, url.trim(), order, order == 0));
+            order++;
+        }
+    }
+
+    private void replaceTags(Long offerId, List<String> tags) {
+        offerTagRepository.deleteByOfferId(offerId);
+        for (String label : tags) {
+            if (label == null || label.isBlank()) continue;
+            offerTagRepository.save(OfferTag.of(offerId, label.trim()));
+        }
+    }
+
+    private void replaceCertifications(Long offerId, List<String> certifications) {
+        offerCertificationRepository.deleteByOfferId(offerId);
+        for (String label : certifications) {
+            if (label == null || label.isBlank()) continue;
+            offerCertificationRepository.save(OfferCertification.of(offerId, label.trim()));
+        }
+    }
+
+    private void replaceOptions(Long offerId, List<CreateOfferRequest.OptionInput> options) {
+        offerOptionRepository.deleteByOfferId(offerId);
+        int oi = 0;
+        for (CreateOfferRequest.OptionInput opt : options) {
+            if (opt == null || opt.price() == null) continue;
+            String ou = (opt.unit() == null || opt.unit().isBlank()) ? null : opt.unit().trim();
+            offerOptionRepository.save(OfferOption.of(offerId, opt.quantity(), ou, opt.price(), oi));
+            oi++;
+        }
+    }
+
     /** 식재료명으로 ingredient_id 해석 (정확히 일치하는 활성 식재료가 있으면 연결, 없으면 null) */
     private Long resolveIngredientId(String name) {
         return ingredientRepository.findTop20ByActiveTrueAndNameContainingIgnoreCaseOrderByIdDesc(name)
@@ -180,26 +274,27 @@ public class ProducerService {
     @Transactional(readOnly = true)
     public List<ProducerOfferResponse> getProducerOffers(Long producerId) {
         requireProducer(producerId);
-        return toOffers(offerRepository.findByProducerIdOrderByPriceAsc(producerId));
+        // 공개 농가 상세 — 숨김(HIDDEN) 상품 제외
+        return toOffers(offerRepository.findByProducerIdAndStatusOrderByPriceAsc(producerId, ProducerOffer.STATUS_ACTIVE));
     }
 
     @Transactional(readOnly = true)
     public List<ProducerOfferResponse> getOffersForIngredient(Long ingredientId) {
-        // 식재료 ID로 농가 비교 (화면 15).
+        // 식재료 ID로 농가 비교 (화면 15). 숨김 상품 제외.
         // 1) offer가 ingredient_id로 링크된 경우 그대로 사용
-        List<ProducerOffer> byId = offerRepository.findByIngredientIdOrderByPriceAsc(ingredientId);
+        List<ProducerOffer> byId = offerRepository.findByIngredientIdAndStatusOrderByPriceAsc(ingredientId, ProducerOffer.STATUS_ACTIVE);
         if (!byId.isEmpty()) {
             return toOffers(byId);
         }
         // 2) 폴백: 아직 ingredient_id 백필 전이면 식재료명으로 매칭 (시드만 있어도 동작)
         return toOffers(ingredientRepository.findById(ingredientId)
-                .map(ing -> offerRepository.findByIngredientNameOrderByPriceAsc(ing.getName()))
+                .map(ing -> offerRepository.findByIngredientNameAndStatusOrderByPriceAsc(ing.getName(), ProducerOffer.STATUS_ACTIVE))
                 .orElseGet(List::of));
     }
 
     @Transactional(readOnly = true)
     public List<ProducerOfferResponse> getOffersForIngredientName(String ingredientName) {
-        return toOffers(offerRepository.findByIngredientNameOrderByPriceAsc(ingredientName));
+        return toOffers(offerRepository.findByIngredientNameAndStatusOrderByPriceAsc(ingredientName, ProducerOffer.STATUS_ACTIVE));
     }
 
     @Transactional(readOnly = true)

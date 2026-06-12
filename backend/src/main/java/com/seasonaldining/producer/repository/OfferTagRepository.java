@@ -8,4 +8,5 @@ import java.util.List;
 public interface OfferTagRepository extends JpaRepository<OfferTag, Long> {
     List<OfferTag> findByOfferIdOrderByIdAsc(Long offerId);
     List<OfferTag> findByOfferIdInOrderByIdAsc(List<Long> offerIds);
+    void deleteByOfferId(Long offerId);
 }

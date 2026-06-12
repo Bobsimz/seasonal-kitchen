@@ -35,8 +35,14 @@ public class ProducerOffer {
     private String storageMethod;
     @Column(name = "storage_note", length = 500)
     private String storageNote;
+    // 판매 상태 (V28) — ACTIVE | HIDDEN(소프트 삭제). 기본 ACTIVE.
+    @Column(nullable = false, length = 20)
+    private String status = "ACTIVE";
     @Column(name = "observed_at", nullable = false)
     private OffsetDateTime observedAt = OffsetDateTime.now();
+
+    public static final String STATUS_ACTIVE = "ACTIVE";
+    public static final String STATUS_HIDDEN = "HIDDEN";
 
     protected ProducerOffer() {}
 
@@ -87,5 +93,20 @@ public class ProducerOffer {
     public Integer getStockQuantity() { return stockQuantity; }
     public String getStorageMethod() { return storageMethod; }
     public String getStorageNote() { return storageNote; }
+    public String getStatus() { return status; }
     public OffsetDateTime getObservedAt() { return observedAt; }
+
+    // ── 판매자 상품 수정/숨김 (V28) ──────────────────────────
+    /** 소프트 삭제 — 공개 목록/검색에서 제외된다. */
+    public void hide() { this.status = STATUS_HIDDEN; }
+
+    public void changePrice(BigDecimal price) { if (price != null) this.price = price; }
+    public void changeUnit(String unit) { if (unit != null) this.unit = unit; }
+    public void changeFreshnessLabel(String freshnessLabel) { if (freshnessLabel != null) this.freshnessLabel = freshnessLabel; }
+    public void changeTitle(String title) { if (title != null) this.title = title; }
+    public void changeDescription(String description) { if (description != null) this.description = description; }
+    public void changeCategory(String category) { if (category != null) this.category = category; }
+    public void changeStockQuantity(Integer stockQuantity) { if (stockQuantity != null) this.stockQuantity = stockQuantity; }
+    public void changeStorageMethod(String storageMethod) { if (storageMethod != null) this.storageMethod = storageMethod; }
+    public void changeStorageNote(String storageNote) { if (storageNote != null) this.storageNote = storageNote; }
 }

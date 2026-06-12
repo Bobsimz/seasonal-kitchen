@@ -4,6 +4,7 @@ import com.seasonaldining.common.response.ApiResponse;
 import com.seasonaldining.common.security.CurrentUserProvider;
 import com.seasonaldining.producer.dto.request.CreateOfferRequest;
 import com.seasonaldining.producer.dto.request.RegisterProducerRequest;
+import com.seasonaldining.producer.dto.request.UpdateOfferRequest;
 import com.seasonaldining.producer.dto.response.ProducerDetailResponse;
 import com.seasonaldining.producer.dto.response.ProducerOfferResponse;
 import com.seasonaldining.producer.dto.response.SellerStatsResponse;
@@ -12,7 +13,11 @@ import com.seasonaldining.producer.service.SellerStatsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 내 농가 (마이페이지 → 농가로 등록 / 내 농가 관리 / 상품 등록). 모두 인증 필요.
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/producers/me")
 @Tag(name = "18. Producers", description = "농가(생산자) API")
+@Validated
 public class ProducerMeController {
 
     private final ProducerService producerService;
@@ -53,6 +59,28 @@ public class ProducerMeController {
     public ApiResponse<ProducerOfferResponse> addOffer(@Valid @RequestBody CreateOfferRequest request) {
         return ApiResponse.success(
                 producerService.addMyOffer(currentUserProvider.getCurrentUserId(), request), null);
+    }
+
+    @GetMapping("/offers")
+    @Operation(summary = "내 농가 상품 목록", description = "내가 등록한 판매 상품 목록(숨김 제외). 판매자 대시보드용. 미등록이면 PRODUCER_NOT_FOUND.")
+    public ApiResponse<List<ProducerOfferResponse>> getMyOffers() {
+        return ApiResponse.success(
+                producerService.getMyOffers(currentUserProvider.getCurrentUserId()), null);
+    }
+
+    @PatchMapping("/offers/{offerId}")
+    @Operation(summary = "내 농가 상품 수정", description = "부분 수정(null=미수정, 컬렉션은 제공 시 전체 교체). 타 농가/숨김 상품은 PRODUCER_OFFER_NOT_FOUND.")
+    public ApiResponse<ProducerOfferResponse> updateOffer(@PathVariable @Positive Long offerId,
+                                                          @Valid @RequestBody UpdateOfferRequest request) {
+        return ApiResponse.success(
+                producerService.updateMyOffer(currentUserProvider.getCurrentUserId(), offerId, request), null);
+    }
+
+    @DeleteMapping("/offers/{offerId}")
+    @Operation(summary = "내 농가 상품 내리기(숨김)", description = "소프트 삭제(status=HIDDEN). 공개 목록/검색에서 제외됩니다. 타 농가/이미 숨김은 PRODUCER_OFFER_NOT_FOUND.")
+    public ApiResponse<Void> deleteOffer(@PathVariable @Positive Long offerId) {
+        producerService.deleteMyOffer(currentUserProvider.getCurrentUserId(), offerId);
+        return ApiResponse.success(null, null);
     }
 
     @GetMapping("/stats")
