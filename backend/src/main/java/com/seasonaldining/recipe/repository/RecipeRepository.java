@@ -14,4 +14,5 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     Optional<Recipe> findByIdAndStatus(Long id, String status);
     List<Recipe> findTop20ByStatusAndTitleContainingIgnoreCaseOrderByIdDesc(String status, String title);
+    List<Recipe> findByIdInAndStatus(List<Long> ids, String status);
 }

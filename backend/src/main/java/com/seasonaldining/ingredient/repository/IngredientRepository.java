@@ -14,4 +14,5 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
 
     Optional<Ingredient> findByIdAndActiveTrue(Long id);
     List<Ingredient> findTop20ByActiveTrueAndNameContainingIgnoreCaseOrderByIdDesc(String name);
+    List<Ingredient> findByIdInAndActiveTrue(List<Long> ids);
 }
