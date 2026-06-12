@@ -1168,7 +1168,7 @@ export function ScreenDetail({ t }) {
           </div>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
             <Chip color={t.primary} bg={t.primaryBg}>
-              📦 공급 과잉
+              🌱 지금 제철
             </Chip>
             <Chip color={t.hot} bg={t.hotBg}>
               🔥 트렌드 상승

@@ -1030,7 +1030,7 @@ export function ScreenHomeB({ t }) {
                 range: "2,800~3,600",
                 unit: "포기",
                 delta: "-22%",
-                tag: "과잉 공급",
+                tag: "지금 제철",
                 color: "#dfe7c4",
               },
               {
@@ -1504,6 +1504,362 @@ function darken(hex, amt) {
 // ─────────────────────────────────────────────────────────────
 // 검색 화면 — 검색 전 (홈에서 상단 검색바 탭, 키워드 입력 전)
 // ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// 07 — 제철 큐레이션 (홈 상단 배너 클릭 시 진입)
+// ─────────────────────────────────────────────────────────────
+export function ScreenSeasonalCuration({ t }) {
+  const farms = producersForIngredient("봄동").slice(0, 3);
+  const recipes = [
+    { name: "봄동 비빔밥", img: DISH_IMG.봄동비빔밥히어로, sub: "20분 · 쉬움" },
+    { name: "봄동 새우전", img: DISH_IMG.봄동새우전, sub: "25분 · 보통" },
+    { name: "봄동 쌈밥", img: DISH_IMG.봄동쌈밥, sub: "15분 · 쉬움" },
+  ];
+  const points = [
+    { ic: "🌱", k: "제철 적기", v: "2~3월이 1년 중 가장 달고 부드러워요" },
+    { ic: "💰", k: "가격 매력", v: "평년 대비 22% 저렴 · 지금이 구매 적기" },
+    { ic: "🥬", k: "영양 가득", v: "비타민C·식이섬유 풍부 · 겨울철 면역에 좋아요" },
+  ];
+  return (
+    <Phone t={t}>
+      <div
+        className="phone-scroll"
+        style={{ flex: 1, overflow: "auto", background: t.bg }}
+      >
+        {/* ── Hero (봄동 강조) ── */}
+        <div style={{ position: "relative", height: 280, overflow: "hidden" }}>
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundImage: `url(${vegImg("봄동") || HERO_IMG})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(180deg, rgba(15,26,20,0.4) 0%, rgba(15,26,20,0.12) 38%, rgba(15,26,20,0.86) 100%)",
+            }}
+          />
+          <div
+            style={{
+              position: "relative",
+              paddingTop: 50,
+              padding: "50px 16px 0",
+            }}
+          >
+            <div
+              className="tap"
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                background: "rgba(255,255,255,0.18)",
+                backdropFilter: "blur(10px)",
+                border: "1px solid rgba(255,255,255,0.25)",
+                display: "grid",
+                placeItems: "center",
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M13 4L7 10l6 6"
+                  stroke="#fff"
+                  strokeWidth="2"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              left: 22,
+              right: 22,
+              bottom: 18,
+              color: "#fff",
+            }}
+          >
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 11.5,
+                fontWeight: 800,
+                letterSpacing: 0.4,
+                color: "#9DE8B5",
+                textShadow: "0 1px 6px rgba(0,0,0,0.55)",
+              }}
+            >
+              <span
+                style={{
+                  width: 5,
+                  height: 5,
+                  borderRadius: 3,
+                  background: "#9DE8B5",
+                  boxShadow: "0 0 10px rgba(157,232,181,0.9)",
+                }}
+              />
+              2월 셋째 주 · 봄동 제철
+            </div>
+            <div
+              style={{
+                fontSize: 30,
+                fontWeight: 800,
+                letterSpacing: -1,
+                lineHeight: 1.12,
+                marginTop: 8,
+                textShadow: "0 2px 16px rgba(0,0,0,0.4)",
+              }}
+            >
+              지금이 딱,
+              <br />
+              봄동의 계절
+            </div>
+            <div
+              style={{
+                fontSize: 12.5,
+                marginTop: 6,
+                color: "rgba(255,255,255,0.9)",
+                textShadow: "0 1px 6px rgba(0,0,0,0.5)",
+              }}
+            >
+              1년 중 가장 맛있고 저렴할 때 · 평년 대비 ▼22%
+            </div>
+          </div>
+        </div>
+
+        {/* ── 봄동 이야기 (따뜻한 카피) ── */}
+        <div style={{ padding: "16px 16px 0" }}>
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 18,
+              border: `1px solid ${t.borderSoft}`,
+              padding: 18,
+            }}
+          >
+            <div
+              style={{
+                fontSize: 12.5,
+                fontWeight: 800,
+                color: t.primary,
+                letterSpacing: 0.3,
+              }}
+            >
+              봄동 이야기
+            </div>
+            <div
+              style={{
+                fontSize: 14,
+                color: t.textMid,
+                lineHeight: 1.75,
+                marginTop: 10,
+                letterSpacing: -0.2,
+              }}
+            >
+              겨우내 언 땅을 견디고 올라온 봄동은, 추위를 이겨낸 만큼 잎이
+              도톰하고 단맛이 깊어요. 찬 바람이 단단하게 키운 봄의 첫 채소랍니다.
+              살짝 데쳐 된장에 무치거나 겉절이로 무쳐내면, 식탁에 가장 먼저 봄이
+              찾아와요. 1년 중 가장 맛있는 지금, 봄동으로 봄을 맞이해보세요.
+            </div>
+          </div>
+        </div>
+        {/* ── 왜 지금 봄동? ── */}
+        <div style={{ padding: "22px 16px 0" }}>
+          <div
+            style={{
+              fontSize: 17,
+              fontWeight: 800,
+              color: t.text,
+              letterSpacing: -0.4,
+              marginBottom: 12,
+              padding: "0 2px",
+            }}
+          >
+            왜 지금 <span style={{ color: t.primary }}>봄동</span>일까요?
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {points.map((p, i) => (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  background: "#fff",
+                  borderRadius: 14,
+                  border: `1px solid ${t.borderSoft}`,
+                  padding: "12px 14px",
+                }}
+              >
+                <div
+                  style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: 11,
+                    background: t.bgSoft,
+                    display: "grid",
+                    placeItems: "center",
+                    fontSize: 18,
+                    flexShrink: 0,
+                  }}
+                >
+                  {p.ic}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13.5, fontWeight: 800, color: t.text }}>
+                    {p.k}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 11.5,
+                      color: t.textSoft,
+                      marginTop: 2,
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    {p.v}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── 봄동 레시피 ── */}
+        <div style={{ padding: "24px 0 0" }}>
+          <div
+            style={{
+              padding: "0 18px",
+              display: "flex",
+              alignItems: "baseline",
+              justifyContent: "space-between",
+              marginBottom: 12,
+            }}
+          >
+            <span
+              style={{
+                fontSize: 17,
+                fontWeight: 800,
+                color: t.text,
+                letterSpacing: -0.4,
+              }}
+            >
+              봄동 레시피
+            </span>
+            <span style={{ fontSize: 12, color: t.primary, fontWeight: 700 }}>
+              더보기 →
+            </span>
+          </div>
+          <div
+            style={{ display: "flex", gap: 12, overflowX: "auto", padding: "0 18px 6px" }}
+            className="phone-scroll"
+          >
+            {recipes.map((r, i) => (
+              <div key={i} className="tap" style={{ width: 160, flexShrink: 0 }}>
+                <div
+                  style={{
+                    width: "100%",
+                    aspectRatio: "4/3",
+                    borderRadius: 14,
+                    backgroundImage: `url(${r.img})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    border: `1px solid ${t.borderSoft}`,
+                  }}
+                />
+                <div
+                  style={{
+                    fontSize: 13.5,
+                    fontWeight: 700,
+                    color: t.text,
+                    marginTop: 8,
+                  }}
+                >
+                  {r.name}
+                </div>
+                <div style={{ fontSize: 11.5, color: t.textSoft, marginTop: 2 }}>
+                  {r.sub}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── 봄동 농가 ── */}
+        <div style={{ padding: "24px 16px 0" }}>
+          <div
+            style={{
+              fontSize: 17,
+              fontWeight: 800,
+              color: t.text,
+              letterSpacing: -0.4,
+              marginBottom: 12,
+              padding: "0 2px",
+            }}
+          >
+            봄동 농가 추천
+          </div>
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 18,
+              border: `1px solid ${t.borderSoft}`,
+              overflow: "hidden",
+            }}
+          >
+            {farms.map((p, i, arr) => (
+              <ProducerRow
+                key={p.id}
+                producer={p}
+                t={t}
+                divider={i < arr.length - 1}
+              />
+            ))}
+          </div>
+          <div
+            className="tap"
+            style={{
+              marginTop: 10,
+              height: 46,
+              borderRadius: 12,
+              background: t.bgSoft,
+              border: `1px solid ${t.borderSoft}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 6,
+              fontSize: 13,
+              fontWeight: 700,
+              color: t.text,
+            }}
+          >
+            봄동 상품 전체 보기
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path
+                d="M4 2l4 4-4 4"
+                stroke={t.text}
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <div style={{ height: 28 }} />
+      </div>
+    </Phone>
+  );
+}
+
 export function ScreenHomeSearch({ t }) {
   return (
     <Phone t={t} bg={t.bg}>

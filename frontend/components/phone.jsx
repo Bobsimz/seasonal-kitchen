@@ -161,7 +161,7 @@ export function Phone({
   );
 }
 
-// Bottom tab bar — 5 균등 슬롯: 홈 / 상품 / 정보 / 릴스 / 마이
+// Bottom tab bar — 5 균등 슬롯: 홈 / 정보 / 상품(강조) / 릴스 / 마이
 export function BottomTabBar({ active = "home", t, dark }) {
   const tabs = [
     {
@@ -175,28 +175,6 @@ export function BottomTabBar({ active = "home", t, dark }) {
             stroke={c === "active" ? t.primary : t.textSoft}
             strokeWidth="1.7"
             strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: "product",
-      label: "상품",
-      icon: (c) => (
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-          <path
-            d="M5 7h12l-1 11a1 1 0 01-1 1H7a1 1 0 01-1-1L5 7z"
-            stroke={c === "active" ? t.primary : t.textSoft}
-            fill={c === "active" ? t.primaryBg : "none"}
-            strokeWidth="1.7"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M8 7.5V6a3 3 0 016 0v1.5"
-            stroke={c === "active" ? t.primary : t.textSoft}
-            strokeWidth="1.7"
-            fill="none"
-            strokeLinecap="round"
           />
         </svg>
       ),
@@ -235,6 +213,29 @@ export function BottomTabBar({ active = "home", t, dark }) {
             stroke={c === "active" ? t.primary : t.textSoft}
             fill={c === "active" ? t.primaryBg : "none"}
             strokeWidth="1.7"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: "product",
+      label: "상품",
+      emphasis: true,
+      icon: (c) => (
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path
+            d="M5 7h12l-1 11a1 1 0 01-1 1H7a1 1 0 01-1-1L5 7z"
+            stroke={c === "active" ? t.primary : t.textSoft}
+            fill={c === "active" ? t.primaryBg : "none"}
+            strokeWidth="1.7"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M8 7.5V6a3 3 0 016 0v1.5"
+            stroke={c === "active" ? t.primary : t.textSoft}
+            strokeWidth="1.7"
+            fill="none"
+            strokeLinecap="round"
           />
         </svg>
       ),
@@ -288,6 +289,70 @@ export function BottomTabBar({ active = "home", t, dark }) {
 
   const renderTab = (tab) => {
     const isActive = active === tab.id;
+    // 상품 탭은 기능 강조 — 띄워진 프라이머리 원형 버튼 (이전 AI 셰프 버튼 느낌).
+    // 원형은 항상 초록 유지, 선택 여부는 그림자와 글자색으로만 구분.
+    if (tab.emphasis) {
+      return (
+        <div
+          key={tab.id}
+          className="tap"
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            gap: 4,
+          }}
+        >
+          <div
+            style={{
+              width: 46,
+              height: 46,
+              marginTop: -18,
+              borderRadius: 23,
+              background: `linear-gradient(135deg, ${t.primary}, ${t.primaryDark})`,
+              border: `3px solid ${dark ? "#0a0a0a" : "#fff"}`,
+              display: "grid",
+              placeItems: "center",
+              boxShadow: isActive
+                ? `0 6px 16px ${t.primary}77, 0 2px 6px rgba(0,0,0,0.14)`
+                : "0 1px 3px rgba(0,0,0,0.12)",
+            }}
+          >
+            <svg width="24" height="24" viewBox="0 0 22 22" fill="none">
+              <path
+                d="M5 7h12l-1 11a1 1 0 01-1 1H7a1 1 0 01-1-1L5 7z"
+                stroke="#fff"
+                fill="none"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M8 7.5V6a3 3 0 016 0v1.5"
+                stroke="#fff"
+                strokeWidth="1.8"
+                fill="none"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+          <span
+            style={{
+              fontSize: 10.5,
+              fontWeight: isActive ? 800 : 500,
+              color: isActive
+                ? t.primary
+                : dark
+                  ? "rgba(255,255,255,0.5)"
+                  : t.textSoft,
+            }}
+          >
+            {tab.label}
+          </span>
+        </div>
+      );
+    }
     return (
       <div
         key={tab.id}

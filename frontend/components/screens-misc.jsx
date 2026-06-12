@@ -224,6 +224,75 @@ export function ScreenMyPage({ t }) {
           </div>
         </div>
 
+        {/* 판매자 센터 — 판매 권한 사용자만 노출되는 통계 접속 버튼 */}
+        <div style={{ padding: "14px 16px 0" }}>
+          <div
+            className="tap"
+            style={{
+              borderRadius: 18,
+              padding: 16,
+              background: "#fff",
+              border: `1px solid ${t.borderSoft}`,
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: 13,
+                background: t.primaryBg,
+                display: "grid",
+                placeItems: "center",
+                fontSize: 22,
+                flexShrink: 0,
+              }}
+            >
+              🧑‍🌾
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                }}
+              >
+                <span style={{ fontSize: 14.5, fontWeight: 800, color: t.text }}>
+                  판매자 센터
+                </span>
+                <span
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 800,
+                    color: t.primaryDark,
+                    background: t.primaryBg,
+                    padding: "2px 7px",
+                    borderRadius: 999,
+                  }}
+                >
+                  판매자
+                </span>
+              </div>
+              <div style={{ fontSize: 11.5, color: t.textSoft, marginTop: 3 }}>
+                오늘 매출 <b style={{ color: t.text }}>₩{priceExact(184000)}</b> · 주문 7건
+              </div>
+            </div>
+            <span
+              style={{
+                fontSize: 12.5,
+                fontWeight: 800,
+                color: t.primary,
+                whiteSpace: "nowrap",
+              }}
+            >
+              통계 보기 →
+            </span>
+          </div>
+        </div>
+
         {/* My picks (wishlist) */}
         <div style={{ padding: "20px 16px 0" }}>
           <div
@@ -617,6 +686,292 @@ export function ScreenSellerRegister({ t }) {
           판매자 신청하기
         </button>
       </StickyBar>
+    </Phone>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// 21f — 판매자 통계 (판매자 센터 · 데이터 통계 대시보드)
+// ─────────────────────────────────────────────────────────────
+export function ScreenSellerDashboard({ t }) {
+  const kpis = [
+    { k: "이번 달 매출", v: "₩4,820,000", d: "+12%", up: true },
+    { k: "주문", v: "186건", d: "+8%", up: true },
+    { k: "상품 조회수", v: "12,430", d: "+21%", up: true },
+    { k: "전환율", v: "3.4%", d: "-0.3%", up: false },
+  ];
+  const week = [
+    { d: "월", v: 62 },
+    { d: "화", v: 48 },
+    { d: "수", v: 80 },
+    { d: "목", v: 56 },
+    { d: "금", v: 95 },
+    { d: "토", v: 100 },
+    { d: "일", v: 74 },
+  ];
+  const tops = [
+    { veg: "무", name: "해남 황토밭 가을무 3kg", sold: 64, amt: 537600 },
+    { veg: "배추", name: "절임 배추 10kg 예약", sold: 28, amt: 669200 },
+    { veg: "봄동", name: "햇 봄동 1.5kg 산지직송", sold: 41, amt: 282900 },
+  ];
+  return (
+    <Phone t={t}>
+      <AppHeader
+        t={t}
+        title="판매자 통계"
+        leftBack
+        rightIcons={
+          <div
+            className="tap"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 3,
+              fontSize: 12.5,
+              fontWeight: 700,
+              color: t.text,
+              padding: "6px 10px",
+              borderRadius: 999,
+              border: `1px solid ${t.border}`,
+            }}
+          >
+            이번 달
+            <svg width="10" height="10" viewBox="0 0 10 10">
+              <path
+                d="M2 3.5l3 3 3-3"
+                stroke={t.textSoft}
+                strokeWidth="1.6"
+                fill="none"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+        }
+      />
+      <div
+        className="phone-scroll"
+        style={{ flex: 1, overflow: "auto", background: t.bgSoft }}
+      >
+        {/* KPI 그리드 */}
+        <div
+          style={{
+            padding: "14px 16px 0",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 10,
+          }}
+        >
+          {kpis.map((s, i) => (
+            <div
+              key={i}
+              style={{
+                background: "#fff",
+                borderRadius: 16,
+                border: `1px solid ${t.borderSoft}`,
+                padding: 14,
+              }}
+            >
+              <div style={{ fontSize: 11.5, color: t.textSoft, fontWeight: 600 }}>
+                {s.k}
+              </div>
+              <div
+                style={{
+                  fontSize: 19,
+                  fontWeight: 800,
+                  color: t.text,
+                  marginTop: 6,
+                  fontFeatureSettings: '"tnum"',
+                  letterSpacing: -0.4,
+                }}
+              >
+                {s.v}
+              </div>
+              <div
+                style={{
+                  fontSize: 11.5,
+                  fontWeight: 800,
+                  marginTop: 4,
+                  color: s.up ? t.primary : t.hot,
+                }}
+              >
+                {s.up ? "▲" : "▼"} {s.d.replace(/[+-]/, "")}
+                <span
+                  style={{ color: t.textSoft, fontWeight: 600, marginLeft: 4 }}
+                >
+                  전월 대비
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 최근 7일 매출 차트 */}
+        <div style={{ padding: "14px 16px 0" }}>
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 18,
+              border: `1px solid ${t.borderSoft}`,
+              padding: 16,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "baseline",
+                justifyContent: "space-between",
+                marginBottom: 14,
+              }}
+            >
+              <span style={{ fontSize: 14, fontWeight: 800, color: t.text }}>
+                최근 7일 매출
+              </span>
+              <span style={{ fontSize: 11.5, color: t.textSoft }}>
+                일 평균 ₩689,000
+              </span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-end",
+                justifyContent: "space-between",
+                gap: 8,
+                height: 120,
+              }}
+            >
+              {week.map((b, i) => {
+                const peak = i === 5;
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 6,
+                      height: "100%",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "100%",
+                        height: `${b.v}%`,
+                        borderRadius: 6,
+                        background: peak
+                          ? `linear-gradient(180deg, ${t.primary}, ${t.primaryDark})`
+                          : t.primaryBg,
+                      }}
+                    />
+                    <span style={{ fontSize: 10.5, color: t.textSoft }}>{b.d}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* 인기 상품 */}
+        <div style={{ padding: "14px 16px 0" }}>
+          <div style={{ fontSize: 14, fontWeight: 800, color: t.text, padding: "0 2px 10px" }}>
+            인기 상품
+          </div>
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 18,
+              border: `1px solid ${t.borderSoft}`,
+              overflow: "hidden",
+            }}
+          >
+            {tops.map((p, i, arr) => (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "12px 16px",
+                  borderBottom:
+                    i < arr.length - 1 ? `1px solid ${t.borderSoft}` : "none",
+                }}
+              >
+                <span
+                  style={{
+                    width: 20,
+                    fontSize: 14,
+                    fontWeight: 800,
+                    color: i === 0 ? t.primary : t.textSoft,
+                    textAlign: "center",
+                    fontFeatureSettings: '"tnum"',
+                  }}
+                >
+                  {i + 1}
+                </span>
+                <VegPlaceholder name={p.veg} size={44} t={t} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      fontSize: 13.5,
+                      fontWeight: 700,
+                      color: t.text,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {p.name}
+                  </div>
+                  <div style={{ fontSize: 11.5, color: t.textSoft, marginTop: 2 }}>
+                    {p.sold}건 판매
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: 13.5,
+                    fontWeight: 800,
+                    color: t.text,
+                    fontFeatureSettings: '"tnum"',
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  ₩{priceExact(p.amt)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 정산 예정 */}
+        <div style={{ padding: "14px 16px 0" }}>
+          <div
+            style={{
+              borderRadius: 16,
+              padding: "14px 16px",
+              background: t.primaryBg,
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            <span style={{ fontSize: 20 }}>💰</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: t.primaryDark }}>
+                정산 예정 금액 ₩{priceExact(2940000)}
+              </div>
+              <div style={{ fontSize: 11.5, color: t.textMid, marginTop: 2 }}>
+                다음 정산일 2026.06.25
+              </div>
+            </div>
+            <span style={{ fontSize: 12.5, fontWeight: 800, color: t.primary }}>
+              내역 →
+            </span>
+          </div>
+        </div>
+
+        <div style={{ height: 28 }} />
+      </div>
     </Phone>
   );
 }

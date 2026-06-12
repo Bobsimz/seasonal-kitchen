@@ -7,11 +7,11 @@ import { DesignCanvas, DCSection, DCArtboard } from './design-canvas';
 import { TweaksPanel, TweakSection, TweakRadio, useTweaks } from './tweaks-panel';
 import { ScreenSplash, ScreenOnboard, ScreenOnboard2, ScreenSignup, ScreenSignupSurvey } from './screens-onboarding';
 import { OnboardingFlow, HomeFlow, CatalogFlow, ReelsFlow, CrossSectionFlow } from './flow-arrows';
-import { ScreenHomeB, ScreenHomeSearch, ScreenHomeSearchResult } from './screens-home';
+import { ScreenHomeB, ScreenSeasonalCuration, ScreenHomeSearch, ScreenHomeSearchResult } from './screens-home';
 import { ScreenList, ScreenRecipeList, ScreenListSearchResult, ScreenRecipeListSearchResult, ScreenDetail, ScreenCompare } from './screens-detail';
 import { ScreenProductList, ScreenProductListSeller, ScreenProductListSearchResult } from './screens-product';
 import { ScreenReels, ScreenRecipeDetail, ScreenRecipeSteps } from './screens-reels';
-import { ScreenMyPage, ScreenOrders, ScreenWishlist, ScreenReviews, ScreenWriteReview, ScreenSellerRegister } from './screens-misc';
+import { ScreenMyPage, ScreenOrders, ScreenWishlist, ScreenReviews, ScreenWriteReview, ScreenSellerRegister, ScreenSellerDashboard } from './screens-misc';
 import { ScreenCart, ScreenPurchase, ScreenFarmUpload, ScreenProducerDetail, ScreenOrderComplete } from './screens-farm';
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
@@ -43,7 +43,8 @@ export function App() {
         </DCSection>
 
         <DCSection id="home" title="02 · 홈" subtitle="메인 + 검색">
-          <DCArtboard id="home-b"   label="07 Home · 메인"      width={W} height={H}><ScreenHomeB       t={t}/></DCArtboard>
+          <DCArtboard id="home-b"   label="06 Home · 메인"      width={W} height={H}><ScreenHomeB       t={t}/></DCArtboard>
+          <DCArtboard id="home-curation" label="07 제철 큐레이션 (배너 진입)" width={W} height={H}><ScreenSeasonalCuration t={t}/></DCArtboard>
           <DCArtboard id="home-search" label="08 Home · 검색 전"   width={W} height={H}><ScreenHomeSearch       t={t}/></DCArtboard>
           <DCArtboard id="home-search-result" label="09 Home · 검색 결과" width={W} height={H}><ScreenHomeSearchResult t={t}/></DCArtboard>
           <HomeFlow />
@@ -84,6 +85,7 @@ export function App() {
           <DCArtboard id="reviews"  label="21c 리뷰 관리"         width={W} height={H}><ScreenReviews   t={t}/></DCArtboard>
           <DCArtboard id="write-review" label="21d 리뷰 작성"     width={W} height={H}><ScreenWriteReview t={t}/></DCArtboard>
           <DCArtboard id="seller-register" label="21e 판매자 등록"  width={W} height={H}><ScreenSellerRegister t={t}/></DCArtboard>
+          <DCArtboard id="seller-dashboard" label="21f 판매자 통계"  width={W} height={H}><ScreenSellerDashboard t={t}/></DCArtboard>
         </DCSection>
 
         <DCSection id="farm" title="07 · 농가 연결 & 주문" subtitle="장바구니 · 주문 완료 · 판매 등록(AI 작성 도움)">

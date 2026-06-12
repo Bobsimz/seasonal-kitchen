@@ -662,17 +662,35 @@ const UPLOAD_IMGS = [
 
 export function ScreenFarmUpload({ t }) {
   const cats = ["잎채소", "뿌리채소", "과일", "곡류", "버섯", "기타"];
-  const Field = ({ label, children, hint }) => (
+  const certs = ["무농약", "유기농(유기농산물)", "GAP(우수관리)", "친환경", "지리적표시"];
+  const storages = ["냉장 보관", "냉동 보관", "실온 보관", "서늘한 그늘"];
+  const Field = ({ label, children, hint, required }) => (
     <div style={{ marginBottom: 16 }}>
       <div
         style={{
-          fontSize: 12.5,
-          fontWeight: 800,
-          color: t.text,
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
           marginBottom: 8,
         }}
       >
-        {label}
+        <span style={{ fontSize: 12.5, fontWeight: 800, color: t.text }}>
+          {label}
+        </span>
+        {required && (
+          <span
+            style={{
+              fontSize: 10,
+              fontWeight: 800,
+              color: t.hot,
+              background: t.hotBg,
+              padding: "2px 7px",
+              borderRadius: 999,
+            }}
+          >
+            필수
+          </span>
+        )}
       </div>
       {children}
       {hint && (
@@ -769,7 +787,88 @@ export function ScreenFarmUpload({ t }) {
             </div>
           </Field>
 
-          {/* AI 작성 도움 — 선택 가능 (AI 추천 ⇄ 직접 작성) */}
+          {/* 사진 자동 분석 결과 — 업로드 시 자동으로 정보 감지 */}
+          <div
+            style={{
+              marginBottom: 16,
+              padding: "12px 14px",
+              borderRadius: 14,
+              background: "#fff",
+              border: `1px solid ${t.primarySoft}`,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 7,
+                marginBottom: 10,
+              }}
+            >
+              <div
+                style={{
+                  width: 18,
+                  height: 18,
+                  borderRadius: 9,
+                  background: t.primary,
+                  display: "grid",
+                  placeItems: "center",
+                }}
+              >
+                <svg width="11" height="11" viewBox="0 0 14 14">
+                  <path
+                    d="M3 7.5l2.5 2.5L11 4"
+                    stroke="#fff"
+                    strokeWidth="2"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <span
+                style={{
+                  fontSize: 13,
+                  fontWeight: 800,
+                  color: t.text,
+                  letterSpacing: -0.3,
+                }}
+              >
+                사진 분석 완료
+              </span>
+              <span style={{ fontSize: 11, color: t.textSoft, marginLeft: "auto" }}>
+                자동 감지됨
+              </span>
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {[
+                { k: "품목", v: "무" },
+                { k: "카테고리", v: "뿌리채소" },
+                { k: "신선도", v: "상 (95%)" },
+              ].map((d) => (
+                <div
+                  key={d.k}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 5,
+                    padding: "6px 10px",
+                    borderRadius: 9,
+                    background: t.bgSoft,
+                  }}
+                >
+                  <span style={{ fontSize: 11, color: t.textSoft, fontWeight: 600 }}>
+                    {d.k}
+                  </span>
+                  <span style={{ fontSize: 12, color: t.text, fontWeight: 800 }}>
+                    {d.v}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* AI 자동완성 — 사진 분석 후 선택 (AI 추천 ⇄ 직접 작성) */}
           <div
             style={{
               marginBottom: 16,
@@ -809,8 +908,21 @@ export function ScreenFarmUpload({ t }) {
                   letterSpacing: -0.3,
                 }}
               >
-                AI로 상품 정보 작성
+                AI 자동완성
               </div>
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 800,
+                  color: t.textSoft,
+                  background: t.bgSoft,
+                  padding: "2px 8px",
+                  borderRadius: 999,
+                  marginLeft: 2,
+                }}
+              >
+                선택
+              </span>
             </div>
             <div
               style={{
@@ -820,7 +932,7 @@ export function ScreenFarmUpload({ t }) {
                 marginBottom: 10,
               }}
             >
-              사진·카테고리를 분석해 상품명·설명·추천 가격을 자동으로 채워드려요
+              사진 분석 결과를 바탕으로 상품명·설명·추천 가격을 자동으로 채워드려요. 원하지 않으면 직접 작성하세요
             </div>
             <div
               style={{
@@ -909,6 +1021,35 @@ export function ScreenFarmUpload({ t }) {
                   {c}
                 </div>
               ))}
+            </div>
+          </Field>
+
+          <Field label="인증마크" required hint="농산물 인증 마크는 반드시 1개 이상 선택해주세요">
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {certs.map((c, i) => {
+                const on = i === 0 || i === 1;
+                return (
+                  <div
+                    key={c}
+                    className="tap"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                      padding: "8px 13px",
+                      borderRadius: 999,
+                      fontSize: 12.5,
+                      fontWeight: 700,
+                      background: on ? t.primaryBg : "#fff",
+                      color: on ? t.primaryDark : t.textMid,
+                      border: `1px solid ${on ? t.primary : t.border}`,
+                    }}
+                  >
+                    {on && <span style={{ fontSize: 11 }}>✓</span>}
+                    {c}
+                  </div>
+                );
+              })}
             </div>
           </Field>
 
@@ -1018,6 +1159,37 @@ export function ScreenFarmUpload({ t }) {
                 </div>
               ))}
             </div>
+          </Field>
+
+          <Field label="보관방법" required hint="구매자에게 안내할 보관 방법을 선택하고 설명을 적어주세요">
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>
+              {storages.map((s, i) => (
+                <div
+                  key={s}
+                  className="tap"
+                  style={{
+                    padding: "8px 14px",
+                    borderRadius: 999,
+                    fontSize: 12.5,
+                    fontWeight: 700,
+                    background: i === 0 ? t.primary : "#fff",
+                    color: i === 0 ? "#fff" : t.textMid,
+                    border: i === 0 ? "none" : `1px solid ${t.border}`,
+                  }}
+                >
+                  {s}
+                </div>
+              ))}
+            </div>
+            <textarea
+              style={{
+                ...inputBox,
+                minHeight: 64,
+                resize: "none",
+                lineHeight: 1.5,
+              }}
+              placeholder="예: 신문지에 싸서 냉장 보관하면 2주까지 신선해요. 흙은 털지 말고 보관하세요."
+            />
           </Field>
 
           <Field label="신선도 · 원산지 소개" hint="0 / 500자">

@@ -83,14 +83,16 @@ export const OnboardingFlow = () => (
   <FlowArrows id="onboard" edges={ONBOARDING_EDGES} rowWidth={rightOf(4)} />
 );
 
-// ── 02 · 홈 (3 아트보드: 07 홈, 08 검색 전, 09 검색 결과) ────────
+// ── 02 · 홈 (4 아트보드: 06 홈, 07 제철 큐레이션, 08 검색 전, 09 검색 결과) ──
 const HOME_EDGES = [
-  // 07 우측 상단 '검색' 아이콘 위 → 08 (검색바 영역으로 진입)
-  { x1: leftOf(0) + 305, y1: 42, x2: leftOf(1), y2: 78 },
+  // 06 최상단 히어로 배너 → 07 제철 큐레이션 (배너 클릭 진입)
+  { x1: leftOf(0) + 150, y1: 70, x2: leftOf(1), y2: MID_Y },
+  // 06 우측 상단 '검색' 아이콘 위 → 08 (07 큐레이션 건너뛰어 검색으로)
+  { x1: leftOf(0) + 305, y1: 42, x2: leftOf(2), y2: 56 },
   // 08 → 09 화살표는 제거됨
 ];
 export const HomeFlow = () => (
-  <FlowArrows id="home" edges={HOME_EDGES} rowWidth={rightOf(2)} />
+  <FlowArrows id="home" edges={HOME_EDGES} rowWidth={rightOf(3)} />
 );
 
 // ── 03 · 정보 — 식재료 & 레시피 (농가 제거 후 8 아트보드: 10,11,12,13,14,14′,15,15a) ──
