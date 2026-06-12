@@ -85,17 +85,17 @@ Authorization: Bearer <accessToken>
 | --- | --- | --- |
 | 회원가입 | `POST /api/v1/auth/signup` | 성공 시 바로 로그인 상태 처리 가능 |
 | 로그인 | `POST /api/v1/auth/login` | `accessToken` 저장 |
-| 상품 탭 | `GET /api/v1/producers` | 현재 상품 탭은 농가/오퍼 기반으로 연동 |
+| 상품 탭 | `GET /api/v1/products` | 상품 목록(producer_offers facade, §13). 농가 기반 `GET /api/v1/producers`도 병행 가능 |
 | 농가 상세 | `GET /api/v1/producers/{producerId}` | 기본 프로필 |
 | 농가 상품 목록 | `GET /api/v1/producers/{producerId}/offers` | 장바구니에는 여기서 받은 `id`를 `offerId`로 사용 |
-| 상품 상세 | `GET /api/v1/producers/{producerId}/offers` + `GET /api/v1/ingredients/{ingredientId}` | 전용 product detail API는 아직 없음 |
+| 상품 상세 | `GET /api/v1/products/{id}` | id=`producer_offers.id`. 이미지·옵션·인증·보관·관련레시피 포함(§13) |
 | 식재료 정보 | `GET /api/v1/ingredients/{ingredientId}` | 기존 식재료 & 레시피 탭 |
 | 식재료 관련 레시피 | `GET /api/v1/ingredients/{ingredientId}/recipes` | 레시피 카드 목록 |
 | 식재료 농가 비교 | `GET /api/v1/ingredients/{ingredientId}/producers` | 가격순 농가 비교 |
 | 장바구니 | `GET /api/v1/cart` | 농가별 그룹/배송비 포함 |
 | 주문 완료 | `POST /api/v1/orders` | 현재 장바구니를 모의 주문으로 전환 |
 | 주문 내역 | `GET /api/v1/orders` | 마이페이지 주문 목록 |
-| 검색 | `GET /api/v1/search?q=무&type=ALL` | 현재 type은 `ALL`, `INGREDIENT`, `RECIPE` |
+| 검색 | `GET /api/v1/search?q=무&type=ALL` | type: `ALL`, `INGREDIENT`, `RECIPE`, `PRODUCT`(상품 facade) |
 | 마이페이지 | `GET /api/v1/users/me/summary` | 프로필/통계/메뉴 카운트 |
 
 ## 4. Auth
@@ -484,19 +484,50 @@ Response:
   "data": {
     "id": 10,
     "targetType": "PRODUCER",
-    "targetId": 1
+    "targetId": 1,
+    "title": "권민성",
+    "imageUrl": "https://img/producer1.png",
+    "subtitle": "고랭지 무농약"
   },
   "error": null,
   "traceId": null
 }
 ```
 
+### GET `/api/v1/favorites`
+
+찜 목록. 기존 식별 필드(`id`/`targetType`/`targetId`)에 더해 **찜 목록 화면 표시용 대상 요약**(`title`/`imageUrl`/`subtitle`)을 함께 반환합니다. 대상이 삭제·비활성·비공개면 요약 필드는 `null`(식별 필드는 유지). 목록은 대상별 배치 조회로 N+1을 피합니다.
+
+> "비활성·비공개" 기준: 식재료 `active=false`, 레시피 `status != PUBLISHED`, 상품(offer) `status = HIDDEN`, 또는 대상이 삭제된 경우 → 해당 찜은 요약 3필드가 `null`로 내려갑니다(프론트는 식별 필드로 폴백/숨김 처리).
+
+targetType별 매핑:
+
+| targetType | title | imageUrl | subtitle |
+| --- | --- | --- | --- |
+| `INGREDIENT` | 식재료명 | 식재료 이미지(없으면 null) | 카테고리(예: 잎채소) |
+| `RECIPE` | 레시피 제목 | 레시피 이미지 | 레시피 설명 |
+| `PRODUCER` | 농가명 | 농가 photoUrl | 한줄소개(tagline) 없으면 지역(region) |
+| `PRODUCT`/`OFFER` | 상품명(없으면 식재료명) | 첫 상품 사진 | 가격/단위(예: `4,500원/봉`) |
+
+> `PRODUCT`/`OFFER`는 찜 생성(create) 대상으로는 아직 허용되지 않지만(현재 INGREDIENT/RECIPE/PRODUCER), 추후 상품 찜이 추가되면 동일 응답으로 동작하도록 매핑돼 있습니다.
+
+```jsonc
+// GET /api/v1/favorites  (응답 data: FavoriteResponse[])
+[
+  { "id": 10, "targetType": "INGREDIENT", "targetId": 12,
+    "title": "봄동", "imageUrl": "https://img/bomdong.png", "subtitle": "잎채소" },
+  { "id": 9, "targetType": "PRODUCER", "targetId": 1,
+    "title": "권민성", "imageUrl": "https://img/producer1.png", "subtitle": "고랭지 무농약" }
+]
+```
+
 ## 8. Search
 
 ### GET `/api/v1/search?q=무&type=ALL`
 
-현재 `type`은 `ALL`, `INGREDIENT`, `RECIPE`만 허용합니다.
-기획상 상품 검색 카테고리는 필요하지만 아직 코드에는 `PRODUCT` 타입이 없습니다.
+`type`은 `ALL`, `INGREDIENT`, `RECIPE`, **`PRODUCT`**를 허용합니다.
+- `ALL`은 기존과 동일하게 **식재료+레시피**만 반환합니다(상품은 포함하지 않음 — 기존 동작 보존).
+- **`PRODUCT`**는 producer_offers facade 기반 상품 검색입니다(상품명 `title`·식재료명·농가명 부분일치). 결과는 `products[]`/`productCount`에 담기고, `items`에도 동일하게 포함됩니다.
 
 ```json
 {
@@ -516,12 +547,26 @@ Response:
     "reels": [],
     "ingredientCount": 1,
     "recipeCount": 0,
-    "reelCount": 0
+    "reelCount": 0,
+    "products": [],
+    "productCount": 0
   },
   "error": null,
   "traceId": null
 }
 ```
+
+`type=PRODUCT` 응답 예(상품 결과):
+
+```jsonc
+{ "data": {
+  "items": [ { "type":"PRODUCT", "id":10, "title":"햇 봄동 1.5kg 산지직송", "description":"권민성", "imageUrl":"https://img/1.png" } ],
+  "ingredients": [], "recipes": [], "reels": [],
+  "ingredientCount": 0, "recipeCount": 0, "reelCount": 0,
+  "products": [ { "type":"PRODUCT", "id":10, "title":"햇 봄동 1.5kg 산지직송", "description":"권민성", "imageUrl":"https://img/1.png" } ],
+  "productCount": 1 } }
+```
+> PRODUCT 검색 항목의 `id`는 `producer_offers.id`(=상품 상세 `/products/{id}`의 id), `title`은 상품명(없으면 식재료명), `description`은 농가명.
 
 ### GET `/api/v1/search/trending`
 
@@ -561,11 +606,11 @@ Response:
 
 | 필요 기능 | 현재 상태 | 프론트 임시 대응 |
 | --- | --- | --- |
-| 전용 상품 목록 `GET /api/v1/products` | 미구현 | `GET /api/v1/producers`와 offers 조합 사용 |
-| 전용 상품 상세 `GET /api/v1/products/{id}` | 미구현 | `GET /api/v1/producers/{producerId}/offers` + `GET /api/v1/ingredients/{ingredientId}` 조합 |
-| 판매 등록 `POST /api/v1/seller/products` | 미구현 | 현재는 `POST /api/v1/producers/me/offers` 사용 |
+| 전용 상품 목록 `GET /api/v1/products` | ✅ **구현됨**(producer_offers facade, §13) | — |
+| 전용 상품 상세 `GET /api/v1/products/{id}` | ✅ **구현됨**(id=offer id, §13) | — |
+| 판매 등록 `POST /api/v1/seller/products` | `POST /api/v1/producers/me/offers` 사용 | 동일 |
 | 판매자 AI 가격 추천/홍보글 | 미구현 | 화면/스펙만 future로 유지 |
-| 검색 `PRODUCT` 타입 | 미구현 | 현재 `ALL`, `INGREDIENT`, `RECIPE`만 사용 |
+| 검색 `PRODUCT` 타입 | ✅ **구현됨**(§8) | — |
 | refresh token/logout/OAuth | 미구현 | access token 만료 시 재로그인 |
 
 ## 11. 농가 자가등록 / 내 농가 (마이페이지 → 농가로 등록)
@@ -578,6 +623,9 @@ Response:
 | `POST` | `/api/v1/producers/me` | 농가로 등록. 이미 등록 시 `PRODUCER_ALREADY_REGISTERED`(409) |
 | `GET` | `/api/v1/producers/me` | 내 농가 조회. 미등록 시 `PRODUCER_NOT_FOUND`(404) → "농가 등록" 버튼 노출 판단에 사용 |
 | `POST` | `/api/v1/producers/me/offers` | 내 농가 상품(offer) 등록. 미등록 상태면 404 |
+| `GET` | `/api/v1/producers/me/offers` | **내 판매 상품 목록**(숨김 제외). 판매자 대시보드 리스트 |
+| `PATCH` | `/api/v1/producers/me/offers/{offerId}` | **내 상품 수정**(부분). 타 농가/숨김은 `PRODUCER_OFFER_NOT_FOUND`(404) |
+| `DELETE` | `/api/v1/producers/me/offers/{offerId}` | **내 상품 내리기**(숨김/소프트 삭제). 공개 목록·검색·`/products`에서 제외 |
 | `GET` | `/api/v1/producers/me/stats` | 내 농가 판매 통계(21f 판매자 통계 / 마이 판매자 센터 카드) |
 
 ```jsonc
@@ -603,6 +651,34 @@ Response:
 - `ingredientId`를 주면 활성 식재료 검증(없으면 `INGREDIENT_NOT_FOUND`), 안 주면 이름으로 자동 연결.
 - **필수 필드 주의**: `certifications`(1개 이상)·`storageMethod`는 V26부터 필수. 누락 시 400(검증 실패).
 
+### 판매자 상품 관리 (대시보드) — GET/PATCH/DELETE
+
+판매자 대시보드에서 **mock 제거** 후 그대로 붙일 수 있습니다. 모두 인증 필요, 본인 농가 상품만.
+
+```jsonc
+// GET /api/v1/producers/me/offers
+// 응답 data: ProducerOfferResponse[] (숨김 제외, 가격 오름차순). 미등록 판매자는 PRODUCER_NOT_FOUND(404)
+[ { "id":10, "producerId":1, "producerName":"권민성", "ingredientName":"봄동",
+    "price":4500, "unit":"봉", "title":"햇 봄동 1.5kg 산지직송",
+    "photoUrls":["https://img/1.png"], "tags":["산지직송"], "options":[],
+    "certifications":["무농약"], "stockQuantity":120, "storageMethod":"냉장 보관" } ]
+
+// PATCH /api/v1/producers/me/offers/10  (부분 수정)
+// ── null 정책 ──
+//  · scalar(price·unit·title·…): null=미수정. ("값 비우기"는 미지원)
+//  · 컬렉션(photoUrls·tags·options·certifications): null=미수정 / list 제공=전체 교체(빈 배열=비우기)
+{ "price":5200, "title":"햇 봄동 2kg 특가",
+  "photoUrls":["https://img/new1.png","https://img/new2.png"],  // 기존 사진 전체 교체
+  "certifications":["유기농(유기농산물)"],                        // 인증마크 전체 교체
+  "stockQuantity":55 }
+// 응답 data: ProducerOfferResponse(수정 반영). 타 농가/숨김 offerId → PRODUCER_OFFER_NOT_FOUND(404)
+
+// DELETE /api/v1/producers/me/offers/10
+// status=HIDDEN 소프트 삭제(물리 삭제 아님 — cart/order FK 보존). 응답 data: null
+// 삭제 후 GET /me/offers, GET /products, GET /producers/{id}/offers, /search 에서 모두 제외됨
+```
+> **삭제 정책**: `producer_offers.status`(V28, ACTIVE/HIDDEN). cart_items·offer_photos 등이 FK로 참조하므로 물리 삭제 대신 HIDDEN 처리. 공개·판매자 목록 모두 ACTIVE만 반환.
+
 ```jsonc
 // GET /api/v1/producers/me/stats  (응답 data: SellerStatsResponse)
 { "summary": {
@@ -621,6 +697,111 @@ Response:
 - 조회수·전환율은 상품 조회 이벤트 수집 후 채워짐(후속, 현재 null).
 - 날짜 기준은 `Asia/Seoul`로 고정되어 있다. `todayRevenue`/`todayOrderCount`, 이번 달·전월, 최근 7일 시리즈는 주문 시각을 한국 달력 날짜로 환산해 집계한다.
 
+## 13. 상품(Product) API — producer_offers facade
+
+> **전용 product 테이블은 없습니다.** `/api/v1/products`는 기존 `producer_offers`를 "상품"으로 보는 **facade**입니다.
+> 상품 `id` = `producer_offers.id`이고, 사진/태그/옵션/인증마크 정규화 테이블과 농가(region/style)를 묶어 상품으로 표현합니다.
+> 따라서 상품 등록은 별도 API가 아니라 기존 `POST /api/v1/producers/me/offers`(§11)를 그대로 사용합니다.
+
+| 메서드 | 경로 | 설명 |
+| --- | --- | --- |
+| GET | `/api/v1/products` | 상품 목록/검색. `q`(상품명·식재료명·농가명), `category`, `region`(부분일치), `style` 필터 + `page`/`size` |
+| GET | `/api/v1/products/{id}` | 상품 상세. `id`는 `producer_offers.id` |
+
+`stockStatus`는 `stockQuantity`로 계산: **null → `UNKNOWN`, 0 → `SOLD_OUT`, 1 이상 → `IN_STOCK`**.
+
+```jsonc
+// GET /api/v1/products?q=봄동&category=잎채소&region=영천&page=0&size=20
+// 응답 data: ListResponse<ProductCardResponse>
+{ "items": [ {
+    "id": 10, "name": "햇 봄동 1.5kg 산지직송",   // name = title, 없으면 ingredientName
+    "ingredientId": 12, "ingredientName": "봄동",
+    "producerId": 1, "producerName": "권민성", "region": "경북영천",
+    "price": 4500, "unit": "봉",
+    "imageUrl": "https://img/1.png",            // 첫 photoUrl
+    "stockStatus": "IN_STOCK", "category": "잎채소"
+  } ],
+  "page": 0, "size": 20, "totalElements": 1, "hasNext": false }
+
+// GET /api/v1/products/10
+// 응답 data: ProductDetailResponse (카드 필드 + 아래)
+{ "id": 10, "name": "햇 봄동 1.5kg 산지직송", "ingredientId": 12, "ingredientName": "봄동",
+  "producerId": 1, "producerName": "권민성", "region": "경북영천", "price": 4500, "unit": "봉",
+  "imageUrl": "https://img/1.png", "stockStatus": "IN_STOCK", "category": "잎채소",
+  "images": ["https://img/1.png","https://img/2.png"],
+  "description": "남도 텃밭에서 새벽 수확", "freshnessLabel": "당일수확",
+  "stockQuantity": 120, "certifications": ["무농약"],
+  "storageMethod": "냉장 보관", "storageNote": "신문지에 싸서 냉장 보관…",
+  "options": [ { "id":100, "quantity":1.5, "unit":"kg", "price":6900 } ],
+  "tags": ["산지직송","무료배송"],
+  "relatedRecipeIds": [3, 7] }   // ingredientId 있을 때 해당 식재료 레시피 id, 없으면 []
+```
+- 미존재 id는 `PRODUCT_NOT_FOUND`(404).
+- `style` 필터는 대소문자 무시(`organic` → `ORGANIC`로 정규화). `category`는 정확일치, `region`은 부분일치.
+- `relatedRecipeIds`는 `ingredientId`가 있을 때 `recipe_ingredients` 기준 레시피 id 목록, 없으면 빈 배열.
+- 검색은 `GET /api/v1/search?type=PRODUCT`(§8)로도 가능(상품명/식재료명/농가명 부분일치).
+
+## 14. 배송지(Addresses) API
+
+마이페이지 기본 배송지 관리. 모두 **인증 필요**, 본인 배송지만 접근.
+
+| 메서드 | 경로 | 설명 |
+| --- | --- | --- |
+| `GET` | `/api/v1/users/me/addresses` | 내 배송지 목록(기본 배송지 우선, 최신순) |
+| `POST` | `/api/v1/users/me/addresses` | 배송지 등록. 첫 배송지는 자동 기본 |
+| `PATCH` | `/api/v1/users/me/addresses/{id}` | 배송지 수정(부분). 없으면 `ADDRESS_NOT_FOUND`(404) |
+| `DELETE` | `/api/v1/users/me/addresses/{id}` | 배송지 삭제. 없으면 `ADDRESS_NOT_FOUND`(404) |
+
+```jsonc
+// POST /api/v1/users/me/addresses  (요청)
+{ "recipientName":"홍길동", "phone":"010-1234-5678",
+  "zipCode":"06236",                 // 선택
+  "address1":"서울 강남구 테헤란로 1", // 필수
+  "address2":"3층 301호",            // 선택
+  "isDefault":true }                  // 선택(첫 배송지는 자동 기본)
+// 응답 data: AddressResponse
+{ "id":1, "recipientName":"홍길동", "phone":"010-1234-5678", "zipCode":"06236",
+  "address1":"서울 강남구 테헤란로 1", "address2":"3층 301호", "isDefault":true }
+
+// PATCH /api/v1/users/me/addresses/1  (부분 수정 — null=미수정)
+{ "address2":"2층", "isDefault":true }   // isDefault=true면 기존 기본 배송지 해제 후 지정
+```
+- **기본 배송지는 항상 정확히 1개**(주소가 1개 이상이면): 첫 배송지는 `isDefault` 미지정이어도 자동 기본. 등록/수정에서 `isDefault=true`를 주면 기존 기본은 자동 해제. **기본 배송지를 삭제하면 남은 주소 중 최신 것이 자동으로 기본 승격**된다.
+- PATCH의 `isDefault`는 **`true`만 의미** — 단독 해제(false)는 동작하지 않는다(기본을 바꾸려면 다른 주소에 `true` 지정, 또는 삭제). 필수 문자열(`recipientName`/`phone`/`address1`)은 보낼 경우 공백 불가(빈 문자열로 비우기 불가).
+- 필수(등록): `recipientName`·`phone`·`address1`. 선택: `zipCode`·`address2`·`isDefault`.
+
+> **주문 연결(향후)**: 현재 `POST /orders`는 배송지와 연결하지 않는다(optional). 추후 주문 생성 시 선택한 배송지를 `order.shippingAddressSnapshot`(주문 시점 스냅샷: 수령인·연락처·주소)으로 복사해 붙일 수 있도록 설계해 둔다. 스냅샷이므로 이후 배송지가 수정/삭제돼도 과거 주문 정보는 보존된다.
+
+## 15. 이미지 업로드(Uploads) API
+
+이미지 파일을 업로드하고 접근 URL을 받습니다. **인증 필요.** 받은 URL을 다른 API의 이미지 필드에 그대로 넣으면 됩니다.
+
+| 메서드 | 경로 | 설명 |
+| --- | --- | --- |
+| `POST` | `/api/v1/uploads` | `multipart/form-data`, 파트 이름 **`file`**. 이미지 업로드 → `{ url }` |
+
+```jsonc
+// POST /api/v1/uploads   (multipart/form-data; file=<이미지>)
+// 응답 data: UploadResponse
+{ "url": "/uploads/images/ab12cd34ef.png" }
+```
+
+**검증**
+- content-type **whitelist**: `image/png`, `image/jpeg`, `image/webp`, `image/gif`만 허용 — 그 외(`image/svg+xml` 포함)는 `INVALID_FILE_TYPE`(400). (SVG는 스크립트/외부참조 위험으로 제외)
+- 최대 크기 `app.uploads.max-bytes`(기본 5MB) 초과 시 `FILE_TOO_LARGE`(413). 멀티파트 한도(`spring.servlet.multipart.max-file-size`, 기본 10MB) 초과도 동일하게 `FILE_TOO_LARGE`(413)로 매핑된다.
+- 빈 파일은 `EMPTY_FILE`(400).
+
+**사용처** — 받은 `url`을 아래 필드에 넣습니다.
+- 농가 등록 `POST /producers/me` → `certificationImageUrl`
+- 상품 등록/수정 `POST|PATCH /producers/me/offers` → `photoUrls[]`
+- 농가 프로필 `photoUrl`
+- (향후) 리뷰 사진
+
+**저장 방식 (S3 교체 가능)**
+- 추상화: `FileStorage` 인터페이스. 기본 구현 `LocalFileStorage`(`app.uploads.storage=local`, 기본값).
+- 로컬: `app.uploads.dir`(기본 `uploads/`)에 저장하고 `GET /uploads/**`로 정적 서빙. URL은 `app.uploads.public-base-url`(빈 값이면 상대경로 `/uploads/...`, CDN/호스트 지정 시 절대경로) + `/uploads/<key>`.
+- S3 전환: `app.uploads.storage=s3`로 두고 `FileStorage`를 구현하는 S3 빈(`@ConditionalOnProperty(...havingValue="s3")`)을 추가하면 컨트롤러/서비스 변경 없이 교체된다(현재 S3 구현체는 후속).
+
 ## 12. 전체 엔드포인트 인벤토리
 
 아래가 **현재 구현된 전부**입니다. 위 섹션에 예시가 없는 것도 Swagger에서 요청/응답 필드를 볼 수 있어요.
@@ -637,12 +818,20 @@ Response:
 | 🔒 | PUT | `/api/v1/users/me/preferences` | 가입 설문/선호(가구수·매움회피·우선순위·알러지) 저장 |
 | 🔒 | GET | `/api/v1/users/me/recent-searches` | 최근 검색어 |
 | 🔒 | GET | `/api/v1/users/me/reviews?status=written` | 내가 쓴 리뷰(writable은 future, 빈 배열) |
+| 🔒 | GET | `/api/v1/users/me/addresses` | 내 배송지 목록 (§14) |
+| 🔒 | POST | `/api/v1/users/me/addresses` | 배송지 등록 (§14) |
+| 🔒 | PATCH | `/api/v1/users/me/addresses/{id}` | 배송지 수정 (§14) |
+| 🔒 | DELETE | `/api/v1/users/me/addresses/{id}` | 배송지 삭제 (§14) |
+| 🔒 | POST | `/api/v1/uploads` | 이미지 업로드 → `{url}` (§15) |
+| 🔓 | GET | `/uploads/**` | 업로드 이미지 정적 서빙(로컬 저장 시) |
 
 ### 홈 / 검색 (🔓)
 | | 메서드 | 경로 | 설명 |
 |---|---|---|---|
 | 🔓 | GET | `/api/v1/home` | 홈 화면(시즌 추천·재료·레시피·릴스·인기검색어·미읽음알림수) |
-| 🔓 | GET | `/api/v1/search?q=&type=ALL\|INGREDIENT\|RECIPE` | 통합 검색 |
+| 🔓 | GET | `/api/v1/search?q=&type=ALL\|INGREDIENT\|RECIPE\|PRODUCT` | 통합 검색(PRODUCT=상품 facade) |
+| 🔓 | GET | `/api/v1/products` | 상품 목록/검색(producer_offers facade, §13) |
+| 🔓 | GET | `/api/v1/products/{id}` | 상품 상세(id=offer id, §13) |
 | 🔓 | GET | `/api/v1/search/trending` | 인기 검색어 |
 
 ### 식재료 (🔓)
@@ -686,6 +875,9 @@ Response:
 | 🔒 | POST | `/api/v1/producers/me` | 농가 자가등록 (§11) |
 | 🔒 | GET | `/api/v1/producers/me` | 내 농가 조회 (§11) |
 | 🔒 | POST | `/api/v1/producers/me/offers` | 내 농가 상품 등록 (§11). 인증마크·보관방법 필수 |
+| 🔒 | GET | `/api/v1/producers/me/offers` | 내 판매 상품 목록(숨김 제외) (§11) |
+| 🔒 | PATCH | `/api/v1/producers/me/offers/{offerId}` | 내 상품 수정(부분) (§11) |
+| 🔒 | DELETE | `/api/v1/producers/me/offers/{offerId}` | 내 상품 내리기(숨김) (§11) |
 | 🔒 | GET | `/api/v1/producers/me/stats` | 내 농가 판매 통계 (§11) |
 
 ### 장바구니 / 주문 (🔒)

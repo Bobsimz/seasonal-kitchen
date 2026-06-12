@@ -22,12 +22,12 @@
 | G3 | **소셜 로그인**(카카오/애플/구글) 미구현 | 04 가입 | 화면을 이메일 우선으로 변경 (OAuth는 future) |
 | G4 | **선호 소비유형(라이프스타일 다중 태그)** 모델 부재 | 05 가입 설문 | preferences에 `lifestyles[]` 추가 (농가 style 매칭용) |
 | ~~G5~~ | ✅ **구현됨** — 상품 옵션(`offer_options`: 수량+단위+가격, V24). 장바구니 옵션선택은 후속 | 17 상품상세 | — |
-| G6 | **검색 PRODUCT 타입** 미지원 | 16b 상품검색 | 상품 확장 끝났으니 `/search?type=PRODUCT` 추가만 하면 됨 |
+| ~~G6~~ | ✅ **구현됨** — `/search?type=PRODUCT` + 전용 상품 facade `GET /products`·`/products/{id}`(producer_offers 기반) | 16 상품리스트 / 16b 상품검색 / 17 상품상세 | — |
 | ~~G7~~ | ✅ **구현됨** — `GET /producers/me/stats`(매출·주문·인기상품·7일 매출추이·전월대비·정산일). 조회수·전환율은 이벤트 미수집이라 null(후속) | 21f 판매자 통계 / 21 마이(판매자 센터) | — |
 | ~~G8~~ | ✅ **구현됨** — offer에 인증마크(`offer_certifications`)·재고(`stock_quantity`)·보관방법(`storage_method`/`storage_note`) 추가(V26) | 24 판매등록(`ScreenFarmUpload`) | — |
 
-남은 갭: **G4**(라이프스타일 다중태그), **G6**(검색 PRODUCT 타입), **G2·G3**(판매자 AI·소셜로그인, future). 상세는 아래.
-G7·G8은 2026-06-12 구현 완료.
+남은 갭: **G4**(라이프스타일 다중태그), **G2·G3**(판매자 AI·소셜로그인, future). 상세는 아래.
+G6·G7·G8은 2026-06-12 구현 완료.
 
 > **2026-06-12 변경 반영**: 프론트 커밋 `58656da`로 화면 3건 변동 — ① 신규 **07 제철 큐레이션**(홈 배너 진입), ② 신규 **21f 판매자 통계**(판매자 센터 대시보드), ③ **24 판매등록**에 인증마크·재고·보관방법 필드 추가. 하단 탭이 5슬롯(홈·정보·**상품**·릴스·마이)으로 재정렬되며 기존 07 홈메인은 06으로 밀림. 상세는 §3a·§5b·§8·§12.
 
@@ -48,9 +48,9 @@ G7·G8은 2026-06-12 구현 완료.
 | | 14 식재료 상세 | ✅ | `/ingredients/{id}` (+`/prices`) |
 | | 15 농가 비교 | ✅ | `/ingredients/{id}/producers` |
 | | 15a 농가 상세 | ✅ | `/producers/{id}` (+`/offers`,`/reviews`,`/news`) |
-| 04 상품 | 16 상품 리스트 / 16a 판매자뷰 | ✅ 백엔드 / 🟡 프론트연동 | `/producers/{id}/offers`(상품필드·태그·사진 포함) |
-| | 16b 상품 검색 | 🟡 G6 | `/search`(아직 PRODUCT 타입 없음) |
-| | 17 상품 상세 | ✅ 백엔드 | offer + `options[]`(규격/가격) 포함 |
+| 04 상품 | 16 상품 리스트 / 16a 판매자뷰 | ✅ | `GET /products`(producer_offers facade) 또는 `/producers/{id}/offers` |
+| | 16b 상품 검색 | ✅ | `GET /products?q=` 또는 `/search?type=PRODUCT` |
+| | 17 상품 상세 | ✅ | `GET /products/{id}`(id=offer id, 이미지·옵션·인증·보관·관련레시피) |
 | 05 릴스 | 18 릴스 | ✅ | `/reels` (+likes/comments/view-events) |
 | | 19 레시피 상세 / 20 조리순서 | ✅ | `/recipes/{id}`, `/recipes/{id}/steps` |
 | 06 마이 | 21 마이페이지 | ✅ | `/users/me/summary` |
@@ -106,7 +106,7 @@ G7·G8은 2026-06-12 구현 완료.
 ### 08 검색 전 / 09 검색 결과 — ✅
 - **표시**: 인기검색어, 최근검색어, 통합 결과(식재료/레시피 더보기).
 - **연동**: `GET /search/trending`, `GET /users/me/recent-searches`, `GET /search?q=&type=`. ✅
-- **갭**: `type=PRODUCT` 없음(상품 도메인 부재, G6).
+- **G6 해소**: `type=PRODUCT` 지원(producer_offers facade). 전용 상품 API `GET /products`·`/products/{id}`도 제공.
 
 ---
 
@@ -142,7 +142,8 @@ offer를 "상품"으로 확장 완료. 화면이 요구하던 상품명·설명�
 - **백엔드 `ProducerOfferResponse`(V23)**: 기존 필드 + `title`·`description`·`category`·`photoUrls[]`·`tags[]`. → 상품명·설명·사진·태그 ✅
   - 상품 평점은 별도 없음 — 농가 평점(`producer.rating`) 사용. (상품 단위 평점은 future)
   - 목록 조회는 배치(N+1 회피)로 사진·태그·옵션·농가를 묶어 반환.
-- 16b 상품 검색: `/search`에 아직 `PRODUCT` 타입 없음(**G6**, 추가만 하면 됨).
+- 16b 상품 검색: ✅ `GET /products?q=`(상품명·식재료명·농가명) 또는 `/search?type=PRODUCT`. (G6 해소)
+- **상품 API는 producer_offers facade** — 전용 product 테이블 없이 offer를 상품으로 노출. id=offer id. `stockStatus`(stockQuantity: null=UNKNOWN/0=SOLD_OUT/1+=IN_STOCK).
 
 ### 17 상품 상세 (구매하기)
 - **표시**: 상품 사진, 농가 헤더, **옵션/규격 선택**(보통/대/세척무 등 가격 상이), 수량, 장바구니/주문.
@@ -237,7 +238,7 @@ offer를 "상품"으로 확장 완료. 화면이 요구하던 상품명·설명�
 5. **(중간) offer/specialty `ingredientId` 백필** — 식재료↔농가↔레시피 교차(15 비교, 19 농가구매)를 이름매칭이 아닌 ID로.
 6. **(낮음·G3) OAuth** — 카카오/애플/구글. 화면 04 1차 노출. future.
 7. **(낮음·G2) 판매자 AI** — 사진 분석 → 상품명/설명/추천가격 생성. 화면 24. future, 요청/응답 스펙 선확정 필요.
-8. **(낮음·G6) 검색 `PRODUCT` 타입** — `/search` 정규식에 `PRODUCT` 추가 + offer 인덱싱(현재 `ALL|INGREDIENT|RECIPE`만).
+8. ~~**(낮음·G6) 검색 `PRODUCT` 타입**~~ — ✅ **완료**: `/search?type=PRODUCT` + 전용 상품 facade `GET /products`·`/products/{id}`(producer_offers 기반, 전용 테이블 없음). `stockStatus` 계산 포함.
 9. **(낮음) 제철 큐레이션 BFF** — `GET /curations/{ingredientId}`(히어로+포인트+레시피+농가 묶음). 선택사항(기존 3 API 조합으로 대체 가능).
 10. **(낮음) 홈 가격대 range** — 캐러셀 "2,100~2,800" 표시용 min/max. 없으면 프론트가 currentPrice만 표시.
 
