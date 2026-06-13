@@ -175,6 +175,7 @@ public class ProductService {
                     o.getPrice(), o.getUnit(), basePackQuantity(o, optionsByOffer.get(o.getId())),
                     firstPhotoByOffer.get(o.getId()),
                     StockStatus.from(o.getStockQuantity()), o.getCategory(),
+                    o.getFreshnessLabel(),
                     Boolean.TRUE.equals(firstPhotoAiByOffer.get(o.getId())));
         }).toList();
     }

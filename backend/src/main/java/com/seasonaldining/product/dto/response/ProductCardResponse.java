@@ -23,5 +23,6 @@ public record ProductCardResponse(
         @Schema(description = "대표 이미지(첫 사진)", nullable = true) String imageUrl,
         @Schema(description = "재고 상태", example = "IN_STOCK") StockStatus stockStatus,
         @Schema(description = "카테고리", example = "잎채소", nullable = true) String category,
+        @Schema(description = "신선도 라벨(예: 당일수확)", example = "당일수확", nullable = true) String freshnessLabel,
         @Schema(description = "AI 생성 이미지 여부", example = "false") boolean aiGenerated
 ) {}

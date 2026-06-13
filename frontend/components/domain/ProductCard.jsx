@@ -26,6 +26,11 @@ export function ProductCard({ product: p, href, className, showCart = true }) {
           <VegImage name={p.ingredientName || p.name} size={72} />
         </div>
       )}
+      {p.freshnessLabel && !soldOut && (
+        <span className="absolute left-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10.5px] font-bold text-white backdrop-blur-sm">
+          🌱 {p.freshnessLabel}
+        </span>
+      )}
       {soldOut && (
         <div className="absolute inset-0 grid place-items-center bg-black/45">
           <span className="rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-extrabold text-ink">품절</span>
