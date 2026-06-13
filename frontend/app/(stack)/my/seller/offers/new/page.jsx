@@ -7,7 +7,7 @@ import {
   Store, Sparkles, X, Camera, TrendingUp, Star,
   ChevronLeft, ChevronRight, RotateCw,
 } from 'lucide-react';
-import { useMyProducer, useAddMyOffer } from '@/lib/queries';
+import { useMyProducer, useAddMyOffer, useIngredients } from '@/lib/queries';
 import { useAuth } from '@/lib/auth';
 import { endpoints } from '@/lib/endpoints';
 import { cn } from '@/lib/cn';
@@ -19,7 +19,31 @@ import { ErrorState, EmptyState } from '@/components/ui/States';
 import { useToast } from '@/components/ui/Toast';
 import { ImageLightbox } from '@/components/ui/ImageLightbox';
 
-const UNITS = ['개', '봉', '포기', '단', 'kg'];
+const UNITS = ['개', '봉', '포기', '단', '100g'];
+
+// 시세(price/unit)를 1개·1봉·1포기·1단·100g 기준 단가로 환산하고 110%를 추천가로 산출.
+// 무게 단위(kg·g)는 100g당, 개수 단위(개·봉·포기·단)는 1개당으로 정규화한다.
+function normalizedRecommendation(currentPrice, rawUnit) {
+  if (currentPrice == null || !rawUnit) return null;
+  const price = Number(currentPrice);
+  if (!(price > 0)) return null;
+  const m = String(rawUnit).trim().match(/^(\d+(?:\.\d+)?)?\s*(kg|g|개|봉|포기|단)/i);
+  if (!m) return null;
+  const qty = m[1] ? Number(m[1]) : 1;
+  const token = m[2].toLowerCase();
+  let perBase;
+  let unit;
+  if (token === 'kg' || token === 'g') {
+    const grams = token === 'kg' ? qty * 1000 : qty;
+    if (!(grams > 0)) return null;
+    perBase = (price / grams) * 100; // 100g당
+    unit = '100g';
+  } else {
+    perBase = price / (qty || 1); // 1개/1봉/1포기/1단당
+    unit = token;
+  }
+  return { price: Math.round(perBase * 1.1), unit };
+}
 const QUICK_BADGES = ['당일배송', '당일수확', '유기농', '산지직송', '안심패킹', '소분포장'];
 const CATEGORIES = ['채소', '과일', '곡류', '기타'];
 
@@ -86,6 +110,7 @@ export default function SellerOfferNewPage() {
   const { isAuthenticated } = useAuth();
   const { data: producer, isLoading, error, refetch } = useMyProducer();
   const addOffer = useAddMyOffer();
+  const { data: ingredientPriceList } = useIngredients({ size: 200 }); // 식재료 시세 조회용
 
   // 단계 / 모드
   const [step, setStep] = useState(1);
@@ -121,6 +146,10 @@ export default function SellerOfferNewPage() {
   const isUploading = photos.some((p) => p.uploading);
   const canSubmit = ingredientName.trim().length > 0 && Number(price) > 0;
   const MAX_APPEALS = 2; // 강조포인트(고정 배지)는 정확히 2개 선택 필수
+
+  // 식재료명과 일치하는 시세를 1개/1봉/1포기/1단/100g 기준으로 환산해 110%를 추천 적정가로 제안
+  const matchedIngredient = (ingredientPriceList ?? []).find((i) => i.name === ingredientName.trim());
+  const recommendation = normalizedRecommendation(matchedIngredient?.currentPrice, matchedIngredient?.unit);
 
   // objectURL 누수 방지: 언마운트 시 모든 blob 미리보기 회수
   const photosRef = useRef(photos);
@@ -722,6 +751,18 @@ export default function SellerOfferNewPage() {
             {step === 4 && (
               <>
                 <FieldLabel label="가격 · 단위" required />
+                {recommendation && (
+                  <p className="-mt-1 mb-2 text-[12px] text-ink-mid">
+                    추천 적정 가격입니다 :{' '}
+                    <button
+                      type="button"
+                      onClick={() => { setPrice(String(recommendation.price)); setUnit(recommendation.unit); }}
+                      className="font-extrabold text-brand underline underline-offset-2"
+                    >
+                      {recommendation.price.toLocaleString()}원 / {recommendation.unit}
+                    </button>
+                  </p>
+                )}
                 <div className="flex gap-2">
                   <div className="flex flex-[1.4] items-center gap-1 rounded-xl border border-line bg-surface-soft px-3.5 py-3 focus-within:border-brand focus-within:bg-white focus-within:ring-2 focus-within:ring-brand/20">
                     <span className="text-ink-soft">₩</span>
