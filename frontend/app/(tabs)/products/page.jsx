@@ -20,10 +20,12 @@ const SORTS = [
   { value: 'PRICE_ASC', label: '낮은가격순' },
   { value: 'REVIEW_DESC', label: '리뷰많은순' },
 ];
+// rating/reviewCount 는 백엔드 ProductCardResponse 미구현 필드(현재 mock 한정)라 누락 가능.
+// 누락 시 0 으로 보고 id 로 안정 정렬해 "정렬 안 됨"으로 조용히 무너지지 않게 한다.
 const SORT_FNS = {
-  RECOMMENDED: (a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount,
-  PRICE_ASC: (a, b) => a.price - b.price,
-  REVIEW_DESC: (a, b) => b.reviewCount - a.reviewCount,
+  RECOMMENDED: (a, b) => (b.rating ?? 0) - (a.rating ?? 0) || (b.reviewCount ?? 0) - (a.reviewCount ?? 0) || a.id - b.id,
+  PRICE_ASC: (a, b) => a.price - b.price || a.id - b.id,
+  REVIEW_DESC: (a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0) || a.id - b.id,
 };
 
 export default function ProductsPage() {
@@ -31,7 +33,9 @@ export default function ProductsPage() {
   const [sort, setSort] = useState('RECOMMENDED');
   const [sortOpen, setSortOpen] = useState(false);
 
-  const { data: allProducts = [], isLoading, error, refetch } = useProducts();
+  // size 를 크게 잡아 (페이지네이션되는 실제 /products 에서도) 전체 카탈로그를 한 번에 받아
+  // 카테고리 칩·개수·클라이언트 정렬이 첫 페이지에만 적용되는 문제를 막는다.
+  const { data: allProducts = [], isLoading, error, refetch } = useProducts({ size: 100 });
   const { data: myProducer } = useMyProducer();
   const { data: home } = useHome();
   const { data: cart } = useCart();
@@ -67,45 +71,50 @@ export default function ProductsPage() {
         }
       />
 
-      {/* 카테고리 칩 — 스크롤 시 헤더 바로 아래 고정 */}
-      <ChipTabs options={filters} value={category} onChange={setCategory} sticky className="sticky top-14" />
-
       {isLoading && <LoadingScreen />}
       {error && <ErrorState onRetry={refetch} />}
 
       {!isLoading && !error && (
-        <div className="animate-fade-up pb-24">
-          {/* 개수 / 정렬 행 */}
-          <div className="flex items-center justify-between px-5 pb-2.5 pt-3.5">
-            <span className="text-[12.5px] text-ink-mid">
-              <b className="text-ink">{list.length}</b>개 상품
-            </span>
-            <button
-              onClick={() => setSortOpen(true)}
-              className="tap flex items-center gap-0.5 text-[12.5px] font-bold text-ink-mid"
-            >
-              {sortLabel}
-              <ChevronDown size={14} />
-            </button>
-          </div>
+        <>
+          {/* 카테고리 칩 — 스크롤 시 헤더 바로 아래 고정 (animate 컨테이너 밖에 둬서 sticky 유지) */}
+          <ChipTabs options={filters} value={category} onChange={setCategory} sticky className="sticky top-14" />
 
-          {list.length === 0 ? (
-            <EmptyState
-              title="조건에 맞는 상품이 없어요"
-              description="다른 카테고리를 선택해 보세요."
-            />
-          ) : (
-            <div className="grid grid-cols-2 gap-3 px-4">
-              {list.map((p) => (
-                <ProductCard
-                  key={p.id}
-                  product={p}
-                  href={`/products/${p.producerId}?offer=${p.id}`}
-                />
-              ))}
+          <div className="animate-fade-up pb-24">
+            {/* 개수 / 정렬 행 */}
+            <div className="flex items-center justify-between px-5 pb-2.5 pt-3.5">
+              <span className="text-[12.5px] text-ink-mid">
+                <b className="text-ink">{list.length}개</b>의 상품
+              </span>
+              <button
+                onClick={() => setSortOpen(true)}
+                aria-haspopup="dialog"
+                aria-expanded={sortOpen}
+                aria-label="정렬 기준 선택"
+                className="tap flex items-center gap-0.5 text-[12.5px] font-bold text-ink-mid"
+              >
+                {sortLabel}
+                <ChevronDown size={14} />
+              </button>
             </div>
-          )}
-        </div>
+
+            {list.length === 0 ? (
+              <EmptyState
+                title="조건에 맞는 상품이 없어요"
+                description="다른 카테고리를 선택해 보세요."
+              />
+            ) : (
+              <div className="grid grid-cols-2 gap-3 px-4">
+                {list.map((p) => (
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    href={`/products/${p.producerId}?offer=${p.id}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </>
       )}
 
       {/* 정렬 바텀시트 */}

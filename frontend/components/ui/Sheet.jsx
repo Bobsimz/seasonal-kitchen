@@ -1,10 +1,21 @@
 'use client';
 
+import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/cn';
 
 // 하단에서 올라오는 바텀시트. 모바일 프레임 내부(absolute inset-0)에 갇힙니다.
 export function Sheet({ open, onClose, title, children, className }) {
+  // ESC 로 닫기 (열려 있을 때만 리스너 부착).
+  useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+
   return (
     <AnimatePresence>
       {open && (
@@ -17,6 +28,9 @@ export function Sheet({ open, onClose, title, children, className }) {
             className="absolute inset-0 bg-black/40"
           />
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={title || undefined}
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}

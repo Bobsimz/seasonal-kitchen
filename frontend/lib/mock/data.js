@@ -252,9 +252,9 @@ export function ingredientProducts(id) {
 // (농가, 품목) 단위로 카드 1개 = 멀티셀러. ingredientProducts 와 동일 형태에
 // 정렬용 rating/reviewCount(농가 값)를 더한다. offer id 는 결정적이라 담기/딥링크와 호환.
 const PRODUCT_SORTS = {
-  PRICE_ASC: (a, b) => a.price - b.price,
-  REVIEW_DESC: (a, b) => b.reviewCount - a.reviewCount,
-  RECOMMENDED: (a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount,
+  PRICE_ASC: (a, b) => a.price - b.price || a.id - b.id,
+  REVIEW_DESC: (a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0) || a.id - b.id,
+  RECOMMENDED: (a, b) => (b.rating ?? 0) - (a.rating ?? 0) || (b.reviewCount ?? 0) - (a.reviewCount ?? 0) || a.id - b.id,
 };
 export function products(params = {}) {
   const { category, sort } = params || {};
@@ -262,7 +262,8 @@ export function products(params = {}) {
     const producerId = pid(p);
     return producerOffers(producerId).map((o) => ({
       id: o.id,
-      name: `${o.region} ${o.ingredientName} · ${o.freshnessLabel}`,
+      // region 은 카드 부제(producerName 과 함께)에서 노출하므로 상품명에서는 제외(중복 방지).
+      name: `${o.ingredientName} · ${o.freshnessLabel}`,
       ingredientId: o.ingredientId,
       ingredientName: o.ingredientName,
       producerId,

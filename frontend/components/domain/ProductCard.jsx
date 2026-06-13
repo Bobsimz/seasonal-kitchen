@@ -39,7 +39,9 @@ export function ProductCard({ product: p, href, className }) {
             <p className="mt-1 flex items-center gap-0.5 text-[11px] font-bold text-warn">
               <Star size={11} className="fill-warn" />
               {p.rating}
-              <span className="font-semibold text-ink-soft">({compact(p.reviewCount)})</span>
+              {p.reviewCount != null && (
+                <span className="font-semibold text-ink-soft">({compact(p.reviewCount)})</span>
+              )}
             </p>
           )}
         </div>
