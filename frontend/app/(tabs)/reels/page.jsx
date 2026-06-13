@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Heart, MessageCircle, Bookmark, Share2, Play, ChevronRight, Plus, Search, Send } from 'lucide-react';
+import { Heart, MessageCircle, Bookmark, Share2, Play, ChevronRight, Search, Send } from 'lucide-react';
 import { useReels, useReelComments, useLikeReel, useSaveReel, useCommentReel } from '@/lib/queries';
 import { useAuth } from '@/lib/auth';
 import { AppHeader, HeaderIconButton } from '@/components/layout';
@@ -189,16 +189,13 @@ function ReelItem({ reel, onOpenComments }) {
 
       {/* 우측 액션 레일 */}
       <div className="absolute bottom-28 right-3 z-[5] flex flex-col items-center gap-[18px]">
-        {/* 크리에이터 아바타 + 팔로우 */}
+        {/* 크리에이터 아바타 */}
         <div className="relative mb-1">
           <div className="h-11 w-11 overflow-hidden rounded-full border-2 border-white bg-ink">
             {reel.creatorAvatar && (
               <img src={reel.creatorAvatar} alt={reel.creatorName} className="h-full w-full object-cover" />
             )}
           </div>
-          <span className="absolute -bottom-1.5 left-1/2 grid h-5 w-5 -translate-x-1/2 place-items-center rounded-full border-2 border-black bg-brand">
-            <Plus size={12} className="text-white" strokeWidth={3} />
-          </span>
         </div>
 
         <RailAction icon={Heart} count={likeCount} active={liked} activeClass="fill-hot text-hot" onClick={onLike} />
@@ -211,12 +208,6 @@ function ReelItem({ reel, onOpenComments }) {
       <div className="absolute bottom-4 left-4 right-[76px] z-[5] text-white">
         <div className="mb-2 flex items-center gap-2">
           <span className="text-[14px] font-extrabold">@{reel.creatorName}</span>
-          <button
-            onClick={() => toast.show('팔로우했어요', { type: 'success' })}
-            className="tap rounded-full border-[1.2px] border-white px-2.5 py-[3px] text-[11px] font-extrabold"
-          >
-            팔로우
-          </button>
         </div>
 
         <p className="text-[14.5px] font-bold leading-snug tracking-tight">{reel.caption || reel.title}</p>
