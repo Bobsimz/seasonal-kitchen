@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Plus, Store, Sparkles, X, PencilLine, Camera } from 'lucide-react';
+import { Store, Sparkles, X, PencilLine, Camera, TrendingUp } from 'lucide-react';
 import { useMyProducer, useAddMyOffer } from '@/lib/queries';
 import { useAuth } from '@/lib/auth';
 import { endpoints } from '@/lib/endpoints';
@@ -125,25 +125,25 @@ export default function SellerOfferNewPage() {
     // 첫 번째 사진이 새로 추가됐으면 분석 시작
     if (isFirstBatch) analyze(placeholders[0].file);
 
-    // S3 업로드
-    try {
-      const fd = new FormData();
-      toUpload.forEach((f) => fd.append('files', f));
-      const results = await endpoints.uploadImages(fd);
-      setAiPhotos((prev) => {
-        const updated = [...prev];
-        placeholders.forEach((pl, i) => {
-          const idx = updated.findIndex((p) => p.id === pl.id);
-          if (idx !== -1) updated[idx] = { ...updated[idx], url: results[i]?.url ?? null, uploading: false };
-        });
-        return updated;
-      });
-    } catch {
-      setAiPhotos((prev) => prev.map((p) =>
-        placeholders.some((pl) => pl.id === p.id) ? { ...p, uploading: false } : p,
-      ));
-      toast.show('사진 업로드에 실패했어요', { type: 'error' });
-    }
+    // S3 개별 업로드 (배치 요청 크기 제한 우회)
+    await Promise.all(
+      toUpload.map(async (file, i) => {
+        const placeholder = placeholders[i];
+        try {
+          const fd = new FormData();
+          fd.append('file', file);
+          const result = await endpoints.uploadImage(fd);
+          setAiPhotos((prev) =>
+            prev.map((p) => p.id === placeholder.id ? { ...p, url: result?.url ?? null, uploading: false } : p)
+          );
+        } catch {
+          setAiPhotos((prev) =>
+            prev.map((p) => p.id === placeholder.id ? { ...p, uploading: false } : p)
+          );
+          toast.show('사진 업로드에 실패했어요', { type: 'error' });
+        }
+      })
+    );
   };
 
   const removeAiPhoto = (id) => {
@@ -207,22 +207,23 @@ export default function SellerOfferNewPage() {
     }));
     setPhotos((prev) => [...prev, ...placeholders]);
 
-    try {
-      const fd = new FormData();
-      toUpload.forEach((f) => fd.append('files', f));
-      const results = await endpoints.uploadImages(fd);
-      setPhotos((prev) => {
-        const updated = [...prev];
-        placeholders.forEach((pl, i) => {
-          const idx = updated.findIndex((p) => p.id === pl.id);
-          if (idx !== -1) updated[idx] = { ...updated[idx], url: results[i].url, uploading: false };
-        });
-        return updated;
-      });
-    } catch {
-      setPhotos((prev) => prev.filter((p) => !placeholders.some((pl) => pl.id === p.id)));
-      toast.show('사진 업로드에 실패했어요', { type: 'error' });
-    }
+    // S3 개별 업로드 (배치 요청 크기 제한 우회)
+    await Promise.all(
+      toUpload.map(async (file, i) => {
+        const placeholder = placeholders[i];
+        try {
+          const fd = new FormData();
+          fd.append('file', file);
+          const result = await endpoints.uploadImage(fd);
+          setPhotos((prev) =>
+            prev.map((p) => p.id === placeholder.id ? { ...p, url: result?.url ?? null, uploading: false } : p)
+          );
+        } catch {
+          setPhotos((prev) => prev.filter((p) => p.id !== placeholder.id));
+          toast.show('사진 업로드에 실패했어요', { type: 'error' });
+        }
+      })
+    );
   };
 
   // ── AI 이미지 생성 (직접 입력 모드) ──────────────────────────
@@ -373,7 +374,7 @@ export default function SellerOfferNewPage() {
             {/* ── AI 사진 업로드 (AI 모드 전용) ── */}
             {mode === 'ai' && (
               <div className="mb-2">
-                <FieldLabel label="상품 사진" hint="첫 번째(대표) 사진으로 AI가 자동 분석해요 · 최대 10장" required />
+                <FieldLabel label="상품 사진" hint="여러 장 선택 가능 · 최대 10장 · 첫 번째(대표) 사진으로 AI가 자동 분석해요" required />
                 <input
                   ref={aiPhotoInputRef}
                   type="file"
@@ -489,7 +490,7 @@ export default function SellerOfferNewPage() {
             {/* ── 직접 입력 모드: 사진 ── */}
             {mode === 'manual' && (
               <div className="mb-2">
-                <FieldLabel label="상품 사진" hint="최대 10장 · 첫 사진이 대표 이미지예요" />
+                <FieldLabel label="상품 사진" hint="여러 장 선택 가능 · 최대 10장 · 첫 사진이 대표 이미지예요" />
                 <input
                   ref={photoInputRef}
                   type="file"
@@ -533,10 +534,17 @@ export default function SellerOfferNewPage() {
                     <button
                       type="button"
                       onClick={() => photoInputRef.current?.click()}
-                      className="tap flex h-[84px] w-[84px] shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-[1.5px] border-dashed border-line bg-surface-soft text-ink-soft"
+                      className={cn(
+                        'tap flex h-[84px] w-[84px] shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-[1.5px] border-dashed text-ink-soft',
+                        photos.length === 0
+                          ? 'border-brand bg-brand-bg text-brand-dark'
+                          : 'border-line bg-surface-soft',
+                      )}
                     >
-                      <Plus size={22} />
-                      <span className="text-[10.5px] font-bold">{photos.length}/10</span>
+                      <Camera size={photos.length === 0 ? 28 : 22} />
+                      <span className="text-[10.5px] font-bold">
+                        {photos.length === 0 ? '사진 선택' : `${photos.length}/10`}
+                      </span>
                     </button>
                   )}
                 </div>
@@ -582,6 +590,22 @@ export default function SellerOfferNewPage() {
                 </div>
               </div>
             </div>
+
+            {/* 직거래 혜택 메시지 */}
+            {Number(price) > 0 && (
+              <div className="mt-3 flex items-center gap-2.5 rounded-2xl border border-brand-soft bg-brand-bg px-4 py-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-brand">
+                  <TrendingUp size={14} className="text-white" />
+                </div>
+                <p className="text-[12.5px] leading-snug text-ink-mid">
+                  직거래를 통해{' '}
+                  <span className="font-extrabold text-brand">
+                    ₩{Math.round(Number(price) * 0.04).toLocaleString()}
+                  </span>
+                  의 추가 이윤이 생겨요
+                </p>
+              </div>
+            )}
 
             {/* checkpoint */}
             <div className="mt-5">

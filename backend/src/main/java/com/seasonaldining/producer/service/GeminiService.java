@@ -80,7 +80,7 @@ public class GeminiService {
         }
     }
 
-    public OfferImageGenerationResponse generateOfferImageFromPhoto(MultipartFile image) {
+    public OfferImageGenerationResponse generateOfferImageFromPhoto(MultipartFile image, String farmPhotoUrl) {
         if (!StringUtils.hasText(properties.key())) {
             throw new BusinessException(ErrorCode.GEMINI_API_NOT_CONFIGURED);
         }
@@ -94,18 +94,25 @@ public class GeminiService {
             String base64 = Base64.getEncoder().encodeToString(compressed);
             String aspectDesc = (origW > 0 && origH > 0) ? describeAspectRatio(origW, origH) : "1:1";
 
-            String prompt = "이 상품 사진을 참고하여 새로운 상품 홍보 사진을 생성해주세요.\n" +
-                    "규칙:\n" +
-                    "- 글씨, 텍스트, 라벨, 워터마크, 숫자가 절대 포함되면 안 됩니다\n" +
-                    "- 신선하고 자연스러운 식재료 사진이어야 합니다\n" +
-                    "- 배경은 깔끔하게 유지해주세요\n" +
-                    "- 참고 사진과 유사한 구도와 스타일로 생성해주세요\n" +
-                    "- 이미지 비율은 " + aspectDesc + " 이어야 합니다";
+            byte[] farmImageBytes = loadFarmImage(farmPhotoUrl);
+            boolean hasFarmImage = farmImageBytes != null;
+
+            String prompt = buildImagePrompt(aspectDesc, hasFarmImage);
 
             Map<String, Object> textPart = Map.of("text", prompt);
-            Map<String, Object> imageData = Map.of("mimeType", "image/jpeg", "data", base64);
-            Map<String, Object> imagePart = Map.of("inlineData", imageData);
-            Map<String, Object> content = Map.of("parts", List.of(textPart, imagePart));
+            Map<String, Object> productImageData = Map.of("mimeType", "image/jpeg", "data", base64);
+            Map<String, Object> productImagePart = Map.of("inlineData", productImageData);
+
+            java.util.List<Map<String, Object>> parts = new java.util.ArrayList<>();
+            parts.add(textPart);
+            parts.add(productImagePart);
+            if (hasFarmImage) {
+                String farmBase64 = Base64.getEncoder().encodeToString(farmImageBytes);
+                Map<String, Object> farmImageData = Map.of("mimeType", "image/jpeg", "data", farmBase64);
+                parts.add(Map.of("inlineData", farmImageData));
+            }
+
+            Map<String, Object> content = Map.of("parts", parts);
             Map<String, Object> generationConfig = Map.of("responseModalities", List.of("IMAGE"));
             Map<String, Object> requestBody = Map.of(
                     "contents", List.of(content),
@@ -131,6 +138,41 @@ public class GeminiService {
         } catch (Exception e) {
             log.error("[GeminiService] generateOfferImageFromPhoto 오류: {}", e.getMessage(), e);
             throw new BusinessException(ErrorCode.GEMINI_API_ERROR);
+        }
+    }
+
+    private String buildImagePrompt(String aspectDesc, boolean hasFarmImage) {
+        StringBuilder sb = new StringBuilder();
+        if (hasFarmImage) {
+            sb.append("첫 번째 사진은 상품 사진이고, 두 번째 사진은 농가(배경) 사진입니다.\n");
+            sb.append("두 사진을 참고하여 상품과 농가의 자연스러운 분위기가 어우러진 홍보 사진을 생성해주세요.\n");
+            sb.append("농가의 환경과 배경을 살리면서 상품이 화면의 주인공이 되어야 합니다.\n");
+        } else {
+            sb.append("이 상품 사진을 참고하여 새로운 상품 홍보 사진을 생성해주세요.\n");
+            sb.append("참고 사진과 유사한 구도와 스타일로 생성해주세요.\n");
+        }
+        sb.append("규칙:\n");
+        sb.append("- 글씨, 텍스트, 라벨, 워터마크, 숫자가 절대 포함되면 안 됩니다\n");
+        sb.append("- 신선하고 자연스러운 식재료 사진이어야 합니다\n");
+        sb.append("- 배경은 깔끔하게 유지해주세요\n");
+        sb.append("- 이미지 비율은 ").append(aspectDesc).append(" 이어야 합니다");
+        return sb.toString();
+    }
+
+    private byte[] loadFarmImage(String farmPhotoUrl) {
+        if (!StringUtils.hasText(farmPhotoUrl)) return null;
+        try {
+            java.net.URL url = new java.net.URL(farmPhotoUrl);
+            byte[] rawBytes;
+            try (java.io.InputStream is = url.openStream()) {
+                rawBytes = is.readAllBytes();
+            }
+            BufferedImage buf = ImageIO.read(new java.io.ByteArrayInputStream(rawBytes));
+            if (buf == null) return null;
+            return compressForGeneration(rawBytes, buf);
+        } catch (Exception e) {
+            log.warn("[GeminiService] 농가 이미지 로드 실패, 농가 이미지 없이 생성: {}", e.getMessage());
+            return null;
         }
     }
 
