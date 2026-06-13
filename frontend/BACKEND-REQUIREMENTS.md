@@ -103,6 +103,7 @@ UI에 카카오/Apple/구글 버튼이 있으나 비활성(준비 중)입니다.
 ## 8. 응답 보강 (있으면 좋음) — P2 — ⬜ 미구현
 
 - ⬜ `GET /home`: 명예 농가 캐러셀 데이터 포함(현재 `/producers` 별도 호출), `weeklySeason`(절기/주차 라벨), hero CTA 구조화.
+  - ⬜ `heroes[]`: 홈 상단 히어로 캐러셀(여러 제철 카드 스와이프)용 배열. 각 원소는 기존 `hero`와 동일 구조 `{ ingredientId, title, subtitle, imageUrl, priceLabel, trendLabel }`. 현재 프론트는 mock에서 `hero` + 제철 식재료 4종으로 구성(폴백). 미제공 시 단일 `hero`로 자동 폴백. 카드 탭 → 제철 큐레이션(`/curation`).
 - ⬜ `GET /ingredients`, `/ingredients/{id}`: `trendDirection`(UP/DOWN/FLAT), `priceChangeLabel`, `seasonMonths`, `buyingSignal`을 실제 계산값으로.
 - ⬜ `GET /ingredients/{id}/substitutes`: `reason`(대체 이유) 필드.
 - 🟡 `GET /search/trending` & `GET /users/me/recent-searches`: API는 존재. 프론트는 비로그인 최근검색을 클라이언트 보관해도 됨.

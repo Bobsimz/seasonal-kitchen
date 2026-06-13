@@ -295,18 +295,38 @@ export function reelComments(id) {
 
 // ── 홈 ───────────────────────────────────────────────────────────
 export function home() {
+  const hero = {
+    title: '지금이 제철, 봄동',
+    subtitle: '이번 주 시세 -15% · 구매 적기',
+    ingredientId: 12,
+    imageUrl: DISH_IMG.봄동비빔밥히어로,
+    priceLabel: '4,500원/봉',
+    trendLabel: '-15%',
+  };
+  const seasonalIngredients = ingredients.filter((i) => i.seasonal || i.hot).slice(0, 8);
+  // 히어로 캐러셀 슬라이드 — 대표(봄동) + 시세 하락폭이 큰 "지금 구매 적기" 식재료 4종.
+  // (데모 season 기준상 제철 항목이 적을 수 있어, 전체 식재료에서 시세 매력도 순으로 보강)
+  const heroPool = ingredients
+    .filter((i) => i.id !== hero.ingredientId)
+    .sort((a, b) => (a.priceChangePct ?? 0) - (b.priceChangePct ?? 0))
+    .slice(0, 4);
+  const heroes = [
+    hero,
+    ...heroPool.map((i) => ({
+      title: `지금이 제철, ${i.name}`,
+      subtitle: i.priceChangeLabel ? `이번 주 ${i.priceChangeLabel} · 지금이 구매 적기` : '제철 맞이 · 지금이 가장 신선해요',
+      ingredientId: i.id,
+      imageUrl: i.imageUrl,
+      priceLabel: `${i.currentPrice.toLocaleString()}원/${i.unit}`,
+      trendLabel: i.priceChangeLabel ?? '제철',
+    })),
+  ];
   return {
     locationLabel: '우리 동네 제철',
     unreadNotificationCount: 2,
-    hero: {
-      title: '지금이 제철, 봄동',
-      subtitle: '이번 주 시세 -15% · 구매 적기',
-      ingredientId: 12,
-      imageUrl: DISH_IMG.봄동비빔밥히어로,
-      priceLabel: '4,500원/봉',
-      trendLabel: '-15%',
-    },
-    seasonalIngredients: ingredients.filter((i) => i.seasonal || i.hot).slice(0, 8),
+    hero,
+    heroes,
+    seasonalIngredients,
     trendingRecipes: recipes.slice(0, 6),
     trendingReels: reels,
     trendingKeywords: ['봄동', '무생채', '배추전', '시금치 페스토', '깍두기'],

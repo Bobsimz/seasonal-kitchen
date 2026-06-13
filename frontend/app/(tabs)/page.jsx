@@ -1,19 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import { Bell, ChevronRight } from 'lucide-react';
-import { useHome, useProducers } from '@/lib/queries';
+import { Bell, Search, ShoppingCart, ChevronRight } from 'lucide-react';
+import { useHome, useProducers, useCart } from '@/lib/queries';
 import { AppHeader, HeaderIconButton } from '@/components/layout';
-import { SearchBar } from '@/components/ui/SearchBar';
 import { Section } from '@/components/ui/Card';
-import { Chip } from '@/components/ui/Chip';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/States';
+import { HeroCarousel } from '@/components/domain/HeroCarousel';
 import { IngredientCard } from '@/components/domain/IngredientCard';
 import { RecipeCard } from '@/components/domain/RecipeCard';
 import { ReelThumb } from '@/components/domain/ReelThumb';
 import { ProducerCircle } from '@/components/domain/ProducerCard';
-import { useRouter } from 'next/navigation';
 
 function MoreLink({ href }) {
   return (
@@ -24,45 +22,32 @@ function MoreLink({ href }) {
 }
 
 export default function HomePage() {
-  const router = useRouter();
   const { data, isLoading, error, refetch } = useHome();
+  const { data: cart } = useCart();
+  const cartCount = cart?.groups?.reduce((n, g) => n + g.items.length, 0) ?? 0;
 
   return (
     <>
       <AppHeader
-        title="제철식탁"
+        title={<span className="font-display">제철식탁</span>}
         right={
-          <HeaderIconButton icon={Bell} href="/notifications" label="알림" badge={data?.unreadNotificationCount} />
+          <>
+            <HeaderIconButton icon={Bell} href="/notifications" label="알림" badge={data?.unreadNotificationCount} />
+            <HeaderIconButton icon={Search} href="/search" label="검색" />
+            <HeaderIconButton icon={ShoppingCart} href="/cart" label="장바구니" badge={cartCount} />
+          </>
         }
       />
-
-      <div className="px-4 pb-3 pt-3">
-        <SearchBar readOnly onClick={() => router.push('/search')} />
-      </div>
 
       {isLoading && <LoadingScreen />}
       {error && <ErrorState onRetry={refetch} />}
 
       {data && (
         <div className="animate-fade-up pb-6">
-          {/* 히어로 — 이번 주 제철 */}
-          <Link href={`/ingredients/${data.hero.ingredientId}`} className="tap mx-4 block overflow-hidden rounded-3xl">
-            <div className="relative aspect-[16/10] w-full">
-              <img src={data.hero.imageUrl} alt={data.hero.title} className="h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-                <span className="inline-block rounded-full bg-brand px-2.5 py-1 text-[11px] font-bold">
-                  {data.locationLabel}
-                </span>
-                <h2 className="mt-2 text-[24px] font-extrabold leading-tight tracking-tight">{data.hero.title}</h2>
-                <p className="mt-1 text-[13.5px] font-medium text-white/85">{data.hero.subtitle}</p>
-                <div className="mt-2 flex items-center gap-2 text-[14px] font-bold">
-                  <span>{data.hero.priceLabel}</span>
-                  <span className="rounded-md bg-white/20 px-1.5 py-0.5 text-[12px]">{data.hero.trendLabel}</span>
-                </div>
-              </div>
-            </div>
-          </Link>
+          {/* 히어로 — 이번 주 제철 (여러 카드 스와이프 → 제철 큐레이션) */}
+          <div className="pt-1">
+            <HeroCarousel heroes={data.heroes ?? [data.hero]} locationLabel={data.locationLabel} />
+          </div>
 
           {/* 제철 식재료 */}
           <Section title="지금 제철 식재료" action={<MoreLink href="/info" />}>
@@ -98,18 +83,6 @@ export default function HomePage() {
             </div>
           </Section>
 
-          {/* 인기 검색어 */}
-          <Section title="인기 검색어">
-            <div className="flex flex-wrap gap-2 px-4">
-              {data.trendingKeywords.map((k, idx) => (
-                <Link key={k} href={`/search?q=${encodeURIComponent(k)}`}>
-                  <Chip tone="neutral" className="gap-1.5 px-3 py-1.5 text-[13px]">
-                    <span className="font-extrabold text-brand">{idx + 1}</span> {k}
-                  </Chip>
-                </Link>
-              ))}
-            </div>
-          </Section>
         </div>
       )}
     </>

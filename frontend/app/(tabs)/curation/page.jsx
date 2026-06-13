@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 import { Sprout, Wallet, Leaf, ChevronRight } from 'lucide-react';
-import { useHome, useIngredients, useRecipes } from '@/lib/queries';
+import { useHome, useIngredients, useRecipes, useProducers } from '@/lib/queries';
 import { AppHeader } from '@/components/layout';
 import { Card, Section } from '@/components/ui/Card';
-import { Chip } from '@/components/ui/Chip';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState, EmptyState } from '@/components/ui/States';
 import { IngredientCard } from '@/components/domain/IngredientCard';
 import { RecipeCard } from '@/components/domain/RecipeCard';
+import { ProducerRow } from '@/components/domain/ProducerCard';
 
 const WHY_NOW = [
   { Icon: Sprout, k: '제철 적기', v: '2~3월이 1년 중 가장 달고 부드러워요' },
@@ -35,11 +35,15 @@ export default function CurationPage() {
   const { data: home, isLoading, error, refetch } = useHome();
   const { data: ingredients = [] } = useIngredients();
   const { data: recipes = [] } = useRecipes();
+  const { data: producers = [] } = useProducers();
 
   const hero = home?.hero;
   const seasonalIngredients = ingredients.filter((i) => i.seasonal || i.hot).slice(0, 8);
   const seasonalRecipes = recipes.filter((r) => r.seasonal).slice(0, 6);
   const recipeList = seasonalRecipes.length ? seasonalRecipes : recipes.slice(0, 6);
+  const honoraryProducers = producers.filter((p) => p.honorary);
+  const recommendedFarms = (honoraryProducers.length >= 3 ? honoraryProducers : producers).slice(0, 3);
+  const heroName = hero ? hero.title.replace(/^지금이 제철,?\s*/, '') : '제철';
 
   return (
     <>
@@ -134,6 +138,17 @@ export default function CurationPage() {
               </div>
             )}
           </Section>
+
+          {/* ── 제철 농가 추천 ── */}
+          {recommendedFarms.length > 0 && (
+            <Section title={`${heroName} 농가 추천`} className="mt-6">
+              <div className="mx-4 overflow-hidden rounded-2xl border border-line-soft bg-surface">
+                {recommendedFarms.map((p, i, arr) => (
+                  <ProducerRow key={p.id} producer={p} divider={i < arr.length - 1} />
+                ))}
+              </div>
+            </Section>
+          )}
 
           {/* ── 제철 상품 전체 보기 ── */}
           <div className="px-4 pt-6">
