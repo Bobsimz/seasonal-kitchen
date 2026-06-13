@@ -1,0 +1,51 @@
+# 운영용 compose — 서버(Lightsail)에서 실행한다.
+# 이미지는 GitHub Actions가 GHCR에 푸시한 것을 pull 한다.
+# 실제 비밀값은 같은 폴더의 .env 파일에서 주입된다 (git 미포함).
+
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: seasonal-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+
+  frontend:
+    image: ghcr.io/bobsimz/seasonal-kitchen-frontend:latest
+    container_name: seasonal-frontend
+    expose:
+      - "3000"
+    restart: unless-stopped
+
+  backend:
+    image: ghcr.io/bobsimz/seasonal-kitchen-backend:latest
+    container_name: seasonal-backend
+    # 비밀값(Supabase, JWT)은 .env 에서 주입
+    env_file:
+      - .env
+    # 비밀 아닌 고정 설정은 여기서 직접 지정
+    environment:
+      SPRING_PROFILES_ACTIVE: supabase
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+    expose:
+      - "8080"
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: seasonal-redis
+    expose:
+      - "6379"
+    restart: unless-stopped
+
+networks:
+  default:
+    name: seasonal-net
