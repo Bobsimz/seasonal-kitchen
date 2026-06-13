@@ -170,7 +170,7 @@ function IngredientTab() {
   const { data: catList = [] } = useIngredientCategories();
   const cats = ['전체', ...catList];
 
-  const { items, isLoading, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { items, total, isLoading, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteIngredients({ sort, category: cat === '전체' ? undefined : cat });
 
   if (isLoading) return <LoadingScreen />;
@@ -180,7 +180,7 @@ function IngredientTab() {
     <>
       <ChipTabs options={cats} value={cat} onChange={setCat} sticky className="sticky top-28" />
       <div className="animate-fade-up pb-6">
-        <SortRow count={`${items.length}개${hasNextPage ? '+' : ''}`} label="의 제철 식재료" options={INGREDIENT_SORTS} value={sort} onOpen={() => setSortOpen(true)} />
+        <SortRow count={`${total}개`} label="의 제철 식재료" options={INGREDIENT_SORTS} value={sort} onOpen={() => setSortOpen(true)} />
         {items.length === 0 ? (
           <EmptyState title="식재료가 없어요" description="다른 카테고리를 선택해 보세요." />
         ) : (
@@ -199,7 +199,7 @@ function IngredientTab() {
 
 // ── 레시피 탭 (2-col 그리드) ── (필터/정렬은 서버에서 처리)
 const RECIPE_SORTS = [
-  { value: 'likes', label: '좋아요 많은 순' },
+  { value: 'likes', label: '찜 많은 순' },
   { value: 'time_asc', label: '조리 빠른 순' },
   { value: 'title', label: '이름순' },
 ];
@@ -211,7 +211,7 @@ function RecipeTab() {
   const { data: tagList = [] } = useRecipeTags();
   const tags = ['전체', ...tagList];
 
-  const { items, isLoading, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { items, total, isLoading, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteRecipes({ sort, tag: tag === '전체' ? undefined : tag });
 
   if (isLoading) return <LoadingScreen />;
@@ -221,7 +221,7 @@ function RecipeTab() {
     <>
       <ChipTabs options={tags} value={tag} onChange={setTag} sticky className="sticky top-28" />
       <div className="animate-fade-up pb-6">
-        <SortRow count={`${items.length}개${hasNextPage ? '+' : ''}`} label="의 레시피" options={RECIPE_SORTS} value={sort} onOpen={() => setSortOpen(true)} />
+        <SortRow count={`${total}개`} label="의 레시피" options={RECIPE_SORTS} value={sort} onOpen={() => setSortOpen(true)} />
         {items.length === 0 ? (
           <EmptyState title="레시피가 없어요" description="다른 태그를 선택해 보세요." />
         ) : (
@@ -252,7 +252,7 @@ function ProducerTab() {
   const { data: regionList = [] } = useProducerRegions();
   const regions = ['전체', ...regionList];
 
-  const { items, isLoading, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { items, total, isLoading, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteProducers({ sort, region: region === '전체' ? undefined : region });
 
   if (isLoading) return <LoadingScreen />;
@@ -262,7 +262,7 @@ function ProducerTab() {
     <>
       <ChipTabs options={regions} value={region} onChange={setRegion} sticky className="sticky top-28" />
       <div className="animate-fade-up pb-6">
-        <SortRow count={`${items.length}곳${hasNextPage ? '+' : ''}`} label="의 추천 농가" options={PRODUCER_SORTS} value={sort} onOpen={() => setSortOpen(true)} />
+        <SortRow count={`${total}곳`} label="의 추천 농가" options={PRODUCER_SORTS} value={sort} onOpen={() => setSortOpen(true)} />
         {items.length === 0 ? (
           <EmptyState title="농가가 없어요" description="다른 지역을 선택해 보세요." />
         ) : (

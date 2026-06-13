@@ -56,8 +56,11 @@ function useInfiniteList(key, fetchPage, params) {
     getNextPageParam: (last) => (last?.hasNext ? (last.page ?? 0) + 1 : undefined),
   });
   // 모든 페이지의 items 를 평탄화해 단일 배열로 노출.
-  const items = (query.data?.pages ?? []).flatMap((p) => unwrapList(p));
-  return { ...query, items };
+  const pages = query.data?.pages ?? [];
+  const items = pages.flatMap((p) => unwrapList(p));
+  // 전체 개수(서버 totalElements). mock(배열 응답)엔 없으니 로드된 개수로 폴백.
+  const total = pages[0]?.totalElements ?? items.length;
+  return { ...query, items, total };
 }
 
 // ── Home / Search ──────────────────────────────────────────

@@ -9,4 +9,7 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     List<Favorite> findByUserIdOrderByIdDesc(Long userId);
     Optional<Favorite> findByIdAndUserId(Long id, Long userId);
     long countByUserId(Long userId);
+
+    /** 특정 대상(레시피 등)의 찜 개수. */
+    long countByTargetTypeAndTargetId(String targetType, Long targetId);
 }

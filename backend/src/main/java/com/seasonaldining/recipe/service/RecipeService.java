@@ -4,6 +4,7 @@ import com.seasonaldining.common.exception.BusinessException;
 import com.seasonaldining.common.exception.ErrorCode;
 import com.seasonaldining.common.response.ListResponse;
 import com.seasonaldining.common.storage.MediaUrlResolver;
+import com.seasonaldining.favorite.repository.FavoriteRepository;
 import com.seasonaldining.ingredient.entity.Ingredient;
 import com.seasonaldining.ingredient.repository.IngredientRepository;
 import com.seasonaldining.price.entity.PriceSnapshot;
@@ -51,6 +52,7 @@ public class RecipeService {
     private final CreatorRepository creatorRepository;
     private final ReelReactionRepository reelReactionRepository;
     private final RecipeTagRepository recipeTagRepository;
+    private final FavoriteRepository favoriteRepository;
     private final MediaUrlResolver mediaUrls;
 
     public RecipeService(
@@ -63,6 +65,7 @@ public class RecipeService {
             CreatorRepository creatorRepository,
             ReelReactionRepository reelReactionRepository,
             RecipeTagRepository recipeTagRepository,
+            FavoriteRepository favoriteRepository,
             MediaUrlResolver mediaUrls
     ) {
         this.recipeRepository = recipeRepository;
@@ -74,6 +77,7 @@ public class RecipeService {
         this.creatorRepository = creatorRepository;
         this.reelReactionRepository = reelReactionRepository;
         this.recipeTagRepository = recipeTagRepository;
+        this.favoriteRepository = favoriteRepository;
         this.mediaUrls = mediaUrls;
     }
 
@@ -242,12 +246,9 @@ public class RecipeService {
         return snapshots.isEmpty() ? null : snapshots.get(snapshots.size() - 1).getPrice();
     }
 
-    /** 레시피 좋아요 수 = 연결 릴스의 시드 baseline(reels.like_count) + 실제 좋아요(reactions) 합. */
+    /** 레시피 찜 수 = favorites(targetType=RECIPE) 실제 개수. (카드/상세의 하트 숫자) */
     private long recipeLikes(Long recipeId) {
-        return reelRepository.findTop3ByRecipeIdAndStatusOrderByPublishedAtDesc(recipeId, PUBLISHED).stream()
-                .mapToLong(reel -> reel.getLikeCount()
-                        + reelReactionRepository.countByReelIdAndReactionType(reel.getId(), ReelReaction.LIKE))
-                .sum();
+        return favoriteRepository.countByTargetTypeAndTargetId("RECIPE", recipeId);
     }
 
     private List<RecipeDetailResponse.RelatedReelResponse> relatedReels(Long recipeId) {

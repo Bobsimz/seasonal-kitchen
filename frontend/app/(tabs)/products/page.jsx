@@ -32,6 +32,7 @@ export default function ProductsPage() {
   // category 가 바뀌면 queryKey 가 바뀌어 해당 카테고리부터 다시 받아온다.
   const {
     items: allProducts,
+    total,
     isLoading,
     error,
     refetch,
@@ -83,7 +84,7 @@ export default function ProductsPage() {
             {/* 개수 / 정렬 행 */}
             <div className="flex items-center justify-between px-5 pb-2.5 pt-3.5">
               <span className="text-[12.5px] text-ink-mid">
-                <b className="text-ink">{list.length}개{hasNextPage ? '+' : ''}</b>의 상품
+                <b className="text-ink">{total}개</b>의 상품
               </span>
               <button
                 onClick={() => setSortOpen(true)}
