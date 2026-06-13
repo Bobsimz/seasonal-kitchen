@@ -184,6 +184,14 @@ export const useMyProducer = () => {
   const { isAuthenticated } = useAuth();
   return useQuery({ queryKey: qk.myProducer, queryFn: endpoints.getMyProducer, enabled: isAuthenticated });
 };
+export const useMyOffers = () => {
+  const { isAuthenticated } = useAuth();
+  return useQuery({ queryKey: ['producer', 'me', 'offers'], queryFn: endpoints.getMyOffers, enabled: isAuthenticated });
+};
+export const useMyStats = () => {
+  const { isAuthenticated } = useAuth();
+  return useQuery({ queryKey: ['producer', 'me', 'stats'], queryFn: endpoints.getMyStats, enabled: isAuthenticated });
+};
 
 // ── MyPage / User ──────────────────────────────────────────
 export const useMySummary = () => {
