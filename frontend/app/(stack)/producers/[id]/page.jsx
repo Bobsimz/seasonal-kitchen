@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Heart, Crown, Megaphone, ChevronRight } from 'lucide-react';
 import {
@@ -250,8 +251,11 @@ function NewsTab({ id }) {
               </span>
               {!last && <span className="mt-1 w-0.5 flex-1 bg-line-soft" />}
             </div>
-            {/* 내용 */}
-            <div className={cn('min-w-0 flex-1', last ? 'pb-0' : 'pb-6')}>
+            {/* 내용 — 탭하면 소식 상세로 */}
+            <Link
+              href={`/producers/${id}/news/${n.id}`}
+              className={cn('tap block min-w-0 flex-1', last ? 'pb-0' : 'pb-6')}
+            >
               <div className="flex items-center gap-2 text-[10.5px] text-ink-soft">
                 <span className="font-extrabold tracking-wide text-ink-mid">NEWS</span>
                 <span>{n.date}</span>
@@ -265,8 +269,9 @@ function NewsTab({ id }) {
                   <img src={n.imageUrl} alt={n.title} className="h-full w-full object-cover" />
                 </div>
               )}
-              <p className="mt-2.5 line-clamp-3 text-[12.5px] leading-relaxed text-ink-mid">{n.body}</p>
-            </div>
+              <p className="mt-2.5 line-clamp-2 text-[12.5px] leading-relaxed text-ink-mid">{n.body}</p>
+              <span className="mt-1.5 inline-block text-[11.5px] font-bold text-brand-dark">자세히 보기</span>
+            </Link>
           </div>
         );
       })}
