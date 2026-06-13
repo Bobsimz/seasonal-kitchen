@@ -22,5 +22,6 @@ public record ProductCardResponse(
         @Schema(description = "기본가가 적용되는 포장 수량(단위와 결합: '100g'·'1kg'). 옵션 없으면 null", example = "100", nullable = true) BigDecimal packQuantity,
         @Schema(description = "대표 이미지(첫 사진)", nullable = true) String imageUrl,
         @Schema(description = "재고 상태", example = "IN_STOCK") StockStatus stockStatus,
-        @Schema(description = "카테고리", example = "잎채소", nullable = true) String category
+        @Schema(description = "카테고리", example = "잎채소", nullable = true) String category,
+        @Schema(description = "AI 생성 이미지 여부", example = "false") boolean aiGenerated
 ) {}

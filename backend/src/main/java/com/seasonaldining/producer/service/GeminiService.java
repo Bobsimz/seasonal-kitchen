@@ -142,21 +142,10 @@ public class GeminiService {
     }
 
     private String buildImagePrompt(String aspectDesc, boolean hasFarmImage) {
-        StringBuilder sb = new StringBuilder();
-        if (hasFarmImage) {
-            sb.append("첫 번째 사진은 상품 사진이고, 두 번째 사진은 농가(배경) 사진입니다.\n");
-            sb.append("두 사진을 참고하여 상품과 농가의 자연스러운 분위기가 어우러진 홍보 사진을 생성해주세요.\n");
-            sb.append("농가의 환경과 배경을 살리면서 상품이 화면의 주인공이 되어야 합니다.\n");
-        } else {
-            sb.append("이 상품 사진을 참고하여 새로운 상품 홍보 사진을 생성해주세요.\n");
-            sb.append("참고 사진과 유사한 구도와 스타일로 생성해주세요.\n");
-        }
-        sb.append("규칙:\n");
-        sb.append("- 글씨, 텍스트, 라벨, 워터마크, 숫자가 절대 포함되면 안 됩니다\n");
-        sb.append("- 신선하고 자연스러운 식재료 사진이어야 합니다\n");
-        sb.append("- 배경은 깔끔하게 유지해주세요\n");
-        sb.append("- 이미지 비율은 ").append(aspectDesc).append(" 이어야 합니다");
-        return sb.toString();
+        String template = hasFarmImage
+                ? prompts.offerImageGeneration().withFarmTemplate()
+                : prompts.offerImageGeneration().withoutFarmTemplate();
+        return template.replace("{aspectRatio}", aspectDesc);
     }
 
     private byte[] loadFarmImage(String farmPhotoUrl) {

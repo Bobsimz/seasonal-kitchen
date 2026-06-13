@@ -33,7 +33,8 @@ public record ProductDetailResponse(
         @Schema(description = "상품 옵션(규격/variant) 목록") List<OptionResponse> options,
         @Schema(description = "상품 태그 목록") List<String> tags,
         @Schema(description = "관련 레시피 ID 목록(ingredientId 있을 때, 없으면 빈 배열)") List<Long> relatedRecipeIds,
-        @Schema(description = "상세정보 섹션(접기/펼치기). 없으면 빈 배열 — 프론트는 description 단일 섹션으로 폴백") List<DetailSectionResponse> detailSections
+        @Schema(description = "상세정보 섹션(접기/펼치기). 없으면 빈 배열 — 프론트는 description 단일 섹션으로 폴백") List<DetailSectionResponse> detailSections,
+        @Schema(description = "AI 생성 이미지 여부", example = "false") boolean aiGenerated
 ) {
     @Schema(description = "상품 옵션")
     public record OptionResponse(

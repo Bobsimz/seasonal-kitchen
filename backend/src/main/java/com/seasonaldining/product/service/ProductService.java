@@ -123,8 +123,9 @@ public class ProductService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
         Producer p = producerRepository.findById(o.getProducerId()).orElse(null);
 
-        List<String> images = offerPhotoRepository.findByOfferIdOrderBySortOrderAsc(id)
-                .stream().map(OfferPhoto::getUrl).toList();
+        List<OfferPhoto> photoEntities = offerPhotoRepository.findByOfferIdOrderBySortOrderAsc(id);
+        List<String> images = photoEntities.stream().map(OfferPhoto::getUrl).toList();
+        boolean imageAiGenerated = !photoEntities.isEmpty() && photoEntities.get(0).isAiGenerated();
         List<String> tags = offerTagRepository.findByOfferIdOrderByIdAsc(id)
                 .stream().map(OfferTag::getLabel).toList();
         List<String> certifications = offerCertificationRepository.findByOfferIdOrderByIdAsc(id)
@@ -147,16 +148,19 @@ public class ProductService {
                 StockStatus.from(o.getStockQuantity()), o.getCategory(),
                 images, o.getDescription(), o.getFreshnessLabel(), o.getStockQuantity(),
                 certifications, o.getStorageMethod(), o.getStorageNote(), options, tags, relatedRecipeIds,
-                detailSections);
+                detailSections, imageAiGenerated);
     }
 
     // ── 목록 배치 매핑 (N+1 회피) ──────────────────────────────
     private List<ProductCardResponse> toCards(List<ProducerOffer> offers) {
         if (offers.isEmpty()) return List.of();
         List<Long> offerIds = offers.stream().map(ProducerOffer::getId).toList();
-        // 대표 이미지(첫 사진) — sort_order asc 첫 행
-        Map<Long, String> firstPhotoByOffer = offerPhotoRepository.findByOfferIdInOrderBySortOrderAsc(offerIds)
-                .stream().collect(Collectors.toMap(OfferPhoto::getOfferId, OfferPhoto::getUrl, (a, b) -> a));
+        // 대표 이미지(첫 사진) — sort_order asc 첫 행, is_ai_generated도 함께 수집
+        List<OfferPhoto> allFirstPhotos = offerPhotoRepository.findByOfferIdInOrderBySortOrderAsc(offerIds);
+        Map<Long, String> firstPhotoByOffer = allFirstPhotos.stream()
+                .collect(Collectors.toMap(OfferPhoto::getOfferId, OfferPhoto::getUrl, (a, b) -> a));
+        Map<Long, Boolean> firstPhotoAiByOffer = allFirstPhotos.stream()
+                .collect(Collectors.toMap(OfferPhoto::getOfferId, OfferPhoto::isAiGenerated, (a, b) -> a));
         // 기본 포장 수량 — 단위(예 "g")엔 수량이 없어, 기본가가 가리키는 옵션 수량을 카드에 함께 내려준다(→ "/100g").
         Map<Long, List<OfferOption>> optionsByOffer = offerOptionRepository.findByOfferIdInOrderBySortOrderAsc(offerIds)
                 .stream().collect(Collectors.groupingBy(OfferOption::getOfferId));
@@ -170,7 +174,8 @@ public class ProductService {
                     o.getProducerId(), p != null ? p.getName() : null, p != null ? p.getRegion() : null,
                     o.getPrice(), o.getUnit(), basePackQuantity(o, optionsByOffer.get(o.getId())),
                     firstPhotoByOffer.get(o.getId()),
-                    StockStatus.from(o.getStockQuantity()), o.getCategory());
+                    StockStatus.from(o.getStockQuantity()), o.getCategory(),
+                    Boolean.TRUE.equals(firstPhotoAiByOffer.get(o.getId())));
         }).toList();
     }
 

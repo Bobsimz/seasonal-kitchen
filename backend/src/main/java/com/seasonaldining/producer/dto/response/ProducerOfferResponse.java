@@ -29,7 +29,8 @@ public record ProducerOfferResponse(
         @Schema(description = "농가 평점(0~5)", example = "4.8", nullable = true) BigDecimal rating,
         @Schema(description = "농가 리뷰 수", example = "128") int reviewCount,
         @Schema(description = "명예농가 여부", example = "true") boolean honorary,
-        @Schema(description = "농가 스타일 VALUE(실속)|ORGANIC(유기농)|PREMIUM(프리미엄)", example = "ORGANIC", nullable = true) String style
+        @Schema(description = "농가 스타일 VALUE(실속)|ORGANIC(유기농)|PREMIUM(프리미엄)", example = "ORGANIC", nullable = true) String style,
+        @Schema(description = "AI 생성 이미지 여부", example = "false") boolean aiGenerated
 ) {
     @Schema(description = "상품 옵션")
     public record OptionResponse(

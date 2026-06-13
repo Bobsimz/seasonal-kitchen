@@ -14,11 +14,11 @@ import { Card } from '@/components/ui/Card';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState, EmptyState } from '@/components/ui/States';
 import { useToast } from '@/components/ui/Toast';
+import { ImageLightbox } from '@/components/ui/ImageLightbox';
 
 const UNITS = ['개', '봉', '포기', '단', 'kg'];
 const CHECKPOINTS = ['당일배송', '당일수확', '유기농', '산지직송', '안심패킹', '소분포장'];
 const CATEGORIES = ['채소', '과일', '곡류', '기타'];
-const CERTIFICATIONS = ['무농약', '유기농(유기농산물)', '친환경', 'GAP인증', '저농약'];
 
 function FieldLabel({ label, required, hint }) {
   return (
@@ -80,6 +80,8 @@ export default function SellerOfferNewPage() {
   const [photos, setPhotos] = useState([]); // { id, preview, url, uploading }
   const [generatingAiImage, setGeneratingAiImage] = useState(false);
 
+  const [lightboxSrc, setLightboxSrc] = useState(null);
+
   // 공유 폼 상태
   const [ingredientName, setIngredientName] = useState('');
   const [price, setPrice] = useState('');
@@ -98,7 +100,6 @@ export default function SellerOfferNewPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
-  const [certifications, setCertifications] = useState([]);
   const [stockQuantity, setStockQuantity] = useState('');
   const [storageNote, setStorageNote] = useState('');
 
@@ -226,6 +227,31 @@ export default function SellerOfferNewPage() {
     );
   };
 
+  // AI 이미지에 "AI" 워터마크를 캔버스로 소각해 새 Blob 반환
+  const stampAiWatermark = (blob) =>
+    new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        const fontSize = Math.max(10, Math.round(img.width * 0.028));
+        ctx.font = `${fontSize}px sans-serif`;
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'bottom';
+        const pad = Math.round(fontSize * 0.55);
+        ctx.fillText('AI로 생성된 이미지입니다.', img.width - pad, img.height - pad);
+
+        canvas.toBlob((b) => resolve(b ?? blob), 'image/png');
+        URL.revokeObjectURL(img.src);
+      };
+      img.src = URL.createObjectURL(blob);
+    });
+
   // ── AI 이미지 생성 (직접 입력 모드) ──────────────────────────
   const generateAiImage = async () => {
     const refFile = mode === 'ai' ? aiPhotos[0]?.file : null;
@@ -244,12 +270,13 @@ export default function SellerOfferNewPage() {
       const byteChars = atob(result.imageData);
       const byteArray = new Uint8Array(byteChars.length);
       for (let i = 0; i < byteChars.length; i++) byteArray[i] = byteChars.charCodeAt(i);
-      const blob = new Blob([byteArray], { type: result.mimeType });
+      const rawBlob = new Blob([byteArray], { type: result.mimeType });
+      const blob = await stampAiWatermark(rawBlob); // "AI" 워터마크 소각
       const previewUrl = URL.createObjectURL(blob);
       setPhotos((prev) => prev.map((p) => p.id === placeholder.id ? { ...p, preview: previewUrl } : p));
       // S3 업로드
       const uploadFd = new FormData();
-      uploadFd.append('files', new File([blob], 'ai-image.png', { type: result.mimeType }));
+      uploadFd.append('files', new File([blob], 'ai-image.png', { type: 'image/png' }));
       const [uploaded] = await endpoints.uploadImages(uploadFd);
       setPhotos((prev) =>
         prev.map((p) => p.id === placeholder.id ? { ...p, url: uploaded.url, uploading: false } : p),
@@ -261,12 +288,6 @@ export default function SellerOfferNewPage() {
       setGeneratingAiImage(false);
     }
   };
-
-  // ── 인증마크 ──────────────────────────────────────────────────
-  const toggleCert = (cert) =>
-    setCertifications(
-      certifications.includes(cert) ? certifications.filter((c) => c !== cert) : [...certifications, cert],
-    );
 
   // ── 제출 ─────────────────────────────────────────────────────
   const onSubmit = async () => {
@@ -289,9 +310,11 @@ export default function SellerOfferNewPage() {
     }
     try {
       const isAi = mode === 'ai' && !!analysis;
+      // AI 생성 이미지(photos)를 앞에 배치해 대표 이미지가 AI 생성본이 되도록 함
+      const aiGeneratedUrls = photos.map((p) => p.url).filter(Boolean);
       const photoUrls = mode === 'manual'
         ? photos.map((p) => p.url).filter(Boolean)
-        : [...aiPhotos.map((p) => p.url).filter(Boolean), ...photos.map((p) => p.url).filter(Boolean)];
+        : [...aiGeneratedUrls, ...aiPhotos.map((p) => p.url).filter(Boolean)];
 
       await addOffer.mutateAsync({
         ingredientName: ingredientName.trim(),
@@ -302,9 +325,9 @@ export default function SellerOfferNewPage() {
         description: description.trim() || null,
         category: category || null,
         photoUrls,
+        aiGeneratedPhotoUrls: isAi && aiGeneratedUrls.length > 0 ? aiGeneratedUrls : null,
         tags: checkpoints.length > 0 ? checkpoints : null,
         options: [],
-        certifications: certifications.length > 0 ? certifications : null,
         stockQuantity: stockQuantity ? Number(stockQuantity) : null,
         storageMethod: null,
         storageNote: storageNote.trim() || null,
@@ -388,7 +411,7 @@ export default function SellerOfferNewPage() {
                   {aiPhotos.map((photo, idx) => (
                     <div key={photo.id} className="relative shrink-0">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={photo.preview} alt="" className="h-[84px] w-[84px] rounded-2xl object-cover" />
+                      <img src={photo.preview} alt="" onClick={() => setLightboxSrc(photo.preview)} className="h-[84px] w-[84px] cursor-zoom-in rounded-2xl object-cover" />
                       {photo.uploading ? (
                         <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/20">
                           <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -450,7 +473,7 @@ export default function SellerOfferNewPage() {
                       <div key={photo.id} className="relative shrink-0">
                         {photo.preview ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={photo.preview} alt="" className="h-[84px] w-[84px] rounded-2xl object-cover" />
+                          <img src={photo.preview} alt="" onClick={() => setLightboxSrc(photo.preview)} className="h-[84px] w-[84px] cursor-zoom-in rounded-2xl object-cover" />
                         ) : (
                           <div className="flex h-[84px] w-[84px] items-center justify-center rounded-2xl bg-brand-bg">
                             <Sparkles size={22} className="animate-pulse text-brand" />
@@ -504,7 +527,7 @@ export default function SellerOfferNewPage() {
                     <div key={photo.id} className="relative shrink-0">
                       {photo.preview ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={photo.preview} alt="" className="h-[84px] w-[84px] rounded-2xl object-cover" />
+                        <img src={photo.preview} alt="" onClick={() => setLightboxSrc(photo.preview)} className="h-[84px] w-[84px] cursor-zoom-in rounded-2xl object-cover" />
                       ) : (
                         <div className="flex h-[84px] w-[84px] items-center justify-center rounded-2xl bg-brand-bg">
                           <Sparkles size={22} className="animate-pulse text-brand" />
@@ -680,19 +703,7 @@ export default function SellerOfferNewPage() {
               />
             </div>
 
-            <SectionTitle>인증 · 재고</SectionTitle>
-
-            {/* 인증마크 */}
-            <div>
-              <FieldLabel label="인증마크" hint="해당하는 인증을 모두 선택해주세요" />
-              <div className="flex flex-wrap gap-1.5">
-                {CERTIFICATIONS.map((cert) => (
-                  <Pill key={cert} active={certifications.includes(cert)} onClick={() => toggleCert(cert)}>
-                    {cert}
-                  </Pill>
-                ))}
-              </div>
-            </div>
+            <SectionTitle>재고</SectionTitle>
 
             {/* 재고 수량 */}
             <div className="mt-5">
@@ -718,6 +729,8 @@ export default function SellerOfferNewPage() {
           )}
         </>
       )}
+
+      <ImageLightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
     </>
   );
 }

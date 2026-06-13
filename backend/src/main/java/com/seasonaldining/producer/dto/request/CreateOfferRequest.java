@@ -58,8 +58,11 @@ public record CreateOfferRequest(
         @Schema(description = "보관 안내 설명(선택)", example = "신문지에 싸서 냉장 보관하면 2주까지 신선해요.", nullable = true)
         @Size(max = 500) String storageNote,
 
-        @Schema(description = "AI 생성 여부", example = "true", nullable = true)
+        @Schema(description = "AI 생성 여부(오퍼 레벨 메타데이터)", example = "true", nullable = true)
         Boolean aiGenerated,
+
+        @Schema(description = "AI가 실제로 생성한 사진 URL 목록 — photoUrls 중 AI 생성분만 표시", nullable = true)
+        List<@Size(max = 500) String> aiGeneratedPhotoUrls,
 
         @Schema(description = "소구 키워드 목록(AI 생성 시, freshness_label에 콤마 구분 저장)", example = "[\"아삭함\",\"당도\"]", nullable = true)
         List<@Size(max = 40) String> appealKeywords,

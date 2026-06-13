@@ -9,6 +9,6 @@ public record GeminiPromptsProperties(
         GenerateDescriptionPrompt generateDescription
 ) {
     public record OfferPhotoAnalysisPrompt(String userTemplate) {}
-    public record OfferImageGenerationPrompt(String userTemplate) {}
+    public record OfferImageGenerationPrompt(String withFarmTemplate, String withoutFarmTemplate) {}
     public record GenerateDescriptionPrompt(String userTemplate) {}
 }

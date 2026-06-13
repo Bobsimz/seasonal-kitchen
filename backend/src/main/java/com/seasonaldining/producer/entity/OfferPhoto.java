@@ -15,15 +15,22 @@ public class OfferPhoto {
     private int sortOrder;
     @Column(name = "is_primary", nullable = false)
     private boolean primary;
+    @Column(name = "is_ai_generated", nullable = false)
+    private boolean aiGenerated = false;
 
     protected OfferPhoto() {}
 
     public static OfferPhoto of(Long offerId, String url, int sortOrder, boolean primary) {
+        return of(offerId, url, sortOrder, primary, false);
+    }
+
+    public static OfferPhoto of(Long offerId, String url, int sortOrder, boolean primary, boolean aiGenerated) {
         OfferPhoto p = new OfferPhoto();
         p.offerId = offerId;
         p.url = url;
         p.sortOrder = sortOrder;
         p.primary = primary;
+        p.aiGenerated = aiGenerated;
         return p;
     }
 
@@ -32,4 +39,5 @@ public class OfferPhoto {
     public String getUrl() { return url; }
     public int getSortOrder() { return sortOrder; }
     public boolean isPrimary() { return primary; }
+    public boolean isAiGenerated() { return aiGenerated; }
 }

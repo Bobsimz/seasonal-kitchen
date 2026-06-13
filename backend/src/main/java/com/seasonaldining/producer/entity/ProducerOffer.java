@@ -38,6 +38,8 @@ public class ProducerOffer {
     // 판매 상태 (V28) — ACTIVE | HIDDEN(소프트 삭제). 기본 ACTIVE.
     @Column(nullable = false, length = 20)
     private String status = "ACTIVE";
+    @Column(name = "ai_generated", nullable = false)
+    private boolean aiGenerated = false;
     @Column(name = "observed_at", nullable = false)
     private OffsetDateTime observedAt = OffsetDateTime.now();
 
@@ -63,6 +65,15 @@ public class ProducerOffer {
                                        BigDecimal price, String unit, String freshnessLabel,
                                        String title, String description, String category,
                                        Integer stockQuantity, String storageMethod, String storageNote) {
+        return create(producerId, ingredientId, ingredientName, price, unit, freshnessLabel,
+                title, description, category, stockQuantity, storageMethod, storageNote, false);
+    }
+
+    public static ProducerOffer create(Long producerId, Long ingredientId, String ingredientName,
+                                       BigDecimal price, String unit, String freshnessLabel,
+                                       String title, String description, String category,
+                                       Integer stockQuantity, String storageMethod, String storageNote,
+                                       boolean aiGenerated) {
         ProducerOffer o = new ProducerOffer();
         o.producerId = producerId;
         o.ingredientId = ingredientId;
@@ -76,6 +87,7 @@ public class ProducerOffer {
         o.stockQuantity = stockQuantity;
         o.storageMethod = storageMethod;
         o.storageNote = storageNote;
+        o.aiGenerated = aiGenerated;
         o.observedAt = OffsetDateTime.now();
         return o;
     }
@@ -94,6 +106,7 @@ public class ProducerOffer {
     public String getStorageMethod() { return storageMethod; }
     public String getStorageNote() { return storageNote; }
     public String getStatus() { return status; }
+    public boolean isAiGenerated() { return aiGenerated; }
     public OffsetDateTime getObservedAt() { return observedAt; }
 
     // ── 판매자 상품 수정/숨김 (V28) ──────────────────────────

@@ -157,18 +157,21 @@ public class ProducerService {
                 ? req.appealSentence()
                 : req.description();
 
+        boolean aiGenerated = Boolean.TRUE.equals(req.aiGenerated());
         ProducerOffer saved = offerRepository.save(ProducerOffer.create(
                 producer.getId(), ingredientId, req.ingredientName(),
                 req.price(), req.unit(), freshnessLabel,
                 req.title(), description, req.category(),
-                req.stockQuantity(), req.storageMethod(), req.storageNote()));
+                req.stockQuantity(), req.storageMethod(), req.storageNote(), aiGenerated));
 
-        // 상품 사진(첫 번째가 대표) 저장
+        // 상품 사진(첫 번째가 대표) 저장 — aiGeneratedPhotoUrls에 포함된 URL은 is_ai_generated=true
         if (req.photoUrls() != null) {
+            java.util.Set<String> aiUrls = req.aiGeneratedPhotoUrls() != null
+                    ? new java.util.HashSet<>(req.aiGeneratedPhotoUrls()) : java.util.Set.of();
             int order = 0;
             for (String url : req.photoUrls()) {
                 if (url == null || url.isBlank()) continue;
-                offerPhotoRepository.save(OfferPhoto.of(saved.getId(), url.trim(), order, order == 0));
+                offerPhotoRepository.save(OfferPhoto.of(saved.getId(), url.trim(), order, order == 0, aiUrls.contains(url.trim())));
                 order++;
             }
         }
@@ -446,9 +449,12 @@ public class ProducerService {
     private List<ProducerOfferResponse> toOffers(List<ProducerOffer> offers) {
         if (offers.isEmpty()) return List.of();
         List<Long> offerIds = offers.stream().map(ProducerOffer::getId).toList();
-        Map<Long, List<String>> photosByOffer = offerPhotoRepository.findByOfferIdInOrderBySortOrderAsc(offerIds)
-                .stream().collect(Collectors.groupingBy(OfferPhoto::getOfferId,
+        List<OfferPhoto> allPhotos = offerPhotoRepository.findByOfferIdInOrderBySortOrderAsc(offerIds);
+        Map<Long, List<String>> photosByOffer = allPhotos.stream()
+                .collect(Collectors.groupingBy(OfferPhoto::getOfferId,
                         Collectors.mapping(OfferPhoto::getUrl, Collectors.toList())));
+        Map<Long, Boolean> firstPhotoAiByOffer = allPhotos.stream()
+                .collect(Collectors.toMap(OfferPhoto::getOfferId, OfferPhoto::isAiGenerated, (a, b) -> a));
         Map<Long, List<String>> tagsByOffer = offerTagRepository.findByOfferIdInOrderByIdAsc(offerIds)
                 .stream().collect(Collectors.groupingBy(OfferTag::getOfferId,
                         Collectors.mapping(OfferTag::getLabel, Collectors.toList())));
@@ -481,14 +487,16 @@ public class ProducerService {
                     p != null ? p.getRating() : null,
                     p != null ? p.getReviewCount() : 0,
                     p != null && p.isHonorary(),
-                    p != null ? p.getStyle() : null);
+                    p != null ? p.getStyle() : null,
+                    Boolean.TRUE.equals(firstPhotoAiByOffer.get(o.getId())));
         }).toList();
     }
 
     private ProducerOfferResponse toOffer(ProducerOffer o, Long producerId) {
         Producer p = producerRepository.findById(producerId).orElse(null);
-        List<String> photoUrls = offerPhotoRepository.findByOfferIdOrderBySortOrderAsc(o.getId())
-                .stream().map(OfferPhoto::getUrl).toList();
+        List<OfferPhoto> photoEntities = offerPhotoRepository.findByOfferIdOrderBySortOrderAsc(o.getId());
+        List<String> photoUrls = photoEntities.stream().map(OfferPhoto::getUrl).toList();
+        boolean firstPhotoAi = !photoEntities.isEmpty() && photoEntities.get(0).isAiGenerated();
         List<String> tags = offerTagRepository.findByOfferIdOrderByIdAsc(o.getId())
                 .stream().map(OfferTag::getLabel).toList();
         List<ProducerOfferResponse.OptionResponse> options = offerOptionRepository.findByOfferIdOrderBySortOrderAsc(o.getId())
@@ -509,7 +517,8 @@ public class ProducerService {
                 p != null ? p.getRating() : null,
                 p != null ? p.getReviewCount() : 0,
                 p != null && p.isHonorary(),
-                p != null ? p.getStyle() : null);
+                p != null ? p.getStyle() : null,
+                firstPhotoAi);
     }
 
     private ProducerReviewResponse toReview(ProducerReview r) {
