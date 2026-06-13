@@ -4,6 +4,7 @@ import { won } from '@/lib/format';
 import { VegImage } from './VegImage';
 import { TrendBadge } from '@/components/ui/Misc';
 import { Chip } from '@/components/ui/Chip';
+import { FavoriteHeart } from './FavoriteHeart';
 
 // 식재료 가로 리스트 행.
 export function IngredientRow({ ingredient: i, divider = true }) {
@@ -32,23 +33,35 @@ export function IngredientRow({ ingredient: i, divider = true }) {
 }
 
 // 식재료 세로 카드 (홈 캐러셀/그리드).
+// 찜 하트는 <Link>(=<a>) 안에 두면 button-in-anchor 가 돼 hydration 경고가 나므로
+// Link 와 형제로 두고 카드 위에 절대배치한다.
 export function IngredientCard({ ingredient: i, className }) {
   return (
-    <Link href={`/ingredients/${i.id}`} className={cn('tap block w-[126px] shrink-0', className)}>
-      <div className="relative">
-        <VegImage name={i.name} src={i.imageUrl} size={126} rounded="rounded-2xl" className="!h-[126px] !w-full" />
-        {i.hot && (
-          <span className="absolute left-2 top-2 rounded-full bg-hot px-2 py-0.5 text-[10px] font-bold text-white shadow">
-            인기 ↑
-          </span>
-        )}
-      </div>
-      <p className="mt-2 text-[13.5px] font-bold text-ink">{i.name}</p>
-      <div className="mt-0.5 flex items-baseline gap-1">
-        <span className="text-[14px] font-extrabold text-ink tabular">{won(i.currentPrice)}</span>
-        <span className="text-[10.5px] text-ink-soft">원/{i.unit}</span>
-      </div>
-      {i.priceChangeLabel && <TrendBadge direction={i.trendDirection} label={i.priceChangeLabel} className="mt-0.5" />}
-    </Link>
+    <div className={cn('relative w-[126px] shrink-0', className)}>
+      <Link href={`/ingredients/${i.id}`} className="tap block">
+        <div className="relative">
+          <VegImage name={i.name} src={i.imageUrl} size={126} rounded="rounded-2xl" className="!h-[126px] !w-full" />
+          {i.hot && (
+            <span className="absolute left-2 top-2 rounded-full bg-hot px-2 py-0.5 text-[10px] font-bold text-white shadow">
+              인기 ↑
+            </span>
+          )}
+        </div>
+        <p className="mt-2 text-[13.5px] font-bold text-ink">{i.name}</p>
+        <div className="mt-0.5 flex items-baseline gap-1">
+          <span className="text-[14px] font-extrabold text-ink tabular">{won(i.currentPrice)}</span>
+          <span className="text-[10.5px] text-ink-soft">원/{i.unit}</span>
+        </div>
+        {i.priceChangeLabel && <TrendBadge direction={i.trendDirection} label={i.priceChangeLabel} className="mt-0.5" />}
+      </Link>
+      <FavoriteHeart
+        targetType="INGREDIENT"
+        targetId={i.id}
+        nextHref={`/ingredients/${i.id}`}
+        size={16}
+        className="absolute right-1.5 top-1.5 grid h-7 w-7 place-items-center rounded-full bg-white/85 shadow-sm backdrop-blur-sm"
+        iconClassName="text-ink-soft"
+      />
+    </div>
   );
 }

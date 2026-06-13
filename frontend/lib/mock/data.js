@@ -33,15 +33,16 @@ export const producers = PRODUCERS.map((p) => ({
 
 export const getProducer = (id) => producers.find((p) => p.id === Number(id));
 
-// 농가가 파는 상품(offer) — priceLevel/freshness 기반 산출
-let _offerSeq = 1000;
+// 농가가 파는 상품(offer) — priceLevel/freshness 기반 산출.
+// id 는 (농가, 품목순서)로 결정적이게 만든다 — store.findOffer 가 같은 id 로 재조회하므로
+// 데모 장바구니 담기가 안정적으로 동작한다.
 export function producerOffers(producerId) {
   const p = PRODUCERS.find((x) => pid(x) === Number(producerId));
   if (!p) return [];
-  return p.specialties.map((name) => {
+  return p.specialties.map((name, idx) => {
     const { price, unit, fresh } = producerOffer(p, name);
     return {
-      id: ++_offerSeq,
+      id: Number(producerId) * 100 + idx,
       producerId: Number(producerId),
       producerName: p.name,
       region: p.region,
@@ -187,10 +188,14 @@ export function ingredientProducers(id) {
   const name = ingredientName(id);
   if (!name) return [];
   return PRODUCERS.filter((p) => p.specialties.some((s) => s.includes(name) || name.includes(s)))
-    .map((p, idx) => {
+    .map((p) => {
       const { price, unit, fresh } = producerOffer(p, name);
+      // 담기용 offerId — producerOffers 와 동일 id 를 써서 store.findOffer 로 해석되게 한다.
+      const offer = producerOffers(pid(p)).find(
+        (o) => o.ingredientName.includes(name) || name.includes(o.ingredientName),
+      );
       return {
-        id: 30 + idx,
+        id: offer ? offer.id : pid(p) * 100,
         producerId: pid(p),
         producerName: p.name,
         region: p.region,
@@ -208,6 +213,72 @@ export function ingredientProducers(id) {
       };
     })
     .sort((a, b) => a.price - b.price);
+}
+
+// 식재료별 농가 직거래 "상품" 목록 — /products(ProductCardResponse) 형태.
+// id 는 producerOffers 의 offer id 를 그대로 써서(=결정적) 데모 장바구니 담기와 호환된다.
+// 백엔드 GET /ingredients/{id}/products 가 생기면 그대로 교체됩니다
+// (docs/ingredient-detail-revamp-2026-06-13.md).
+export function ingredientProducts(id) {
+  const i = ING.find((x) => x.id === Number(id));
+  if (!i) return [];
+  const name = i.name;
+  const list = [];
+  for (const p of PRODUCERS) {
+    if (!p.specialties.some((s) => s.includes(name) || name.includes(s))) continue;
+    const offer = producerOffers(pid(p)).find(
+      (o) => o.ingredientName.includes(name) || name.includes(o.ingredientName),
+    );
+    if (!offer) continue;
+    list.push({
+      id: offer.id,
+      name: `${offer.region} ${offer.ingredientName} · ${offer.freshnessLabel}`,
+      ingredientId: Number(id),
+      ingredientName: offer.ingredientName,
+      producerId: offer.producerId,
+      producerName: offer.producerName,
+      region: offer.region,
+      price: offer.price,
+      unit: offer.unit,
+      imageUrl: vegImg(name),
+      stockStatus: 'IN_STOCK',
+      category: i.cat,
+    });
+  }
+  return list.sort((a, b) => a.price - b.price);
+}
+
+// 전체 상품 목록 — 모든 농가의 판매 offer 를 평탄화한 ProductCardResponse[].
+// (농가, 품목) 단위로 카드 1개 = 멀티셀러. ingredientProducts 와 동일 형태에
+// 정렬용 rating/reviewCount(농가 값)를 더한다. offer id 는 결정적이라 담기/딥링크와 호환.
+const PRODUCT_SORTS = {
+  PRICE_ASC: (a, b) => a.price - b.price,
+  REVIEW_DESC: (a, b) => b.reviewCount - a.reviewCount,
+  RECOMMENDED: (a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount,
+};
+export function products(params = {}) {
+  const { category, sort } = params || {};
+  let list = PRODUCERS.flatMap((p) => {
+    const producerId = pid(p);
+    return producerOffers(producerId).map((o) => ({
+      id: o.id,
+      name: `${o.region} ${o.ingredientName} · ${o.freshnessLabel}`,
+      ingredientId: o.ingredientId,
+      ingredientName: o.ingredientName,
+      producerId,
+      producerName: o.producerName,
+      region: o.region,
+      price: o.price,
+      unit: o.unit,
+      imageUrl: vegImg(o.ingredientName),
+      stockStatus: 'IN_STOCK',
+      category: ING.find((i) => i.id === o.ingredientId)?.cat || '기타',
+      rating: p.rating,
+      reviewCount: p.reviewCount,
+    }));
+  });
+  if (category && category !== 'ALL') list = list.filter((x) => x.category === category);
+  return list.sort(PRODUCT_SORTS[sort] || PRODUCT_SORTS.RECOMMENDED);
 }
 
 // ── 레시피 ───────────────────────────────────────────────────────

@@ -3,9 +3,9 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { Heart, MessageCircle, Bookmark, Share2, Play, ChevronRight, Plus } from 'lucide-react';
+import { Heart, MessageCircle, Bookmark, Share2, Play, ChevronRight, Plus, Search } from 'lucide-react';
 import { useReels } from '@/lib/queries';
-import { AppHeader } from '@/components/layout';
+import { AppHeader, HeaderIconButton } from '@/components/layout';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState, EmptyState } from '@/components/ui/States';
 import { useToast } from '@/components/ui/Toast';
@@ -35,7 +35,12 @@ function ReelsInner() {
 
   return (
     <>
-      <AppHeader title="릴스" transparent center />
+      <AppHeader
+        title="릴스"
+        transparent
+        center
+        right={<HeaderIconButton icon={Search} href="/search" label="검색" transparent />}
+      />
 
       {isLoading && <LoadingScreen />}
       {error && <ErrorState onRetry={refetch} />}

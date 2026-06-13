@@ -51,6 +51,7 @@ export const endpoints = {
   getIngredientStoreOffers: (id) => withFallback(() => api.get(`/ingredients/${id}/offers`), () => mock.ingredientStoreOffers(id)),
   getIngredientRecipes: (id) => withFallback(() => api.get(`/ingredients/${id}/recipes`), () => mock.recipesForIngredient(id)),
   getIngredientProducers: (id) => withFallback(() => api.get(`/ingredients/${id}/producers`), () => mock.ingredientProducers(id)),
+  getIngredientProducts: (id) => withFallback(() => api.get(`/ingredients/${id}/products`), () => mock.ingredientProducts(id)),
 
   // ── Recipes ────────────────────────────────────────────
   listRecipes: (params) => withFallback(() => api.get('/recipes', { params }), () => ({ items: mock.listRecipes() })),
@@ -64,6 +65,9 @@ export const endpoints = {
   likeReel: (id) => withFallback(() => api.post(`/reels/${id}/likes`, {}, { auth: true }), () => ({ liked: true })),
   unlikeReel: (id) => withFallback(() => api.del(`/reels/${id}/likes`, { auth: true }), () => ({ liked: false })),
   commentReel: (id, body) => withFallback(() => api.post(`/reels/${id}/comments`, body, { auth: true }), () => ({ id: Date.now(), ...body, createdAt: new Date().toISOString() })),
+
+  // ── Products ───────────────────────────────────────────
+  listProducts: (params) => withFallback(() => api.get('/products', { params }), () => mock.products(params)),
 
   // ── Producers ──────────────────────────────────────────
   listProducers: (params) => withFallback(() => api.get('/producers', { params }), () => ({ items: mock.producers, page: 0, size: 20, totalElements: mock.producers.length, hasNext: false })),
