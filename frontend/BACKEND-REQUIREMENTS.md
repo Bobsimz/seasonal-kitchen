@@ -109,6 +109,22 @@ UI에 카카오/Apple/구글 버튼이 있으나 비활성(준비 중)입니다.
 - 🟡 `GET /search/trending` & `GET /users/me/recent-searches`: API는 존재. 프론트는 비로그인 최근검색을 클라이언트 보관해도 됨.
 - ⬜ 알림 푸시: 디바이스 토큰 등록 `POST /api/v1/notifications/devices` (실시간/푸시) — P2.
 
+## 9. 식재료 상세 · 상품 탭 개편 (2026-06-13) — P1~P2 — ⬜ 미구현
+
+> 2026-06-13 프론트 개편(식재료 상세 "상품 리스트"·찜 하트, 상품 탭 이커머스 그리드)에서 새로 필요한 백엔드. 상세 설계는 아래 문서 참조.
+> - `backend/docs/ingredient-detail-revamp-2026-06-13.md`
+> - `docs/superpowers/specs/2026-06-13-products-tab-commerce-list-design.md`
+
+| 상태 | 우선 | 메서드 | 경로 | 설명 |
+| --- | --- | --- | --- | --- |
+| ⬜ 신규 | P1 | GET | `/api/v1/ingredients/{id}/products` | 식재료 상세 "상품 리스트" 섹션. 응답 `ProductCardResponse[]`(§1과 동일 DTO), **가격 오름차순**, `status=ACTIVE`만, 비면 `[]`, 미존재 식재료 `INGREDIENT_NOT_FOUND`(404). `ingredient_id` 백필 안 된 offer는 제외. 대안: `GET /products?ingredientId={id}`(`ListResponse<ProductCardResponse>`) — 둘 다 대응 가능하나 하위리소스 방식 권장. |
+| ⬜ 보강 | P2 | — | `ProductCardResponse` | 상품 탭 정렬(추천순 = rating desc→reviewCount desc, 리뷰많은순)을 위해 `rating`, `reviewCount` 추가. 현재 프론트는 mock에만 두고 클라이언트 정렬로 임시 대응. 필요 시 `GET /products`에 `sort`(추천/낮은가격/리뷰) 파라미터도. |
+| ⬜ 선택 | P2 | — | `IngredientDetailResponse` | `favorited`(로그인 사용자 찜 여부), `favoriteCount`(누적 찜 수) 추가 시 하트 초기 상태를 `GET /favorites` 전체 조회 없이 표기. 없으면 현행(favorites 목록 매칭)대로 동작. |
+
+- 이미 존재(변경 불필요): 식재료 찜 = `favorites` API의 `targetType=INGREDIENT`(§3 기반) 재사용, 상품 카드 = §1 `ProductCardResponse` 재사용, 농가 비교(하단 바) = `GET /ingredients/{id}/producers` 유지.
+- 화면에서 미사용으로 전환됐으나 **API는 유지**: `GET /ingredients/{id}/prices`(가격 추이), 영양 정보, `GET /ingredients/{id}/offers`(리테일 시세).
+- 프론트 임시 대응: `endpoints.getIngredientProducts(id)` → 연결/오류 시 `mock.ingredientProducts(id)` 폴백. 위 신규 엔드포인트가 생기면 프론트 수정 없이 전환.
+
 ---
 
 ## 부록 — 프론트가 사용하는 엔드포인트 매핑
