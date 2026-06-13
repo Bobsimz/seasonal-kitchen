@@ -65,7 +65,7 @@
 | --- | --- | --- | --- |
 | 🟡 | 결제 | `POST /orders`가 장바구니를 즉시 `PAID`로 전환(모의) | 실제 PG 연동 또는 결제수단/검증 (P2) |
 | ✅ | 배송지 | `GET/POST/PATCH/DELETE /api/v1/users/me/addresses` 구현됨. 기본 배송지 항상 1개 정책. 상세 `frontend-api-guide.md` §14 | — |
-| ⬜ | 주문 상태 | 단일 `PAID` | 상태 흐름 `PAID→PREPARING→SHIPPED→DELIVERED` + 운송장/추적 — P1 |
+| ✅ | 주문 상태 | 상태 흐름 `PAID→PREPARING→SHIPPED→DELIVERED`(+배송 전 `CANCELLED`) + 운송장/추적 구현됨 (2026-06-13, V30). 판매자: `GET /api/v1/producers/me/orders`, `PATCH /api/v1/producers/me/orders/{orderId}/status`. 구매자 `OrderResponse`에 `carrier/trackingNumber/shippedAt/deliveredAt` 추가. 상세 `frontend-api-guide.md` §6·§11 | 농가별 분리배송 상태(현재 주문 단위) — 후속 |
 | ⬜ | 주문 항목 이미지 | 없음 | `OrderItem.imageUrl` 있으면 주문/완료 화면 품질↑ — P2 |
 
 ## 5. 리뷰 — P1 — 🟡 일부 구현

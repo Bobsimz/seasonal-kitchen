@@ -424,6 +424,12 @@ Response:
 ### GET `/api/v1/orders/{orderId}`
 
 주문 상세 화면에 사용합니다. 응답은 `POST /api/v1/orders`와 동일한 `OrderResponse`입니다.
+`OrderResponse`에는 배송 추적 필드가 포함됩니다(V30): `status`, `carrier`, `trackingNumber`, `shippedAt`, `deliveredAt`. SHIPPED 전까지는 `carrier`/`trackingNumber`/`shippedAt`이 모두 null입니다.
+
+### 주문 상태 흐름 (구매자 화면 표기용)
+
+`PAID → PREPARING → SHIPPED → DELIVERED` (배송 시작 전에는 `CANCELLED` 가능). 종료 상태: `DELIVERED`, `CANCELLED`.
+SHIPPED 상태부터 운송장(`carrier`+`trackingNumber`)이 채워지므로, 주문 상세/배송조회 UI에서 그대로 노출하면 됩니다. 상태 전이는 판매자(농가)가 수행합니다 — §11.1 참고.
 
 ## 7. Reviews and Favorites
 
@@ -696,6 +702,33 @@ targetType별 매핑:
 - V27 이전 과거 주문(`offer_id` null)은 `offerId`·`title`이 `null`이고 **식재료명 기준으로 fallback** 집계된다.
 - 조회수·전환율은 상품 조회 이벤트 수집 후 채워짐(후속, 현재 null).
 - 날짜 기준은 `Asia/Seoul`로 고정되어 있다. `todayRevenue`/`todayOrderCount`, 이번 달·전월, 최근 7일 시리즈는 주문 시각을 한국 달력 날짜로 환산해 집계한다.
+
+### 판매자 주문 처리 (받은 주문 · 상태 변경) — GET/PATCH
+
+판매자 대시보드의 "받은 주문/배송 관리"에 사용합니다. 모두 인증 필요, 본인 농가 항목이 있는 주문만.
+
+```jsonc
+// GET /api/v1/producers/me/orders
+// 응답 data: SellerOrderResponse[] (최신순). items는 "내 농가 항목"만 포함. 미등록 판매자는 PRODUCER_NOT_FOUND(404)
+[ { "orderId":5001, "orderNumber":"20260613-101530123-a1b2", "status":"PAID",
+    "producerSubtotal":9000, "carrier":null, "trackingNumber":null,
+    "shippedAt":null, "deliveredAt":null, "orderedAt":"2026-06-13T10:15:30+09:00",
+    "items":[ { "title":"햇 봄동 1.5kg 산지직송", "ingredientName":"봄동",
+                "qty":2, "unit":"봉", "unitPrice":4500 } ] } ]
+
+// PATCH /api/v1/producers/me/orders/5001/status
+// 상태 전이: PAID → PREPARING → SHIPPED → DELIVERED  (배송 전 PAID/PREPARING → CANCELLED 가능)
+{ "status":"SHIPPED", "carrier":"CJ대한통운", "trackingNumber":"1234567890" }
+// 응답 data: SellerOrderResponse(전이 반영, shippedAt 기록)
+```
+
+상태 전이 규칙과 에러:
+- 허용 전이만 가능. 불가능한 전이(예: PAID→DELIVERED, DELIVERED→*) → `ORDER_INVALID_STATUS_TRANSITION`(409).
+- `SHIPPED`로 변경할 때 `trackingNumber` 필수(미입력 시 `ORDER_TRACKING_REQUIRED`, 400). `carrier`는 선택.
+- 알 수 없는 `status` 문자열 → `ORDER_INVALID_STATUS`(400).
+- 내 농가 항목이 없는 주문을 변경하려 하면 `ORDER_ACCESS_DENIED`(403), 없는 주문은 `ORDER_NOT_FOUND`(404).
+- `SHIPPED` 전이 시 `carrier`/`trackingNumber`/`shippedAt`, `DELIVERED` 전이 시 `deliveredAt`이 기록되어 구매자 `OrderResponse`(§6)에도 그대로 노출됩니다.
+- 주문 단위로 status를 둡니다(MVP). 한 주문에 여러 농가 항목이 있으면 각 농가가 같은 주문 status를 변경할 수 있습니다 — 농가별 분리 배송 상태는 후속 과제.
 
 ## 13. 상품(Product) API — producer_offers facade
 

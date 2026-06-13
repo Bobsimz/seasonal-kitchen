@@ -9,12 +9,16 @@ import java.util.List;
 public record OrderResponse(
         @Schema(description = "주문 ID") Long id,
         @Schema(description = "주문번호", example = "2026-0609-0427") String orderNumber,
-        @Schema(description = "상태", example = "PAID") String status,
+        @Schema(description = "상태 PAID|PREPARING|SHIPPED|DELIVERED|CANCELLED", example = "PAID") String status,
         @Schema(description = "상품 합계") BigDecimal itemsTotal,
         @Schema(description = "배송비") BigDecimal shippingFee,
         @Schema(description = "결제 금액") BigDecimal totalAmount,
         @Schema(description = "적립 포인트") BigDecimal pointsEarned,
         @Schema(description = "주문 시각(ISO 8601)") OffsetDateTime orderedAt,
+        @Schema(description = "택배사(SHIPPED부터, 없으면 null)", example = "CJ대한통운") String carrier,
+        @Schema(description = "운송장 번호(SHIPPED부터, 없으면 null)", example = "1234567890") String trackingNumber,
+        @Schema(description = "발송 시각(SHIPPED 전이 시각, ISO 8601)") OffsetDateTime shippedAt,
+        @Schema(description = "배송완료 시각(DELIVERED 전이 시각, ISO 8601)") OffsetDateTime deliveredAt,
         @Schema(description = "주문 항목") List<Item> items
 ) {
     @Schema(description = "주문 항목")

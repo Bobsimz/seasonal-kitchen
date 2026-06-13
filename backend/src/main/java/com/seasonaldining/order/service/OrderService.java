@@ -153,6 +153,7 @@ public class OrderService {
                 .map(i -> new OrderResponse.Item(i.getProducerName(), i.getIngredientName(), i.getQty(), i.getUnitPrice()))
                 .toList();
         return new OrderResponse(o.getId(), o.getOrderNumber(), o.getStatus(), itemsTotal,
-                o.getShippingFee(), o.getTotalAmount(), o.getPointsEarned(), o.getOrderedAt(), itemDtos);
+                o.getShippingFee(), o.getTotalAmount(), o.getPointsEarned(), o.getOrderedAt(),
+                o.getCarrier(), o.getTrackingNumber(), o.getShippedAt(), o.getDeliveredAt(), itemDtos);
     }
 }

@@ -8,6 +8,9 @@ import com.seasonaldining.producer.dto.request.UpdateOfferRequest;
 import com.seasonaldining.producer.dto.response.ProducerDetailResponse;
 import com.seasonaldining.producer.dto.response.ProducerOfferResponse;
 import com.seasonaldining.producer.dto.response.SellerStatsResponse;
+import com.seasonaldining.order.dto.request.UpdateOrderStatusRequest;
+import com.seasonaldining.order.dto.response.SellerOrderResponse;
+import com.seasonaldining.order.service.SellerOrderService;
 import com.seasonaldining.producer.service.ProducerService;
 import com.seasonaldining.producer.service.SellerStatsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,13 +33,16 @@ public class ProducerMeController {
 
     private final ProducerService producerService;
     private final SellerStatsService sellerStatsService;
+    private final SellerOrderService sellerOrderService;
     private final CurrentUserProvider currentUserProvider;
 
     public ProducerMeController(ProducerService producerService,
                                 SellerStatsService sellerStatsService,
+                                SellerOrderService sellerOrderService,
                                 CurrentUserProvider currentUserProvider) {
         this.producerService = producerService;
         this.sellerStatsService = sellerStatsService;
+        this.sellerOrderService = sellerOrderService;
         this.currentUserProvider = currentUserProvider;
     }
 
@@ -88,5 +94,22 @@ public class ProducerMeController {
     public ApiResponse<SellerStatsResponse> getMyStats() {
         return ApiResponse.success(
                 sellerStatsService.getMyStats(currentUserProvider.getCurrentUserId()), null);
+    }
+
+    @GetMapping("/orders")
+    @Operation(summary = "내 농가 받은 주문", description = "내 농가 항목이 포함된 주문 목록(최신순). 항목은 내 농가 것만 노출. 미등록이면 PRODUCER_NOT_FOUND.")
+    public ApiResponse<List<SellerOrderResponse>> getMyOrders() {
+        return ApiResponse.success(
+                sellerOrderService.getMyOrders(currentUserProvider.getCurrentUserId()), null);
+    }
+
+    @PatchMapping("/orders/{orderId}/status")
+    @Operation(summary = "주문 상태 변경", description =
+            "PAID→PREPARING→SHIPPED→DELIVERED(배송 전 CANCELLED 가능). SHIPPED는 운송장 필수(ORDER_TRACKING_REQUIRED). " +
+            "불가능한 전이는 ORDER_INVALID_STATUS_TRANSITION, 내 농가 항목이 없는 주문은 ORDER_ACCESS_DENIED.")
+    public ApiResponse<SellerOrderResponse> updateOrderStatus(@PathVariable @Positive Long orderId,
+                                                              @Valid @RequestBody UpdateOrderStatusRequest request) {
+        return ApiResponse.success(
+                sellerOrderService.updateStatus(currentUserProvider.getCurrentUserId(), orderId, request), null);
     }
 }
