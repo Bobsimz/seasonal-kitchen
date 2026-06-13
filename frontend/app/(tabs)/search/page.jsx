@@ -4,7 +4,7 @@ import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
-import { useSearch, useTrending } from '@/lib/queries';
+import { useSearch, useTrending, useRecentSearches } from '@/lib/queries';
 import { AppHeader } from '@/components/layout';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { Chip } from '@/components/ui/Chip';
@@ -92,8 +92,8 @@ function SearchInner() {
 // ── 검색 전: 최근 검색 + 실시간 인기 검색어 ──────────────────
 function EmptyQueryView({ onPick }) {
   const { data: trending = [] } = useTrending();
-  // 최근 검색어 데모: 인기 검색어 일부를 칩으로 노출.
-  const recent = trending.slice(0, 5).map((it) => it.keyword);
+  // 최근 검색 — 로그인 사용자의 실제 검색 기록(/users/me/recent-searches). 비로그인이면 빈 배열 → 섹션 숨김.
+  const { data: recent = [] } = useRecentSearches();
 
   return (
     <div className="animate-fade-up pb-6">

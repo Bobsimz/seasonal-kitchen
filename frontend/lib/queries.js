@@ -10,6 +10,7 @@ export const qk = {
   home: ['home'],
   search: (q, type) => ['search', q, type],
   trending: ['trending'],
+  recentSearches: ['recent-searches'],
   ingredients: (params) => ['ingredients', params || {}],
   ingredient: (id) => ['ingredient', String(id)],
   ingredientPrices: (id) => ['ingredient', String(id), 'prices'],
@@ -48,6 +49,17 @@ export const useHome = () => useQuery({ queryKey: qk.home, queryFn: endpoints.ge
 export const useSearch = (q, type = 'ALL', enabled = true) =>
   useQuery({ queryKey: qk.search(q, type), queryFn: () => endpoints.search(q, type), enabled });
 export const useTrending = () => useQuery({ queryKey: qk.trending, queryFn: endpoints.getTrending });
+// 최근 검색 — 로그인 사용자 전용(/users/me/recent-searches). 비로그인 시 비활성 → 빈 배열.
+// 백엔드는 [{keyword,searchCount}], 데모 mock 은 ['봄동',...] 를 주므로 키워드 문자열 배열로 통일한다.
+export const useRecentSearches = () => {
+  const { isAuthenticated } = useAuth();
+  return useQuery({
+    queryKey: qk.recentSearches,
+    queryFn: endpoints.getRecentSearches,
+    enabled: isAuthenticated,
+    select: (d) => (Array.isArray(d) ? d : []).map((x) => (typeof x === 'string' ? x : x?.keyword)).filter(Boolean),
+  });
+};
 
 // ── Ingredients ────────────────────────────────────────────
 export const useIngredients = (params) =>
