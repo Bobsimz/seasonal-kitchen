@@ -256,10 +256,13 @@ function DetailSections({ sections }) {
   const [overflows, setOverflows] = useState(false);
   const bodyRef = useRef(null);
 
-  useEffect(() => {
+  // scrollHeight 는 클램프 여부와 무관하게 전체 콘텐츠 높이. 이미지 로드 후 높이가 늘어나므로 onLoad 에서 재측정.
+  const measure = () => {
     const el = bodyRef.current;
-    // scrollHeight 는 클램프 여부와 무관하게 전체 콘텐츠 높이.
     if (el) setOverflows(el.scrollHeight > DETAIL_MAX_H + 1);
+  };
+  useEffect(() => {
+    measure();
   }, [sections]);
 
   if (!sections || sections.length === 0) return null;
@@ -273,7 +276,18 @@ function DetailSections({ sections }) {
           {sections.map((s, i) => (
             <div key={i} className={i > 0 ? 'mt-4' : ''}>
               {s.heading && <h3 className="text-[14px] font-bold text-ink">{s.heading}</h3>}
-              <p className="mt-1 whitespace-pre-line text-[13px] leading-relaxed text-ink-mid">{s.body}</p>
+              {s.imageUrl && (
+                <img
+                  src={s.imageUrl}
+                  alt={s.heading || ''}
+                  loading="lazy"
+                  onLoad={measure}
+                  className="mt-2 aspect-[16/10] w-full rounded-xl border border-line-soft object-cover bg-surface-soft"
+                />
+              )}
+              {s.body && (
+                <p className="mt-2 whitespace-pre-line text-[13px] leading-relaxed text-ink-mid">{s.body}</p>
+              )}
             </div>
           ))}
         </div>

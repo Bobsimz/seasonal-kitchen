@@ -138,7 +138,7 @@ UI에 카카오/Apple/구글 버튼이 있으나 비활성(준비 중)입니다.
 | 상태 | 우선 | 대상 | 설명 |
 | --- | --- | --- | --- |
 | ✅ 기구현 | — | `GET /products/{id}` `options[]` | 옵션(규격/variant)은 `offer_options` 테이블 + `ProductDetailResponse.options(OptionResponse{id,quantity,unit,price})`로 **이미 구현됨**. 프론트는 그대로 소비(라벨=`${quantity}${unit}`). 옵션 없는 상품은 `options=[]` → 프론트가 기준가 단일 옵션으로 폴백. |
-| ⬜ 신규 | P1 | `GET /products/{id}` `detailSections[]` | "상품 상세정보(접기/펼치기)"용 **제목+본문 섹션 리스트**. `ProductDetailResponse`에 `List<DetailSectionResponse{heading, body}> detailSections` 추가. 새 테이블 `offer_detail_sections(offer_id, heading, body, sort_order)`. 비면 `[]`. 프론트는 없으면 `description` 단일 섹션으로 폴백. 상세는 백엔드 문서 §2 참조. |
+| ⬜ 신규 | P1 | `GET /products/{id}` `detailSections[]` | "상품 상세정보(접기/펼치기)"용 **(선택)이미지+제목+본문 섹션 리스트**. `ProductDetailResponse`에 `List<DetailSectionResponse{imageUrl?, heading, body}> detailSections` 추가(**`imageUrl` nullable** — 섹션별 상세 이미지). 새 테이블 `offer_detail_sections(offer_id, image_url, heading, body, sort_order)`. 비면 `[]`. 프론트는 없으면 `description` 단일 섹션으로 폴백, **이미지 없는 섹션은 텍스트만 렌더**. 상세는 백엔드 문서 §2 참조. |
 | ⬜ 보강 | P1 | `POST /cart/items` `offerOptionId` | 선택 옵션을 장바구니에 반영. 요청 `{offerId, qty, offerOptionId?}`. 서버는 `offerOptionId` 있으면 해당 옵션 단가/라벨로 라인 생성, 같은 offer라도 옵션 다르면 별도 라인. 응답 라인에 `optionLabel`(또는 `offerOptionId`+`quantity/unit`) 포함 권장. 현재 데모는 클라이언트가 옵션 단가/라벨을 스냅샷. |
 | ⬜ 선택 | P2 | `favorites` `targetType=PRODUCT` | 상품(=offer) 찜. 현재 데모 스토어로 동작(§3의 PRODUCT·OFFER "추후"와 연결). 실제 구현 시 `targetType=PRODUCT, targetId=offerId` 저장 + 요약(상품명/첫사진/가격·단위) 반환. |
 
