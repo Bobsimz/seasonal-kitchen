@@ -1,0 +1,2 @@
+ALTER TABLE offer_photos
+    ADD COLUMN IF NOT EXISTS is_ai_generated BOOLEAN NOT NULL DEFAULT FALSE;

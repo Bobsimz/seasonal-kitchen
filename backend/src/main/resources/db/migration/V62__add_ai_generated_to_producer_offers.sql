@@ -1,0 +1,2 @@
+ALTER TABLE producer_offers
+    ADD COLUMN IF NOT EXISTS ai_generated BOOLEAN NOT NULL DEFAULT FALSE;
