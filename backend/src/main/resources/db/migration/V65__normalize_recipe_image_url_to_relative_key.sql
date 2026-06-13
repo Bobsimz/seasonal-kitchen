@@ -1,4 +1,4 @@
--- V62: recipe image_url 표기를 상대키로 정규화.
+-- V65: recipe image_url 표기를 상대키로 정규화. (원래 V62였으나 AI 컬럼 마이그레이션과 번호 충돌로 V65로 이동)
 -- recipes.image_url 은 RecipeService 가 MediaUrlResolver.resolve() 로 감싸 CloudFront 도메인을
 -- 런타임에 붙이므로 상대키(dishes/{id}.jpg)로 저장하는 것이 설계 의도다(V52 — 환경독립).
 -- 그런데 한 건(id=9)만 절대 CloudFront URL 로 저장되어 표기가 불일치했다.
