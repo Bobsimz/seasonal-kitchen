@@ -166,9 +166,9 @@ export function AmbientBackground() {
       />
 
       {/* 데스크탑 사이드 브랜드 워드마크 */}
-      <div className="absolute left-[max(2.5rem,calc(50%-560px))] top-1/2 hidden -translate-y-1/2 lg:block">
+      <div className="absolute left-[max(1.5rem,calc(50%-660px))] top-1/2 hidden -translate-y-1/2 lg:block">
         <p className="font-display text-[44px] font-bold leading-tight text-[#3D5A2B]">제철식탁</p>
-        <p className="mt-2 max-w-[220px] text-[14px] leading-relaxed text-[#5E7A45]">
+        <p className="mt-2 max-w-[360px] whitespace-nowrap text-[14px] leading-relaxed text-[#5E7A45]">
           지금 가장 사랑받는 한 끼를, 더 신선하고 똑똑하게.
           <br />
           그리고 그 한 끼를 모아 내일의 들녘을 키우도록.
