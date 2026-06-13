@@ -121,12 +121,18 @@ Response:
     "accessToken": "eyJhbGciOiJ...",
     "tokenType": "Bearer",
     "userId": 1,
-    "nickname": "제철러버"
+    "nickname": "제철러버",
+    "isProducer": false,
+    "producerId": null
   },
   "error": null,
   "traceId": null
 }
 ```
+
+> **화면 분기(농가 vs 소비자)**: `isProducer`가 `true`면 그 사용자는 농가(판매자)입니다. `producerId`는 농가일 때만 값이 있고 소비자는 `null`입니다.
+> 로그인/가입 응답에 포함되므로 로그인 직후 바로 분기할 수 있고, 새로고침·재접속 시에는 `GET /api/v1/users/me`(§2 사용자) 응답에도 같은 두 필드가 있으니 저장된 토큰으로 복원하면 됩니다.
+> 판별 기준은 "그 사용자로 등록된 농가 행 존재 여부"입니다. 소비자가 마이페이지에서 농가로 등록(`POST /api/v1/producers/me`)하면 그 이후 응답부터 `isProducer=true`가 됩니다 — 등록 직후엔 프론트에서 세션 정보를 갱신(재로그인 또는 `/users/me` 재호출)하세요.
 
 주요 오류:
 

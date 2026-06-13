@@ -6,6 +6,8 @@ import com.seasonaldining.auth.dto.response.AuthTokenResponse;
 import com.seasonaldining.common.exception.BusinessException;
 import com.seasonaldining.common.exception.ErrorCode;
 import com.seasonaldining.common.security.JwtTokenProvider;
+import com.seasonaldining.producer.entity.Producer;
+import com.seasonaldining.producer.repository.ProducerRepository;
 import com.seasonaldining.user.entity.User;
 import com.seasonaldining.user.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,11 +24,14 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ProducerRepository producerRepository;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       JwtTokenProvider jwtTokenProvider, ProducerRepository producerRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.producerRepository = producerRepository;
     }
 
     @Transactional
@@ -75,7 +80,11 @@ public class AuthService {
     }
 
     private AuthTokenResponse issue(User user) {
+        // 농가 여부 = 이 사용자로 등록된 producer 행 존재 여부(한 사용자당 농가 1개). 화면 분기용.
+        Long producerId = producerRepository.findByUserId(user.getId())
+                .map(Producer::getId).orElse(null);
         return new AuthTokenResponse(
-                jwtTokenProvider.createAccessToken(user.getId()), "Bearer", user.getId(), user.getNickname());
+                jwtTokenProvider.createAccessToken(user.getId()), "Bearer", user.getId(), user.getNickname(),
+                producerId != null, producerId);
     }
 }

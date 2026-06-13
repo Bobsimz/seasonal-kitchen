@@ -6,6 +6,8 @@ import com.seasonaldining.favorite.repository.FavoriteRepository;
 import com.seasonaldining.ingredient.entity.Ingredient;
 import com.seasonaldining.ingredient.repository.IngredientRepository;
 import com.seasonaldining.price.repository.PriceAlertRepository;
+import com.seasonaldining.producer.entity.Producer;
+import com.seasonaldining.producer.repository.ProducerRepository;
 import com.seasonaldining.user.dto.request.UpdateUserProfileRequest;
 import com.seasonaldining.user.dto.request.UpdateUserPreferenceRequest;
 import com.seasonaldining.user.dto.response.MyPageSummaryResponse;
@@ -33,6 +35,7 @@ public class UserService {
     private final FavoriteRepository favoriteRepository;
     private final PriceAlertRepository priceAlertRepository;
     private final IngredientRepository ingredientRepository;
+    private final ProducerRepository producerRepository;
 
     public UserService(
             UserRepository userRepository,
@@ -40,7 +43,8 @@ public class UserService {
             UserAllergyRepository userAllergyRepository,
             FavoriteRepository favoriteRepository,
             PriceAlertRepository priceAlertRepository,
-            IngredientRepository ingredientRepository
+            IngredientRepository ingredientRepository,
+            ProducerRepository producerRepository
     ) {
         this.userRepository = userRepository;
         this.userPreferenceRepository = userPreferenceRepository;
@@ -48,6 +52,7 @@ public class UserService {
         this.favoriteRepository = favoriteRepository;
         this.priceAlertRepository = priceAlertRepository;
         this.ingredientRepository = ingredientRepository;
+        this.producerRepository = producerRepository;
     }
 
     @Transactional
@@ -121,12 +126,17 @@ public class UserService {
     }
 
     private UserProfileResponse toResponse(User user) {
+        // 농가 여부 = 이 사용자로 등록된 producer 행 존재 여부(한 사용자당 농가 1개). 화면 분기용.
+        Long producerId = producerRepository.findByUserId(user.getId())
+                .map(Producer::getId).orElse(null);
         return new UserProfileResponse(
                 user.getId(),
                 user.getEmail(),
                 user.getNickname(),
                 user.getProfileImageUrl(),
-                user.getStatus()
+                user.getStatus(),
+                producerId != null,
+                producerId
         );
     }
 

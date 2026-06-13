@@ -12,6 +12,10 @@ public record UserProfileResponse(
         @Schema(description = "프로필 이미지 URL", example = "https://example.com/profile.png", nullable = true)
         String profileImageUrl,
         @Schema(description = "사용자 상태", example = "ACTIVE")
-        String status
+        String status,
+        @Schema(description = "농가(판매자) 여부 — 화면 분기용. 농가로 등록돼 있으면 true", example = "false")
+        boolean isProducer,
+        @Schema(description = "농가 ID — 농가면 값, 소비자면 null", example = "1", nullable = true)
+        Long producerId
 ) {
 }

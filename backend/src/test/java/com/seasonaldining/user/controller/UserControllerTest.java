@@ -8,6 +8,8 @@ import com.seasonaldining.ingredient.entity.Ingredient;
 import com.seasonaldining.ingredient.repository.IngredientRepository;
 import com.seasonaldining.price.entity.PriceAlert;
 import com.seasonaldining.price.repository.PriceAlertRepository;
+import com.seasonaldining.producer.dto.request.RegisterProducerRequest;
+import com.seasonaldining.producer.service.ProducerService;
 import com.seasonaldining.user.entity.User;
 import com.seasonaldining.user.repository.UserRepository;
 import com.seasonaldining.user.repository.UserPreferenceRepository;
@@ -23,10 +25,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,6 +64,9 @@ class UserControllerTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
+    private ProducerService producerService;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     @BeforeEach
@@ -77,7 +84,25 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.id").value(user.getId()))
-                .andExpect(jsonPath("$.data.email").value("user@example.com"));
+                .andExpect(jsonPath("$.data.email").value("user@example.com"))
+                // 농가로 등록 안 한 일반 사용자(소비자) — 화면 분기 계약
+                .andExpect(jsonPath("$.data.isProducer").value(false))
+                .andExpect(jsonPath("$.data.producerId").value(nullValue()));
+    }
+
+    @Test
+    void currentUserIncludesProducerFlagWhenRegistered() throws Exception {
+        // /users/me JSON 계약 고정: 농가로 등록된 사용자는 isProducer=true, producerId가 내려와야 한다(새로고침 세션 복원용)
+        User user = userRepository.save(new User("farmer@example.com", "농부", null, "ACTIVE"));
+        Long producerId = producerService.registerMyProducer(user.getId(), new RegisterProducerRequest(
+                "해남농가", "농부", "전남 해남", "010-1111-2222",
+                List.of("무"), "https://cert/x.png", true)).id();
+
+        mockMvc.perform(get("/api/v1/users/me")
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(user.getId())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.isProducer").value(true))
+                .andExpect(jsonPath("$.data.producerId").value(producerId));
     }
 
     @Test
