@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronRight, Eye, Heart, MessageSquare, ShoppingBag, Plus, Sprout } from 'lucide-react';
-import { useMyProducer } from '@/lib/queries';
+import { ChevronRight, ShoppingBag, Wallet, CalendarDays, Star, Plus, Sprout } from 'lucide-react';
+import { useMyProducer, useMyStats, useMyOffers } from '@/lib/queries';
 import { AppHeader } from '@/components/layout';
 import { Button } from '@/components/ui/Button';
 import { Card, Section } from '@/components/ui/Card';
@@ -17,7 +17,7 @@ export default function SellerDashboardPage() {
 
   return (
     <>
-      <AppHeader title="판매자 센터" back />
+      <AppHeader title="농가 센터" back />
 
       {isLoading && <LoadingScreen />}
       {error && <ErrorState onRetry={refetch} />}
@@ -41,8 +41,12 @@ export default function SellerDashboardPage() {
 }
 
 function Dashboard({ producer }) {
-  const stats = deriveStats(producer);
-  const offers = deriveOffers(producer);
+  const { data: stats } = useMyStats();
+  const { data: offers = [] } = useMyOffers();
+
+  const summary = stats?.summary;
+  const series = stats?.revenueSeries ?? [];
+  const maxAmt = Math.max(1, ...series.map((d) => Number(d.amount) || 0));
 
   return (
     <div className="animate-fade-up pb-28">
@@ -70,54 +74,62 @@ function Dashboard({ producer }) {
         </Card>
       </div>
 
-      {/* 통계 카드 (데모) */}
-      <Section
-        title="판매 현황"
-        action={<span className="text-[11px] font-semibold text-ink-soft">데모 통계</span>}
-      >
+      {/* 판매 현황 (실데이터) */}
+      <Section title="판매 현황">
         <div className="grid grid-cols-2 gap-2.5 px-4">
-          <StatCard icon={ShoppingBag} label="총 판매" value={`${won(stats.totalSold)}건`} tone="brand" />
-          <StatCard icon={Eye} label="상품 조회수" value={won(stats.views)} tone="ink" />
-          <StatCard icon={Heart} label="찜" value={won(stats.favorites)} tone="hot" />
+          <StatCard icon={Wallet} label="이번 달 매출" value={`${won(summary?.monthlyRevenue ?? 0)}원`} tone="brand" />
+          <StatCard icon={ShoppingBag} label="이번 달 주문" value={`${summary?.orderCount ?? 0}건`} tone="ink" />
+          <StatCard icon={CalendarDays} label="오늘 매출" value={`${won(summary?.todayRevenue ?? 0)}원`} tone="hot" />
           <StatCard
-            icon={MessageSquare}
-            label="리뷰"
+            icon={Star}
+            label="평점 · 리뷰"
             value={`${producer.rating || 0} · ${compact(producer.reviewCount || 0)}개`}
             tone="warn"
           />
         </div>
       </Section>
 
-      {/* 최근 7일 매출 요약 (데모) */}
+      {/* 최근 7일 매출 (실데이터) */}
       <Section title="최근 7일 매출">
         <div className="px-4">
           <Card className="p-4">
-            <div className="mb-3.5 flex items-baseline justify-between">
-              <span className="text-[13px] font-bold text-ink">이번 주 합계</span>
-              <span className="text-[12px] text-ink-soft">
-                일 평균 {wonLabel(stats.dailyAvg)}
-              </span>
-            </div>
-            <div className="flex h-28 items-end justify-between gap-2">
-              {stats.week.map((b) => (
-                <div key={b.d} className="flex h-full flex-1 flex-col items-center justify-end gap-1.5">
-                  <div
-                    className={cn(
-                      'w-full rounded-md',
-                      b.peak ? 'bg-gradient-to-b from-brand to-brand-dark' : 'bg-brand-bg',
-                    )}
-                    style={{ height: `${b.v}%` }}
-                  />
-                  <span className="text-[10.5px] text-ink-soft">{b.d}</span>
+            {series.length === 0 ? (
+              <p className="py-6 text-center text-[12.5px] text-ink-soft">
+                아직 매출 데이터가 없어요. 첫 판매가 발생하면 표시됩니다.
+              </p>
+            ) : (
+              <>
+                <div className="mb-3.5 flex items-baseline justify-between">
+                  <span className="text-[13px] font-bold text-ink">최근 7일</span>
+                  <span className="text-[12px] text-ink-soft">
+                    일 평균 {wonLabel(stats?.dailyAverage ?? 0)}
+                  </span>
                 </div>
-              ))}
-            </div>
-            <p className="mt-3 text-[11px] text-ink-soft">실제 정산 데이터가 연동되면 자동으로 갱신돼요.</p>
+                <div className="flex h-28 items-end justify-between gap-2">
+                  {series.map((d) => {
+                    const amt = Number(d.amount) || 0;
+                    const isPeak = amt === maxAmt && amt > 0;
+                    return (
+                      <div key={d.date} className="flex h-full flex-1 flex-col items-center justify-end gap-1.5">
+                        <div
+                          className={cn(
+                            'w-full rounded-md',
+                            isPeak ? 'bg-gradient-to-b from-brand to-brand-dark' : 'bg-brand-bg',
+                          )}
+                          style={{ height: `${Math.max(4, (amt / maxAmt) * 100)}%` }}
+                        />
+                        <span className="text-[10.5px] text-ink-soft">{dayLabel(d.date)}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </Card>
         </div>
       </Section>
 
-      {/* 내 판매 상품 */}
+      {/* 내 판매 상품 (실데이터) */}
       <Section
         title="내 판매 상품"
         action={
@@ -133,25 +145,30 @@ function Dashboard({ producer }) {
           {offers.length > 0 ? (
             <Card className="overflow-hidden">
               {offers.map((o, i) => (
-                <div
-                  key={o.ingredientName}
+                <Link
+                  key={o.id}
+                  href={`/products/${o.producerId}?offer=${o.id}`}
                   className={cn(
-                    'flex items-center gap-3 px-4 py-3',
+                    'tap flex items-center gap-3 px-4 py-3',
                     i < offers.length - 1 && 'border-b border-line-soft',
                   )}
                 >
-                  <span className="w-5 text-center text-[14px] font-extrabold text-ink-soft tabular">
-                    {i + 1}
-                  </span>
-                  <VegImage name={o.ingredientName} size={44} />
+                  {o.photoUrls?.[0] ? (
+                    <img src={o.photoUrls[0]} alt={o.title || o.ingredientName} className="h-11 w-11 shrink-0 rounded-xl object-cover" />
+                  ) : (
+                    <VegImage name={o.ingredientName} size={44} />
+                  )}
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[13.5px] font-bold text-ink">{o.title}</p>
-                    <p className="mt-0.5 text-[11.5px] text-ink-soft">{o.soldLabel}</p>
+                    <p className="truncate text-[13.5px] font-bold text-ink">{o.title || o.ingredientName}</p>
+                    <p className="mt-0.5 text-[11.5px] text-ink-soft">
+                      {o.category || '기타'} · {o.unit}
+                      {o.freshnessLabel ? ` · ${o.freshnessLabel}` : ''}
+                    </p>
                   </div>
                   <span className="shrink-0 text-[13.5px] font-extrabold text-ink tabular">
                     {wonLabel(o.price)}
                   </span>
-                </div>
+                </Link>
               ))}
             </Card>
           ) : (
@@ -160,9 +177,6 @@ function Dashboard({ producer }) {
               <p className="mt-1 text-[12px] text-ink-soft">첫 상품을 등록하고 판매를 시작해 보세요.</p>
             </Card>
           )}
-          <p className="mt-2 px-1 text-[11px] text-ink-soft">
-            가격은 예시이며, 상품 등록 시 직접 설정한 가격으로 표시돼요.
-          </p>
         </div>
       </Section>
 
@@ -198,31 +212,9 @@ function StatCard({ icon: Icon, label, value, tone = 'ink' }) {
   );
 }
 
-// ── 데모 통계 산출 ──────────────────────────────────────────
-// 실제 판매/조회 데이터가 없으므로 농가 정보(rating/reviewCount/specialties)에서
-// 안정적으로 파생한 예시 수치. (라벨에 '데모 통계' 표기)
-function deriveStats(producer) {
-  const reviews = producer.reviewCount || 0;
-  const specCount = producer.specialties?.length || 1;
-  const totalSold = reviews * 7 + specCount * 18 + 24;
-  const views = totalSold * 67 + 1240;
-  const favorites = Math.round(totalSold * 1.8) + 36;
-  const week = [62, 48, 80, 56, 95, 100, 74].map((v, i) => ({
-    d: ['월', '화', '수', '목', '금', '토', '일'][i],
-    v,
-    peak: i === 5,
-  }));
-  const dailyAvg = Math.round((totalSold * 9800) / 7 / 1000) * 1000;
-  return { totalSold, views, favorites, week, dailyAvg };
-}
-
-// specialties → offer 형태의 표시용 목록 (가격은 placeholder)
-function deriveOffers(producer) {
-  const list = producer.specialties || [];
-  return list.slice(0, 6).map((name, i) => ({
-    ingredientName: name,
-    title: `${producer.region} ${name} 산지직송`,
-    price: 8900 + i * 1500,
-    soldLabel: `누적 ${won((producer.reviewCount || 0) * 4 + (i + 1) * 11)}건 판매`,
-  }));
+// "2026-06-12" → 요일 라벨
+function dayLabel(dateStr) {
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return '';
+  return ['일', '월', '화', '수', '목', '금', '토'][d.getDay()];
 }

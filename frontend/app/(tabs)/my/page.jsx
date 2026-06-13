@@ -158,7 +158,7 @@ function MenuList({ counts }) {
     { icon: BellRing, label: '가격 알림', href: '/my/price-alerts', count: counts?.priceAlerts },
     { icon: Star, label: '내 리뷰', href: '/my/reviews', count: counts?.reviews },
     { icon: Bell, label: '알림', href: '/notifications' },
-    { icon: Store, label: '판매자 센터', href: '/my/seller/dashboard' },
+    { icon: Store, label: '농가 센터', href: '/my/seller/dashboard' },
     { icon: Settings, label: '설정', href: '/my/settings' },
   ];
   return (
