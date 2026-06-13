@@ -68,8 +68,8 @@ export const endpoints = {
   getMyProducer: () => api.get('/producers/me', { auth: true }),
   registerProducer: (body) => api.post('/producers/me', body, { auth: true }),
   addMyOffer: (body) => api.post('/producers/me/offers', body, { auth: true }),
-  getMyOffers: () => withFallback(() => api.get('/producers/me/offers', { auth: true }), () => []),
-  getMyStats: () => withFallback(() => api.get('/producers/me/stats', { auth: true }), () => null),
+  getMyOffers: () => api.get('/producers/me/offers', { auth: true }),
+  getMyStats: () => api.get('/producers/me/stats', { auth: true }),
   listMyOffers: () => api.get('/producers/me/offers', { auth: true }),
 
   // AI 상품 생성
