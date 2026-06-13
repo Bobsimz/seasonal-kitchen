@@ -27,10 +27,31 @@ export function setToken(token) {
   else window.localStorage.removeItem(STORAGE_KEYS.token);
 }
 
+// ── 401(인증 만료/무효) 전역 통지 ──────────────────────────────
+// auth 호출이 401 을 만나면 토큰을 비우고 구독자(AuthProvider)에게 알린다.
+// DOM·라우터에 의존하지 않는 순수 pub/sub — UI 처리는 구독자가 한다.
+const unauthorizedSubscribers = new Set();
+export function onUnauthorized(cb) {
+  unauthorizedSubscribers.add(cb);
+  return () => unauthorizedSubscribers.delete(cb);
+}
+function emitUnauthorized(detail) {
+  for (const cb of unauthorizedSubscribers) {
+    try {
+      cb(detail);
+    } catch {
+      /* 구독자 오류는 통지를 막지 않는다 */
+    }
+  }
+}
+
 // ── 핵심 fetch 래퍼 ─────────────────────────────────────────────
 // path 는 '/auth/login' 처럼 prefix 이후 부분만 넘깁니다.
 // 반환값은 공통 래퍼를 벗긴 data 입니다. 실패 시 ApiError 를 던집니다.
-export async function apiFetch(path, { method = 'GET', body, params, auth = false, signal } = {}) {
+export async function apiFetch(
+  path,
+  { method = 'GET', body, params, auth = false, background = false, signal } = {},
+) {
   const url = new URL(`${API_BASE_URL}${API_PREFIX}${path}`);
   if (params) {
     for (const [k, v] of Object.entries(params)) {
@@ -39,9 +60,10 @@ export async function apiFetch(path, { method = 'GET', body, params, auth = fals
   }
 
   const headers = { 'Content-Type': 'application/json' };
+  let attachedToken = null;
   if (auth) {
-    const token = getToken();
-    if (token) headers.Authorization = `Bearer ${token}`;
+    attachedToken = getToken();
+    if (attachedToken) headers.Authorization = `Bearer ${attachedToken}`;
   }
 
   let res;
@@ -65,6 +87,12 @@ export async function apiFetch(path, { method = 'GET', body, params, auth = fals
   }
 
   if (!res.ok || (payload && payload.success === false)) {
+    // 인증 만료/무효: 잘못된 토큰을 비우고 전역 구독자에게 알린다.
+    // background(fire-and-forget 분석 등) 호출은 모달을 띄우지 않는다.
+    if (res.status === 401 && auth && !background) {
+      setToken(null);
+      emitUnauthorized({ hadToken: !!attachedToken });
+    }
     const err = payload?.error || {};
     throw new ApiError({
       code: err.code,

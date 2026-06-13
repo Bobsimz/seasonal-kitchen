@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   ShoppingCart,
   Package,
@@ -106,6 +107,8 @@ function ProfileBlock({ user, authenticated }) {
 }
 
 function LoginPromptCard() {
+  const pathname = usePathname();
+  const href = `/login?next=${encodeURIComponent(pathname || '/my')}`;
   return (
     <div className="px-4 pt-4">
       <Card className="flex flex-col items-center gap-3 p-6 text-center">
@@ -120,7 +123,7 @@ function LoginPromptCard() {
             한곳에서 관리할 수 있어요.
           </p>
         </div>
-        <Link href="/login" className="w-full">
+        <Link href={href} className="w-full">
           <Button block size="lg" className="!mt-1">
             로그인 / 가입하기
           </Button>

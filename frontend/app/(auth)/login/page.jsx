@@ -11,7 +11,9 @@ import { useToast } from '@/components/ui/Toast';
 function LoginInner() {
   const router = useRouter();
   const params = useSearchParams();
-  const next = params.get('next') || '/';
+  // 내부 경로만 허용 (open-redirect 방지: '//evil.com' 같은 값 차단).
+  const rawNext = params.get('next') || '/';
+  const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/';
   const { login } = useAuth();
   const toast = useToast();
 

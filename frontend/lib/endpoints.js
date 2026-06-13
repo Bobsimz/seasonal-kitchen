@@ -115,5 +115,6 @@ export const endpoints = {
   deletePriceAlert: (id) => withFallback(() => api.del(`/price-alerts/${id}`, { auth: true }), () => ({ ok: true })),
 
   // ── Analytics (fire-and-forget) ────────────────────────
-  track: (body) => api.post('/events', body, { auth: true }).catch(() => {}),
+  // background: 401 이어도 로그인 모달을 띄우지 않는다(공개 화면에서 백그라운드 전송).
+  track: (body) => api.post('/events', body, { auth: true, background: true }).catch(() => {}),
 };
