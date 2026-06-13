@@ -44,6 +44,7 @@ function serializeCart(s) {
       items: items.map((it) => ({
         cartItemId: it.cartItemId,
         ingredientName: it.ingredientName,
+        optionLabel: it.optionLabel ?? null,
         qty: it.qty,
         unitPrice: it.unitPrice,
         unit: it.unit,
@@ -66,20 +67,29 @@ export const demoStore = {
   getCart() {
     return serializeCart(read());
   },
-  addCartItem(offerId, qty = 1) {
+  // option(선택): { id, quantity, unit, price } — 옵션별 단가/라벨을 라인에 스냅샷한다.
+  addCartItem(offerId, qty = 1, option = null) {
     const s = read();
     const offer = findOffer(offerId);
     if (!offer) return serializeCart(s);
-    const existing = s.cartItems.find((it) => it.offerId === Number(offerId));
+    const optionId = option?.id != null ? Number(option.id) : null;
+    const optionLabel = option ? `${option.quantity}${option.unit || ''}` : null;
+    const unitPrice = option?.price != null ? option.price : offer.price;
+    // 같은 상품이라도 옵션이 다르면 별도 라인.
+    const existing = s.cartItems.find(
+      (it) => it.offerId === Number(offerId) && (it.optionId ?? null) === optionId,
+    );
     if (existing) existing.qty += qty;
     else
       s.cartItems.push({
         cartItemId: _cartSeq++,
         offerId: Number(offerId),
+        optionId,
+        optionLabel,
         producerId: offer.producerId,
         producerName: offer.producerName,
         ingredientName: offer.ingredientName,
-        unitPrice: offer.price,
+        unitPrice,
         unit: offer.unit,
         imageUrl: offer.imageUrl || null,
         qty,

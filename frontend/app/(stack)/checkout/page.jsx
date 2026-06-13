@@ -166,7 +166,10 @@ export default function CheckoutPage() {
                             <div className="min-w-0 flex-1">
                               <p className="truncate text-[13.5px] font-bold text-ink">{it.ingredientName}</p>
                               <p className="mt-0.5 text-[12px] text-ink-soft">
-                                {wonLabel(it.unitPrice)}/{it.unit} · {it.qty}개
+                                {/* 옵션 라인은 옵션 라벨로, 일반 라인은 단위당 가격으로 표기 */}
+                                {it.optionLabel
+                                  ? `${it.optionLabel} · ${wonLabel(it.unitPrice)} · ${it.qty}개`
+                                  : `${wonLabel(it.unitPrice)}/${it.unit} · ${it.qty}개`}
                               </p>
                             </div>
                             <span className="shrink-0 text-[13.5px] font-bold text-ink">

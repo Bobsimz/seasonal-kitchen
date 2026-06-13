@@ -68,6 +68,7 @@ export const endpoints = {
 
   // ── Products ───────────────────────────────────────────
   listProducts: (params) => withFallback(() => api.get('/products', { params }), () => mock.products(params)),
+  getProduct: (id) => withFallback(() => api.get(`/products/${id}`), () => mock.productDetail(id)),
 
   // ── Producers ──────────────────────────────────────────
   listProducers: (params) => withFallback(() => api.get('/producers', { params }), () => ({ items: mock.producers, page: 0, size: 20, totalElements: mock.producers.length, hasNext: false })),
@@ -85,7 +86,12 @@ export const endpoints = {
 
   // ── Cart / Orders ──────────────────────────────────────
   getCart: () => withFallback(() => api.get('/cart', { auth: true }), () => demoStore.getCart()),
-  addCartItem: (body) => withFallback(() => api.post('/cart/items', body, { auth: true }), () => demoStore.addCartItem(body.offerId, body.qty)),
+  // 실 백엔드 계약은 { offerId, qty, offerOptionId? }. 선택 옵션의 id 만 보낸다(없으면 null).
+  // 데모 폴백에는 옵션 단가/라벨 스냅샷용으로 option 객체 전체를 넘긴다.
+  addCartItem: ({ offerId, qty, option }) => withFallback(
+    () => api.post('/cart/items', { offerId, qty, offerOptionId: option?.id ?? null }, { auth: true }),
+    () => demoStore.addCartItem(offerId, qty, option),
+  ),
   updateCartItem: (id, body) => withFallback(() => api.patch(`/cart/items/${id}`, body, { auth: true }), () => demoStore.updateCartItem(id, body.qty)),
   removeCartItem: (id) => withFallback(() => api.del(`/cart/items/${id}`, { auth: true }), () => demoStore.removeCartItem(id)),
   createOrder: () => withFallback(() => api.post('/orders', {}, { auth: true }), () => demoStore.createOrder()),

@@ -19,7 +19,7 @@
 | 메서드 | 경로 | 설명 | 응답 핵심 필드 |
 | --- | --- | --- | --- |
 | GET | `/api/v1/products` | 상품 목록(페이지네이션, 카테고리/지역/스타일 필터) | `id, name, ingredientId, ingredientName, producerId, producerName, region, price, unit, imageUrl, stockStatus, category` |
-| GET | `/api/v1/products/{id}` | 상품 상세 | 위 + `images[], description, relatedRecipeIds[], freshnessLabel, stock` |
+| GET | `/api/v1/products/{id}` | 상품 상세 | 위 + `images[], description, freshnessLabel, stockQuantity, certifications[], storageMethod, storageNote, options[], tags[], relatedRecipeIds[]` (옵션 `OptionResponse{id,quantity,unit,price}` 기구현). **신규 P1: `detailSections[]`** — §10 |
 | GET | `/api/v1/search?type=PRODUCT` | 검색에 상품 타입 추가 | 현재 `ALL/INGREDIENT/RECIPE`만 존재 |
 
 - 임시 대응: 프론트는 `/products`를 농가/오퍼로 구성하고, 상품 상세 라우트는 `/products/[producerId]?offer=<offerId>`로 동작합니다.
@@ -111,19 +111,38 @@ UI에 카카오/Apple/구글 버튼이 있으나 비활성(준비 중)입니다.
 
 ## 9. 식재료 상세 · 상품 탭 개편 (2026-06-13) — P1~P2 — ⬜ 미구현
 
-> 2026-06-13 프론트 개편(식재료 상세 "상품 리스트"·찜 하트, 상품 탭 이커머스 그리드)에서 새로 필요한 백엔드. 상세 설계는 아래 문서 참조.
+> 2026-06-13 프론트 개편(식재료 상세 "농가 직거래" 섹션·찜 하트, 상품 탭 이커머스 그리드)에서 필요한 백엔드. 상세 설계는 아래 문서 참조.
 > - `backend/docs/ingredient-detail-revamp-2026-06-13.md`
 > - `docs/superpowers/specs/2026-06-13-products-tab-commerce-list-design.md`
+>
+> **변경(2026-06-13 구현됨)**: 식재료 상세는 별도 "상품 리스트"(`/ingredients/{id}/products`) 대신 **기존 `GET /ingredients/{id}/producers`** 를 그대로 써서 "농가 직거래" 섹션(베스트+가격순, 행별 담기)을 그린다. 따라서 1순위 요청은 새 엔드포인트가 아니라 **`ProducerOfferResponse` 필드 보강**이다.
 
-| 상태 | 우선 | 메서드 | 경로 | 설명 |
-| --- | --- | --- | --- | --- |
-| ⬜ 신규 | P1 | GET | `/api/v1/ingredients/{id}/products` | 식재료 상세 "상품 리스트" 섹션. 응답 `ProductCardResponse[]`(§1과 동일 DTO), **가격 오름차순**, `status=ACTIVE`만, 비면 `[]`, 미존재 식재료 `INGREDIENT_NOT_FOUND`(404). `ingredient_id` 백필 안 된 offer는 제외. 대안: `GET /products?ingredientId={id}`(`ListResponse<ProductCardResponse>`) — 둘 다 대응 가능하나 하위리소스 방식 권장. |
-| ⬜ 보강 | P2 | — | `ProductCardResponse` | 상품 탭 정렬(추천순 = rating desc→reviewCount desc, 리뷰많은순)을 위해 `rating`, `reviewCount` 추가. 현재 프론트는 mock에만 두고 클라이언트 정렬로 임시 대응. 필요 시 `GET /products`에 `sort`(추천/낮은가격/리뷰) 파라미터도. |
-| ⬜ 선택 | P2 | — | `IngredientDetailResponse` | `favorited`(로그인 사용자 찜 여부), `favoriteCount`(누적 찜 수) 추가 시 하트 초기 상태를 `GET /favorites` 전체 조회 없이 표기. 없으면 현행(favorites 목록 매칭)대로 동작. |
+| 상태 | 우선 | 대상 | 설명 |
+| --- | --- | --- | --- |
+| ⬜ 보강 | **P1** | `GET /ingredients/{id}/producers` → `ProducerOfferResponse` | 현재 DTO에 **`rating`, `reviewCount`, `honorary`(명예농가), `style`(유기농/프리미엄/실속 enum)** 가 없음. 식재료 상세 "농가 직거래"(★평점·명예·스타일 배지 + 베스트 선정) **와 기존 농가 비교 페이지**(이미 이 필드들을 렌더) 둘 다 필요. 대표 이미지는 프론트가 `photoUrls[0]` 사용(또는 `photoUrl` 단일 추가). 정렬 가격 오름차순 유지. |
+| ⬜ 선택 | P2 | `GET /ingredients/{id}/products` (`ProductCardResponse[]`) | **식재료 상세에선 미사용으로 전환**(위 `/producers` 사용). `/products` 탭이 식재료별 필터를 원하면 `GET /products?ingredientId={id}`(가격 오름차순·`status=ACTIVE`)로 살릴 수 있음. 상세 화면 차단요소 아님. |
+| ⬜ 보강 | P2 | `ProductCardResponse` | 상품 탭 정렬(추천순 = rating desc→reviewCount desc, 리뷰많은순)을 위해 `rating`, `reviewCount` 추가. 현재 프론트는 mock에만 두고 클라이언트 정렬로 임시 대응. 필요 시 `GET /products`에 `sort` 파라미터도. |
+| ⬜ 선택 | P2 | `IngredientDetailResponse` | `favorited`(로그인 사용자 찜 여부), `favoriteCount`(누적 찜 수) 추가 시 하트 초기 상태를 `GET /favorites` 전체 조회 없이 표기. 없으면 현행(favorites 목록 매칭)대로 동작. |
 
-- 이미 존재(변경 불필요): 식재료 찜 = `favorites` API의 `targetType=INGREDIENT`(§3 기반) 재사용, 상품 카드 = §1 `ProductCardResponse` 재사용, 농가 비교(하단 바) = `GET /ingredients/{id}/producers` 유지.
+- 이미 존재(변경 불필요): 식재료 찜 = `favorites` API의 `targetType=INGREDIENT`(§3 기반) 재사용, 농가 비교 라우트 `GET /ingredients/{id}/producers` 자체는 유지(필드만 보강).
 - 화면에서 미사용으로 전환됐으나 **API는 유지**: `GET /ingredients/{id}/prices`(가격 추이), 영양 정보, `GET /ingredients/{id}/offers`(리테일 시세).
-- 프론트 임시 대응: `endpoints.getIngredientProducts(id)` → 연결/오류 시 `mock.ingredientProducts(id)` 폴백. 위 신규 엔드포인트가 생기면 프론트 수정 없이 전환.
+- 빈 상태(판매 농가 0곳): 프론트가 현재가·농가섹션·구매 CTA를 숨기고 "입고 알림"(=`favorites` 찜)으로 전환 — 추가 백엔드 불필요.
+- 프론트 임시 대응: `useIngredientProducers(id)` → 연결/오류 시 `mock.ingredientProducers(id)`(평점·명예·스타일·신선도 포함) 폴백. 위 필드가 실 응답에 추가되면 프론트 수정 없이 전환.
+
+## 10. 상품 상세 구매 플로우 · 상세보기(detailSections) (2026-06-13) — P1~P2
+
+> 2026-06-13 프론트 개편(상품 상세 네이버식 구매 시트 + 상세보기 접기/펼치기)에서 필요한 백엔드.
+> 구현 명세(테이블/엔티티/매핑): `backend/docs/product-detail-options-2026-06-13.md`
+> 프론트 설계: `docs/superpowers/specs/2026-06-13-product-detail-purchase-flow-design.md`
+
+| 상태 | 우선 | 대상 | 설명 |
+| --- | --- | --- | --- |
+| ✅ 기구현 | — | `GET /products/{id}` `options[]` | 옵션(규격/variant)은 `offer_options` 테이블 + `ProductDetailResponse.options(OptionResponse{id,quantity,unit,price})`로 **이미 구현됨**. 프론트는 그대로 소비(라벨=`${quantity}${unit}`). 옵션 없는 상품은 `options=[]` → 프론트가 기준가 단일 옵션으로 폴백. |
+| ⬜ 신규 | P1 | `GET /products/{id}` `detailSections[]` | "상품 상세정보(접기/펼치기)"용 **제목+본문 섹션 리스트**. `ProductDetailResponse`에 `List<DetailSectionResponse{heading, body}> detailSections` 추가. 새 테이블 `offer_detail_sections(offer_id, heading, body, sort_order)`. 비면 `[]`. 프론트는 없으면 `description` 단일 섹션으로 폴백. 상세는 백엔드 문서 §2 참조. |
+| ⬜ 보강 | P1 | `POST /cart/items` `offerOptionId` | 선택 옵션을 장바구니에 반영. 요청 `{offerId, qty, offerOptionId?}`. 서버는 `offerOptionId` 있으면 해당 옵션 단가/라벨로 라인 생성, 같은 offer라도 옵션 다르면 별도 라인. 응답 라인에 `optionLabel`(또는 `offerOptionId`+`quantity/unit`) 포함 권장. 현재 데모는 클라이언트가 옵션 단가/라벨을 스냅샷. |
+| ⬜ 선택 | P2 | `favorites` `targetType=PRODUCT` | 상품(=offer) 찜. 현재 데모 스토어로 동작(§3의 PRODUCT·OFFER "추후"와 연결). 실제 구현 시 `targetType=PRODUCT, targetId=offerId` 저장 + 요약(상품명/첫사진/가격·단위) 반환. |
+
+- 프론트 임시 대응: `endpoints.getProduct(id)` → 연결/오류 시 `mock.productDetail(id)` 폴백(옵션 3종 + detailSections 3종 생성). 장바구니는 `addCartItem(offerId, qty, option)`로 옵션 단가/라벨을 데모 스토어 라인에 스냅샷.
 
 ---
 

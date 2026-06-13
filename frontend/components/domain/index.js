@@ -7,6 +7,7 @@ export { RecipeCard, RecipeRow } from './RecipeCard';
 export { ReelThumb } from './ReelThumb';
 export { OfferRow } from './OfferCard';
 export { ProductCard } from './ProductCard';
+export { PurchaseSheet } from './PurchaseSheet';
 export { AddToCartButton } from './AddToCartButton';
 export { FavoriteHeart } from './FavoriteHeart';
 export { PriceBars } from './PriceBars';

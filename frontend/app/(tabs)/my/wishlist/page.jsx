@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Heart, ChevronRight, Carrot, ChefHat, Sprout } from 'lucide-react';
+import { Heart, ChevronRight, Carrot, ChefHat, Sprout, ShoppingBag } from 'lucide-react';
 import { useFavorites, useToggleFavorite } from '@/lib/queries';
 import { useAuth } from '@/lib/auth';
 import { AppHeader } from '@/components/layout';
@@ -19,11 +19,14 @@ const TYPE_META = {
   INGREDIENT: { label: '식재료', icon: Carrot, href: (id) => `/ingredients/${id}`, noun: '식재료' },
   RECIPE: { label: '레시피', icon: ChefHat, href: (id) => `/recipes/${id}`, noun: '레시피' },
   PRODUCER: { label: '농가', icon: Sprout, href: (id) => `/producers/${id}`, noun: '농가' },
+  // 상품 찜: targetId = offerId. 데모 offer id 는 producerId*100+idx 라 producerId 를 역산해 상세로 링크.
+  PRODUCT: { label: '상품', icon: ShoppingBag, href: (id) => `/products/${Math.floor(Number(id) / 100)}?offer=${id}`, noun: '상품' },
 };
 
 const TABS = [
   { value: 'INGREDIENT', label: '식재료' },
   { value: 'RECIPE', label: '레시피' },
+  { value: 'PRODUCT', label: '상품' },
   { value: 'PRODUCER', label: '농가' },
 ];
 

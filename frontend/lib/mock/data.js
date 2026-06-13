@@ -282,6 +282,53 @@ export function products(params = {}) {
   return list.sort(PRODUCT_SORTS[sort] || PRODUCT_SORTS.RECOMMENDED);
 }
 
+// 상품 상세 보강 — 실제 ProductDetailResponse 의 부분집합(옵션·상세섹션).
+// options 는 백엔드 OfferOption({id,quantity,unit,price})와 동일 형태로 산출하고,
+// detailSections 는 신규 필드(backend/docs/product-detail-options-2026-06-13.md)로 농가·식재료 템플릿.
+const round10 = (n) => Math.round(n / 10) * 10;
+export function productDetail(offerId) {
+  const id = Number(offerId);
+  const offer = producerOffers(Math.floor(id / 100)).find((o) => o.id === id);
+  if (!offer) return null;
+  const { unit, price, ingredientName, region, producerName, freshnessLabel } = offer;
+  const options = [
+    { id: id * 10 + 1, quantity: 1, unit, price },
+    { id: id * 10 + 2, quantity: 3, unit, price: round10(price * 3 * 0.95) },
+    { id: id * 10 + 3, quantity: 5, unit, price: round10(price * 5 * 0.9) },
+  ];
+  const detailSections = [
+    {
+      heading: '산지 이야기',
+      body: `${region} ${producerName} 농가에서 정성껏 기른 ${ingredientName}입니다. ${freshnessLabel} 기준으로 수확해 가장 신선한 상태로 산지직송합니다.`,
+    },
+    {
+      heading: '보관 방법',
+      body: `받으신 ${ingredientName}은(는) 신문지에 싸서 냉장 보관하면 신선도가 더 오래 유지됩니다. 흐르는 물에 가볍게 헹군 뒤 용도에 맞게 손질해 드세요.`,
+    },
+    {
+      heading: '이렇게 드세요',
+      body: `${ingredientName}은(는) 데치거나 무침, 국·전골 등 다양하게 활용할 수 있어요. 제철 ${ingredientName}의 향과 식감을 그대로 즐겨보세요.`,
+    },
+  ];
+  return {
+    id,
+    name: `${ingredientName} · ${freshnessLabel}`,
+    ingredientId: offer.ingredientId,
+    ingredientName,
+    producerId: offer.producerId,
+    producerName,
+    region,
+    price,
+    unit,
+    imageUrl: vegImg(ingredientName),
+    stockStatus: 'IN_STOCK',
+    freshnessLabel,
+    options,
+    detailSections,
+    description: detailSections[0].body,
+  };
+}
+
 // ── 레시피 ───────────────────────────────────────────────────────
 const RECIPES = [
   { id: 101, title: '봄동 비빔밥', img: DISH_IMG.봄동비빔밥, time: 20, difficulty: '쉬움', likes: 1240, servings: 2, ings: ['봄동', '쌀', '고추장', '계란'], tags: ['#봄동', '#한그릇', '#제철'], creator: '쿠킹맘', seasonal: true },

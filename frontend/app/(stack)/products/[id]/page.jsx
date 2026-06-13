@@ -1,23 +1,25 @@
 'use client';
 
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Star, Truck, Package, Snowflake, ChevronRight } from 'lucide-react';
-import { useProducer, useProducerOffers, useAddToCart } from '@/lib/queries';
+import { Star, Truck, Package, Snowflake, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
+import { useProducer, useProducerOffers, useProduct, useAddToCart } from '@/lib/queries';
 import { useAuth } from '@/lib/auth';
 import { AppHeader } from '@/components/layout';
 import { BottomBar } from '@/components/layout/BottomBar';
 import { Button } from '@/components/ui/Button';
 import { Chip } from '@/components/ui/Chip';
-import { QtyStepper } from '@/components/ui/Misc';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState, EmptyState } from '@/components/ui/States';
 import { useToast } from '@/components/ui/Toast';
 import { VegImage } from '@/components/domain/VegImage';
 import { ProducerAvatar } from '@/components/domain/ProducerCard';
 import { StyleBadge } from '@/components/domain/StyleBadge';
+import { FavoriteHeart } from '@/components/domain/FavoriteHeart';
+import { PurchaseSheet } from '@/components/domain/PurchaseSheet';
 import { won, wonLabel, compact } from '@/lib/format';
+import { cn } from '@/lib/cn';
 
 export default function ProductDetailPage({ params }) {
   const producerId = params.id;
@@ -39,7 +41,8 @@ function ProductDetail({ producerId }) {
   const { data: producer, isLoading: producerLoading, error: producerError, refetch: refetchProducer } = useProducer(producerId);
   const { data: offers = [], isLoading: offersLoading, error: offersError, refetch: refetchOffers } = useProducerOffers(producerId);
 
-  const [qty, setQty] = useState(1);
+  const [purchaseOpen, setPurchaseOpen] = useState(false);
+  const [submitMode, setSubmitMode] = useState(null); // 'cart' | 'buy' | null — 어느 CTA가 진행 중인지
 
   const offer = useMemo(() => {
     if (!offers.length) return null;
@@ -50,6 +53,23 @@ function ProductDetail({ producerId }) {
     return offers[0];
   }, [offers, focusedOfferId]);
 
+  // 상품 상세 보강(옵션·상세섹션) — offer 확정 후 조회. 실패/미로딩 시 폴백으로 대체.
+  const { data: product } = useProduct(offer?.id);
+
+  // 옵션: 백엔드 options 가 있으면 그대로, 없으면 기준가 단일 옵션으로 폴백 → 구매 플로우 항상 동작.
+  const options = useMemo(() => {
+    if (product?.options?.length) return product.options;
+    if (offer) return [{ id: offer.id, quantity: 1, unit: offer.unit, price: offer.price }];
+    return [];
+  }, [product, offer]);
+
+  // 상세섹션: detailSections(리스트)가 우선, 없으면 description 단일 섹션.
+  const detailSections = useMemo(() => {
+    if (product?.detailSections?.length) return product.detailSections;
+    if (product?.description) return [{ heading: '상품 정보', body: product.description }];
+    return [];
+  }, [product]);
+
   const otherOffers = useMemo(
     () => (offer ? offers.filter((o) => o.id !== offer.id) : []),
     [offers, offer],
@@ -58,21 +78,29 @@ function ProductDetail({ producerId }) {
   const isLoading = producerLoading || offersLoading;
   const error = producerError || offersError;
 
-  const onAddToCart = () => {
+  const onSubmit = ({ option, qty, mode }) => {
     if (!offer) return;
     if (!isAuthenticated) {
       toast.show('로그인이 필요해요', { type: 'error' });
       router.push('/login?next=' + encodeURIComponent(typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/'));
       return;
     }
+    // 실제 옵션이 있을 때만 옵션을 전달. 기준가 폴백 옵션(id=offerId)은 백엔드 offerOptionId 로 보내면 안 됨.
+    const sendOption = product?.options?.length ? option : null;
+    setSubmitMode(mode);
     addToCart.mutate(
-      { offerId: offer.id, qty },
+      { offerId: offer.id, qty, option: sendOption },
       {
         onSuccess: () => {
-          toast.show('장바구니에 담았어요', { type: 'success' });
-          router.push('/cart');
+          setSubmitMode(null);
+          setPurchaseOpen(false);
+          if (mode === 'buy') router.push('/checkout');
+          else toast.show('장바구니에 담았어요', { type: 'success' });
         },
-        onError: () => toast.show('담기에 실패했어요', { type: 'error' }),
+        onError: () => {
+          setSubmitMode(null);
+          toast.show('담기에 실패했어요', { type: 'error' });
+        },
       },
     );
   };
@@ -137,14 +165,6 @@ function ProductDetail({ producerId }) {
               </div>
             </div>
 
-            {/* 수량 */}
-            <div className="px-4 pt-3">
-              <div className="flex items-center justify-between rounded-2xl border border-line-soft bg-white p-4">
-                <span className="text-[13px] font-bold text-ink">수량</span>
-                <QtyStepper value={qty} onChange={setQty} />
-              </div>
-            </div>
-
             {/* 배송 안내 */}
             <div className="px-4 pt-3">
               <div className="rounded-2xl border border-line-soft bg-white px-4">
@@ -167,6 +187,9 @@ function ProductDetail({ producerId }) {
                 ))}
               </div>
             </div>
+
+            {/* 상품 상세정보 — 접기/펼치기 */}
+            <DetailSections sections={detailSections} />
 
             {/* 같은 농가의 다른 상품 */}
             {otherOffers.length > 0 && (
@@ -197,17 +220,77 @@ function ProductDetail({ producerId }) {
             )}
           </div>
 
+          {/* 하단바 — 찜하기 + 구매하기 */}
           <BottomBar>
-            <div className="flex-1">
-              <p className="text-[11px] font-semibold text-ink-soft">총 상품금액</p>
-              <p className="text-[18px] font-extrabold tabular text-ink">{wonLabel(offer.price * qty)}</p>
-            </div>
-            <Button block className="flex-[1.4]" loading={addToCart.isPending} onClick={onAddToCart}>
-              장바구니 담기
+            <FavoriteHeart
+              targetType="PRODUCT"
+              targetId={offer.id}
+              size={24}
+              nextHref={`/products/${producer.id}?offer=${offer.id}`}
+              className="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-2xl border border-line"
+              iconClassName="text-ink-mid"
+            />
+            <Button size="lg" block className="flex-1" onClick={() => setPurchaseOpen(true)}>
+              구매하기
             </Button>
           </BottomBar>
+
+          <PurchaseSheet
+            open={purchaseOpen}
+            onClose={() => setPurchaseOpen(false)}
+            options={options}
+            pendingMode={submitMode}
+            onSubmit={onSubmit}
+          />
         </>
       )}
     </>
+  );
+}
+
+// 상품 상세정보(detailSections)를 접기/펼치기로 렌더.
+// 내용이 180px 를 넘을 때만 클램프+페이드+토글을 노출(짧으면 죽은 펼치기 버튼이 안 생김).
+const DETAIL_MAX_H = 180;
+function DetailSections({ sections }) {
+  const [expanded, setExpanded] = useState(false);
+  const [overflows, setOverflows] = useState(false);
+  const bodyRef = useRef(null);
+
+  useEffect(() => {
+    const el = bodyRef.current;
+    // scrollHeight 는 클램프 여부와 무관하게 전체 콘텐츠 높이.
+    if (el) setOverflows(el.scrollHeight > DETAIL_MAX_H + 1);
+  }, [sections]);
+
+  if (!sections || sections.length === 0) return null;
+  const collapsed = !expanded && overflows;
+
+  return (
+    <div className="px-4 pt-6">
+      <h2 className="mb-3 text-[15.5px] font-extrabold tracking-tight text-ink">상품 상세정보</h2>
+      <div className="relative overflow-hidden rounded-2xl border border-line-soft bg-white">
+        <div ref={bodyRef} className={cn('px-4 py-4', collapsed && 'max-h-[180px] overflow-hidden')}>
+          {sections.map((s, i) => (
+            <div key={i} className={i > 0 ? 'mt-4' : ''}>
+              {s.heading && <h3 className="text-[14px] font-bold text-ink">{s.heading}</h3>}
+              <p className="mt-1 whitespace-pre-line text-[13px] leading-relaxed text-ink-mid">{s.body}</p>
+            </div>
+          ))}
+        </div>
+        {collapsed && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent" />
+        )}
+      </div>
+      {overflows && (
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          className="tap mt-2 flex w-full items-center justify-center gap-1 rounded-2xl border border-line py-2.5 text-[13px] font-bold text-ink-mid"
+        >
+          {expanded ? '접기' : '상세정보 펼쳐보기'}
+          {expanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+        </button>
+      )}
+    </div>
   );
 }

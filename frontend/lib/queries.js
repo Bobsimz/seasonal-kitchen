@@ -18,6 +18,7 @@ export const qk = {
   ingredientProducers: (id) => ['ingredient', String(id), 'producers'],
   ingredientProducts: (id) => ['ingredient', String(id), 'products'],
   products: (params) => ['products', params || {}],
+  product: (id) => ['product', String(id)],
   recipes: (params) => ['recipes', params || {}],
   recipe: (id) => ['recipe', String(id)],
   recipeSteps: (id) => ['recipe', String(id), 'steps'],
@@ -82,6 +83,8 @@ export const useReelComments = (id) =>
 // ── Products ───────────────────────────────────────────────
 export const useProducts = (params) =>
   useQuery({ queryKey: qk.products(params), queryFn: () => endpoints.listProducts(params), select: unwrapList });
+export const useProduct = (id) =>
+  useQuery({ queryKey: qk.product(id), queryFn: () => endpoints.getProduct(id), enabled: !!id });
 
 // ── Producers ──────────────────────────────────────────────
 export const useProducers = (params) =>

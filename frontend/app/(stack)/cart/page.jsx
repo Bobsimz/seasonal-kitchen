@@ -112,8 +112,14 @@ function ProducerGroup({ group, onQty, onRemove }) {
 
             <div className="min-w-0 flex-1">
               <div className="text-[14px] font-bold text-ink">{it.ingredientName}</div>
+              {it.optionLabel && (
+                <div className="mt-0.5 inline-block rounded-md bg-surface-soft px-1.5 py-0.5 text-[11px] font-semibold text-ink-mid">
+                  옵션 · {it.optionLabel}
+                </div>
+              )}
               <div className="mt-0.5 text-[11.5px] text-ink-soft">
-                {it.unit}당 · {wonLabel(it.unitPrice)}
+                {/* 옵션 라인은 단가가 옵션(묶음) 단위라 '단위당'으로 오기되지 않게 가격만 표기 */}
+                {it.optionLabel ? wonLabel(it.unitPrice) : `${it.unit}당 · ${wonLabel(it.unitPrice)}`}
               </div>
               <div className="mt-2">
                 <QtyStepper
