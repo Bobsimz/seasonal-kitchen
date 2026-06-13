@@ -50,6 +50,18 @@ public class ReelController {
         return ApiResponse.success(service.unlike(reelId, currentUserProvider.getCurrentUserId()), null);
     }
 
+    @PostMapping("/{reelId}/saves")
+    @Operation(summary = "릴스 저장(찜)")
+    public ApiResponse<ReelSaveActionResponse> save(@PathVariable Long reelId) {
+        return ApiResponse.success(service.save(reelId, currentUserProvider.getCurrentUserId()), null);
+    }
+
+    @DeleteMapping("/{reelId}/saves")
+    @Operation(summary = "릴스 저장(찜) 취소")
+    public ApiResponse<ReelSaveActionResponse> unsave(@PathVariable Long reelId) {
+        return ApiResponse.success(service.unsave(reelId, currentUserProvider.getCurrentUserId()), null);
+    }
+
     @GetMapping("/{reelId}/comments")
     @Operation(summary = "릴스 댓글 조회")
     public ApiResponse<List<ReelCommentResponse>> getComments(@PathVariable Long reelId) {

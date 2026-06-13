@@ -64,7 +64,20 @@ export const endpoints = {
   getReelComments: (id) => withFallback(() => api.get(`/reels/${id}/comments`), () => mock.reelComments(id)),
   likeReel: (id) => withFallback(() => api.post(`/reels/${id}/likes`, {}, { auth: true }), () => ({ liked: true })),
   unlikeReel: (id) => withFallback(() => api.del(`/reels/${id}/likes`, { auth: true }), () => ({ liked: false })),
-  commentReel: (id, body) => withFallback(() => api.post(`/reels/${id}/comments`, body, { auth: true }), () => ({ id: Date.now(), ...body, createdAt: new Date().toISOString() })),
+  saveReel: (id) => withFallback(() => api.post(`/reels/${id}/saves`, {}, { auth: true }), () => ({ saved: true })),
+  unsaveReel: (id) => withFallback(() => api.del(`/reels/${id}/saves`, { auth: true }), () => ({ saved: false })),
+  commentReel: (id, body) => withFallback(
+    () => api.post(`/reels/${id}/comments`, body, { auth: true }),
+    () => ({
+      id: Date.now(),
+      reelId: Number(id),
+      userId: mock.demoUser.id,
+      nickname: mock.demoUser.nickname,
+      profileImageUrl: mock.demoUser.photoUrl,
+      content: body.content,
+      createdAt: new Date().toISOString(),
+    }),
+  ),
 
   // ── Products ───────────────────────────────────────────
   listProducts: (params) => withFallback(() => api.get('/products', { params }), () => mock.products(params)),

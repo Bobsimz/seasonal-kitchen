@@ -93,6 +93,40 @@ export const useReel = (id) => useQuery({ queryKey: qk.reel(id), queryFn: () => 
 export const useReelComments = (id) =>
   useQuery({ queryKey: qk.reelComments(id), queryFn: () => endpoints.getReelComments(id), enabled: !!id });
 
+// 좋아요/저장은 화면에서 낙관적으로 토글하고, 성공 시 피드(qk.reels)를 무효화해
+// 서버 기준 카운트/내 상태(liked/saved)와 다시 맞춘다. (인자 boolean = 켜기/끄기)
+export function useLikeReel(id) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (on) => (on ? endpoints.likeReel(id) : endpoints.unlikeReel(id)),
+    onSuccess: () => qc.invalidateQueries({ queryKey: qk.reels }),
+  });
+}
+export function useSaveReel(id) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (on) => (on ? endpoints.saveReel(id) : endpoints.unsaveReel(id)),
+    onSuccess: () => qc.invalidateQueries({ queryKey: qk.reels }),
+  });
+}
+export function useCommentReel(id) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (content) => endpoints.commentReel(id, { content }),
+    onSuccess: (created) => {
+      // 작성한 댓글을 목록에 즉시 추가(낙관적). 서버 응답이 곧 권위 있는 값이라 그대로 붙인다.
+      if (created) {
+        qc.setQueryData(qk.reelComments(id), (prev) => {
+          const list = Array.isArray(prev) ? prev : prev?.items || [];
+          return [...list, created];
+        });
+      }
+      // 릴스 댓글 수 갱신.
+      qc.invalidateQueries({ queryKey: qk.reels });
+    },
+  });
+}
+
 // ── Products ───────────────────────────────────────────────
 export const useProducts = (params) =>
   useQuery({ queryKey: qk.products(params), queryFn: () => endpoints.listProducts(params), select: unwrapList });

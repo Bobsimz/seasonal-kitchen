@@ -59,16 +59,37 @@ class ReelControllerTest {
                 .andExpect(jsonPath("$.data.likeCount").value(1));
         mvc.perform(post("/api/v1/reels/{id}/comments", reel.getId()).header("Authorization", token).contentType(MediaType.APPLICATION_JSON).content("{\"content\":\"맛있어 보여요\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content").value("맛있어 보여요"));
+                .andExpect(jsonPath("$.data.content").value("맛있어 보여요"))
+                .andExpect(jsonPath("$.data.nickname").value("릴스"));
         mvc.perform(get("/api/v1/reels/{id}/comments", reel.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.length()").value(1));
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].nickname").value("릴스"))
+                .andExpect(jsonPath("$.data[0].content").value("맛있어 보여요"));
         mvc.perform(post("/api/v1/reels/{id}/view-events", reel.getId()).header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.views").value(1));
         mvc.perform(delete("/api/v1/reels/{id}/likes", reel.getId()).header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.liked").value(false));
+    }
+
+    @Test void saveAndUnsaveReelTogglesSavedState() throws Exception {
+        Reel reel = fixtureReel();
+        User user = users.save(new User("save@example.com", "찜러", null, "ACTIVE"));
+        String token = "Bearer " + jwt.createAccessToken(user.getId());
+        mvc.perform(post("/api/v1/reels/{id}/saves", reel.getId()).header("Authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.saved").value(true))
+                .andExpect(jsonPath("$.data.saveCount").value(1));
+        mvc.perform(get("/api/v1/reels/{id}", reel.getId()).header("Authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.saved").value(true))
+                .andExpect(jsonPath("$.data.saves").value(1));
+        mvc.perform(delete("/api/v1/reels/{id}/saves", reel.getId()).header("Authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.saved").value(false))
+                .andExpect(jsonPath("$.data.saveCount").value(0));
     }
 
     @Test void unauthenticatedWriteReturns401AndMissingReelReturns404() throws Exception {

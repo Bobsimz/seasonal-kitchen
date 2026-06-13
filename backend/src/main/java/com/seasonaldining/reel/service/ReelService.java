@@ -6,11 +6,14 @@ import com.seasonaldining.common.storage.MediaUrlResolver;
 import com.seasonaldining.reel.dto.response.*;
 import com.seasonaldining.reel.entity.*;
 import com.seasonaldining.reel.repository.*;
+import com.seasonaldining.user.entity.User;
+import com.seasonaldining.user.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ReelService {
@@ -20,13 +23,15 @@ public class ReelService {
     private final CreatorRepository creators;
     private final ReelReactionRepository reactions;
     private final ReelCommentRepository comments;
+    private final UserRepository users;
     private final MediaUrlResolver mediaUrls;
 
-    public ReelService(ReelRepository reels, CreatorRepository creators, ReelReactionRepository reactions, ReelCommentRepository comments, MediaUrlResolver mediaUrls) {
+    public ReelService(ReelRepository reels, CreatorRepository creators, ReelReactionRepository reactions, ReelCommentRepository comments, UserRepository users, MediaUrlResolver mediaUrls) {
         this.reels = reels;
         this.creators = creators;
         this.reactions = reactions;
         this.comments = comments;
+        this.users = users;
         this.mediaUrls = mediaUrls;
     }
 
@@ -58,19 +63,54 @@ public class ReelService {
         return new ReelActionResponse(reelId, false, reactions.countByReelIdAndReactionType(reelId, ReelReaction.LIKE));
     }
 
+    @Transactional
+    public ReelSaveActionResponse save(Long reelId, Long userId) {
+        findPublishedReel(reelId);
+        if (!reactions.existsByReelIdAndUserIdAndReactionType(reelId, userId, ReelReaction.SAVE)) {
+            reactions.save(new ReelReaction(reelId, userId, ReelReaction.SAVE));
+        }
+        return new ReelSaveActionResponse(reelId, true, reactions.countByReelIdAndReactionType(reelId, ReelReaction.SAVE));
+    }
+
+    @Transactional
+    public ReelSaveActionResponse unsave(Long reelId, Long userId) {
+        findPublishedReel(reelId);
+        reactions.findByReelIdAndUserIdAndReactionType(reelId, userId, ReelReaction.SAVE).ifPresent(reactions::delete);
+        return new ReelSaveActionResponse(reelId, false, reactions.countByReelIdAndReactionType(reelId, ReelReaction.SAVE));
+    }
+
     @Transactional(readOnly = true)
     public List<ReelCommentResponse> getComments(Long reelId) {
         findPublishedReel(reelId);
-        return comments.findByReelIdAndStatusOrderByIdAsc(reelId, ACTIVE).stream()
-                .map(comment -> new ReelCommentResponse(comment.getId(), comment.getReelId(), comment.getUserId(), comment.getContent(), comment.getCreatedAt()))
-                .toList();
+        List<ReelComment> list = comments.findByReelIdAndStatusOrderByIdAsc(reelId, ACTIVE);
+        Map<Long, User> authors = loadAuthors(list.stream().map(ReelComment::getUserId).toList());
+        return list.stream().map(comment -> toCommentResponse(comment, authors.get(comment.getUserId()))).toList();
     }
 
     @Transactional
     public ReelCommentResponse addComment(Long reelId, Long userId, String content) {
         findPublishedReel(reelId);
         ReelComment comment = comments.save(new ReelComment(reelId, userId, content, ACTIVE));
-        return new ReelCommentResponse(comment.getId(), comment.getReelId(), comment.getUserId(), comment.getContent(), comment.getCreatedAt());
+        return toCommentResponse(comment, users.findById(userId).orElse(null));
+    }
+
+    // 댓글 작성자(닉네임/프로필)를 한 번에 로딩해 N+1 을 피한다.
+    private Map<Long, User> loadAuthors(List<Long> userIds) {
+        if (userIds.isEmpty()) return Map.of();
+        return users.findAllById(new HashSet<>(userIds)).stream()
+                .collect(Collectors.toMap(User::getId, user -> user));
+    }
+
+    private ReelCommentResponse toCommentResponse(ReelComment comment, User author) {
+        return new ReelCommentResponse(
+                comment.getId(),
+                comment.getReelId(),
+                comment.getUserId(),
+                author == null ? null : author.getNickname(),
+                author == null ? null : mediaUrls.resolve(author.getProfileImageUrl()),
+                comment.getContent(),
+                comment.getCreatedAt()
+        );
     }
 
     @Transactional

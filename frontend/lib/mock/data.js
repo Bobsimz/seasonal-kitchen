@@ -411,8 +411,8 @@ export const reels = [
 export const getReel = (id) => reels.find((r) => r.id === Number(id));
 export function reelComments(id) {
   return [
-    { id: 1, author: '지수', body: '와 이거 진짜 맛있겠다 🤤', createdAt: '2026-06-10T12:00:00+09:00' },
-    { id: 2, author: '현우', body: '봄동 어디서 사요?', createdAt: '2026-06-10T13:20:00+09:00' },
+    { id: 1, reelId: Number(id), userId: 2, nickname: '지수', profileImageUrl: FACE_IMG.emily, content: '와 이거 진짜 맛있겠다 🤤', createdAt: '2026-06-10T12:00:00+09:00' },
+    { id: 2, reelId: Number(id), userId: 3, nickname: '현우', profileImageUrl: FACE_IMG.ansungJae, content: '봄동 어디서 사요?', createdAt: '2026-06-10T13:20:00+09:00' },
   ];
 }
 

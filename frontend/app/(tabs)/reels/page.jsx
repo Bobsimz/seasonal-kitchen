@@ -1,16 +1,17 @@
 'use client';
 
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Heart, MessageCircle, Bookmark, Share2, Play, ChevronRight, Plus, Search } from 'lucide-react';
-import { useReels } from '@/lib/queries';
+import { Heart, MessageCircle, Bookmark, Share2, Play, ChevronRight, Plus, Search, Send } from 'lucide-react';
+import { useReels, useReelComments, useLikeReel, useSaveReel, useCommentReel } from '@/lib/queries';
 import { useAuth } from '@/lib/auth';
 import { AppHeader, HeaderIconButton } from '@/components/layout';
+import { Sheet } from '@/components/ui/Sheet';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState, EmptyState } from '@/components/ui/States';
 import { useToast } from '@/components/ui/Toast';
-import { compact } from '@/lib/format';
+import { compact, relativeTime } from '@/lib/format';
 import { cn } from '@/lib/cn';
 
 export default function ReelsPage() {
@@ -26,6 +27,9 @@ function ReelsInner() {
   const targetId = params.get('id');
   const { data: reels = [], isLoading, error, refetch } = useReels();
   const scrollerRef = useRef(null);
+  // 댓글 시트는 피드 전체에 하나만 둔다. 탭한 릴을 담아 열고, 닫는 동안 exit 애니메이션을 위해 reel 은 유지한다.
+  const [commentReel, setCommentReel] = useState(null);
+  const [commentsOpen, setCommentsOpen] = useState(false);
 
   // ?id= 로 진입 시 해당 릴로 점프
   useEffect(() => {
@@ -56,26 +60,41 @@ function ReelsInner() {
           className="-mt-14 min-h-0 flex-1 snap-y snap-mandatory overflow-y-auto bg-black phone-scroll"
         >
           {reels.map((reel) => (
-            <ReelItem key={reel.id} reel={reel} />
+            <ReelItem
+              key={reel.id}
+              reel={reel}
+              onOpenComments={() => {
+                setCommentReel(reel);
+                setCommentsOpen(true);
+              }}
+            />
           ))}
         </div>
       )}
+
+      <CommentsSheet reel={commentReel} open={commentsOpen} onClose={() => setCommentsOpen(false)} />
     </>
   );
 }
 
-function ReelItem({ reel }) {
+function ReelItem({ reel, onOpenComments }) {
   const router = useRouter();
   const toast = useToast();
   const { isAuthenticated } = useAuth();
-  const [liked, setLiked] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const likeReel = useLikeReel(reel.id);
+  const saveReel = useSaveReel(reel.id);
   const videoRef = useRef(null);
   const [playing, setPlaying] = useState(false);
 
-  // 좋아요/저장 로컬 옵티미스틱 토글 + 카운트 보정
-  const likeCount = useMemo(() => (reel.likes ?? 0) + (liked ? 1 : 0), [reel.likes, liked]);
-  const saveCount = useMemo(() => (reel.saves ?? 0) + (saved ? 1 : 0), [reel.saves, saved]);
+  // 서버가 내려준 내 상태(liked/saved)를 기준으로 낙관적 토글한다.
+  const serverLiked = !!reel.liked;
+  const serverSaved = !!reel.saved;
+  const [liked, setLiked] = useState(serverLiked);
+  const [saved, setSaved] = useState(serverSaved);
+
+  // 표시 카운트 = 서버 카운트 + (로컬 토글이 서버 상태와 다르면 ±1)
+  const likeCount = (reel.likes ?? 0) + (liked === serverLiked ? 0 : liked ? 1 : -1);
+  const saveCount = (reel.saves ?? 0) + (saved === serverSaved ? 0 : saved ? 1 : -1);
 
   // 좋아요·저장은 로그인 필요 — 비로그인 시 로그인 유도 후 중단(FavoriteHeart와 동일 동작)
   const requireAuth = () => {
@@ -85,8 +104,29 @@ function ReelItem({ reel }) {
     router.push('/login?next=' + encodeURIComponent(back));
     return false;
   };
-  const onLike = () => requireAuth() && setLiked((v) => !v);
-  const onSave = () => requireAuth() && setSaved((v) => !v);
+  const onLike = () => {
+    if (!requireAuth()) return;
+    const next = !liked;
+    setLiked(next); // 낙관적 토글
+    likeReel.mutate(next, {
+      onError: () => {
+        setLiked(!next);
+        toast.show('잠시 후 다시 시도해 주세요', { type: 'error' });
+      },
+    });
+  };
+  const onSave = () => {
+    if (!requireAuth()) return;
+    const next = !saved;
+    setSaved(next); // 낙관적 토글
+    saveReel.mutate(next, {
+      onSuccess: () => toast.show(next ? '저장했어요' : '저장을 해제했어요', { type: 'success' }),
+      onError: () => {
+        setSaved(!next);
+        toast.show('잠시 후 다시 시도해 주세요', { type: 'error' });
+      },
+    });
+  };
 
   // 세로 피드라 화면에 보이는 릴만 재생 (스크롤 이탈 시 일시정지)
   useEffect(() => {
@@ -162,7 +202,7 @@ function ReelItem({ reel }) {
         </div>
 
         <RailAction icon={Heart} count={likeCount} active={liked} activeClass="fill-hot text-hot" onClick={onLike} />
-        <RailAction icon={MessageCircle} count={reel.comments} />
+        <RailAction icon={MessageCircle} count={reel.comments} onClick={onOpenComments} />
         <RailAction icon={Bookmark} count={saveCount} active={saved} activeClass="fill-white text-white" onClick={onSave} />
         <RailAction icon={Share2} label="공유" onClick={onShare} />
       </div>
@@ -225,5 +265,95 @@ function RailAction({ icon: Icon, count, label, active, activeClass, onClick }) 
       </span>
       <span className="text-[10.5px] font-bold text-white">{count != null ? compact(count) : label}</span>
     </button>
+  );
+}
+
+// 릴스 댓글 바텀시트 — 목록 조회 + 작성. 작성자 프로필(아바타·닉네임)을 함께 보여준다.
+function CommentsSheet({ reel, open, onClose }) {
+  const router = useRouter();
+  const toast = useToast();
+  const { isAuthenticated } = useAuth();
+  const reelId = reel?.id;
+  // 열렸을 때만 조회한다(닫혀 있으면 id=undefined → 비활성화).
+  const { data: comments = [], isLoading } = useReelComments(open ? reelId : undefined);
+  const commentMut = useCommentReel(reelId);
+  const [text, setText] = useState('');
+
+  const submit = (e) => {
+    e.preventDefault();
+    const content = text.trim();
+    if (!content || commentMut.isPending) return;
+    if (!isAuthenticated) {
+      toast.show('로그인이 필요해요', { type: 'error' });
+      const back = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/reels';
+      router.push('/login?next=' + encodeURIComponent(back));
+      return;
+    }
+    commentMut.mutate(content, {
+      onSuccess: () => setText(''),
+      onError: () => toast.show('댓글을 등록하지 못했어요', { type: 'error' }),
+    });
+  };
+
+  return (
+    <Sheet open={open} onClose={onClose} title={`댓글 ${comments.length || ''}`.trim()}>
+      <div className="space-y-5 pt-1">
+        {isLoading && <p className="py-8 text-center text-[13px] text-ink-soft">댓글을 불러오는 중…</p>}
+        {!isLoading && comments.length === 0 && (
+          <p className="py-10 text-center text-[13px] text-ink-soft">아직 댓글이 없어요. 첫 댓글을 남겨보세요!</p>
+        )}
+        {comments.map((c) => (
+          <CommentRow key={c.id} comment={c} />
+        ))}
+      </div>
+
+      {/* 입력 — 시트 하단에 붙여 스크롤해도 항상 보이게(sticky). -mb-6 로 시트 하단 패딩까지 채운다. */}
+      <form
+        onSubmit={submit}
+        className="sticky bottom-0 -mx-5 -mb-6 mt-3 flex items-center gap-2 border-t border-line bg-white px-5 pb-[max(0.875rem,env(safe-area-inset-bottom))] pt-3"
+      >
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={isAuthenticated ? '댓글 달기…' : '로그인하고 댓글 달기'}
+          maxLength={1000}
+          className="h-11 flex-1 rounded-full bg-surface-soft px-4 text-[14px] text-ink outline-none placeholder:text-ink-soft"
+        />
+        <button
+          type="submit"
+          disabled={!text.trim() || commentMut.isPending}
+          aria-label="댓글 등록"
+          className="tap grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand text-white transition disabled:opacity-40"
+        >
+          <Send size={18} />
+        </button>
+      </form>
+    </Sheet>
+  );
+}
+
+function CommentRow({ comment }) {
+  const name = comment.nickname || comment.author || '익명';
+  return (
+    <div className="flex gap-3">
+      <CommentAvatar src={comment.profileImageUrl} name={name} />
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <span className="truncate text-[13px] font-extrabold text-ink">{name}</span>
+          <span className="shrink-0 text-[11px] text-ink-soft">{relativeTime(comment.createdAt)}</span>
+        </div>
+        <p className="mt-0.5 whitespace-pre-wrap break-words text-[14px] leading-snug text-ink">
+          {comment.content || comment.body}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function CommentAvatar({ src, name }) {
+  return (
+    <div className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full bg-line text-[13px] font-bold text-ink-mid">
+      {src ? <img src={src} alt={name} className="h-full w-full object-cover" /> : <span>{(name || '?').slice(0, 1)}</span>}
+    </div>
   );
 }
