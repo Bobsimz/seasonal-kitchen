@@ -17,7 +17,7 @@ import { useToast } from '@/components/ui/Toast';
 
 const UNITS = ['개', '봉', '포기', '단', 'kg'];
 const CHECKPOINTS = ['당일배송', '당일수확', '유기농', '산지직송', '안심패킹', '소분포장'];
-const CATEGORIES = ['잎채소', '뿌리채소', '과채', '과일', '쌀/잡곡', '버섯', '해산물', '견과류'];
+const CATEGORIES = ['채소', '과일', '곡류', '기타'];
 const CERTIFICATIONS = ['무농약', '유기농(유기농산물)', '친환경', 'GAP인증', '저농약'];
 
 function FieldLabel({ label, required, hint }) {

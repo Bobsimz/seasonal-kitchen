@@ -46,4 +46,26 @@ public interface ProducerOfferRepository extends JpaRepository<ProducerOffer, Lo
     Page<ProducerOffer> searchProducts(@Param("q") String q, @Param("category") String category,
                                        @Param("region") String region, @Param("style") String style,
                                        Pageable pageable);
+
+    /** 위와 동일한 필터, 정렬만 가격 오름차순(동가는 id 내림차순 안정 정렬). 상품 탭 "낮은가격순"용. */
+    @Query(value = "select o from ProducerOffer o, com.seasonaldining.producer.entity.Producer p " +
+            "where o.producerId = p.id and o.status = 'ACTIVE' " +
+            "and (:q is null or lower(o.title) like lower(concat('%', cast(:q as string), '%')) " +
+            "     or lower(o.ingredientName) like lower(concat('%', cast(:q as string), '%')) " +
+            "     or lower(p.name) like lower(concat('%', cast(:q as string), '%'))) " +
+            "and (:category is null or o.category = :category) " +
+            "and (:region is null or lower(p.region) like lower(concat('%', cast(:region as string), '%'))) " +
+            "and (:style is null or p.style = :style) " +
+            "order by o.price asc, o.id desc",
+            countQuery = "select count(o) from ProducerOffer o, com.seasonaldining.producer.entity.Producer p " +
+            "where o.producerId = p.id and o.status = 'ACTIVE' " +
+            "and (:q is null or lower(o.title) like lower(concat('%', cast(:q as string), '%')) " +
+            "     or lower(o.ingredientName) like lower(concat('%', cast(:q as string), '%')) " +
+            "     or lower(p.name) like lower(concat('%', cast(:q as string), '%'))) " +
+            "and (:category is null or o.category = :category) " +
+            "and (:region is null or lower(p.region) like lower(concat('%', cast(:region as string), '%'))) " +
+            "and (:style is null or p.style = :style)")
+    Page<ProducerOffer> searchProductsByPriceAsc(@Param("q") String q, @Param("category") String category,
+                                                 @Param("region") String region, @Param("style") String style,
+                                                 Pageable pageable);
 }

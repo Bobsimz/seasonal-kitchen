@@ -70,12 +70,20 @@ public class ProductService {
         this.ingredientRepository = ingredientRepository;
     }
 
-    /** 상품 목록/검색 (페이지네이션 + q/category/region/style 필터). */
+    /**
+     * 상품 목록/검색 (페이지네이션 + q/category/region/style 필터 + sort).
+     * sort: "price_asc"(낮은가격순) | 그 외/미지정 = 추천순(id 내림차순, 최신).
+     */
     public ListResponse<ProductCardResponse> getProducts(String q, String category, String region, String style,
-                                                         int page, int size) {
-        Page<ProducerOffer> pageResult = offerRepository.searchProducts(
-                blankToNull(q), blankToNull(category), blankToNull(region), normalizeStyle(style),
-                PageRequest.of(page, size));
+                                                         String sort, int page, int size) {
+        String qn = blankToNull(q);
+        String cat = blankToNull(category);
+        String rg = blankToNull(region);
+        String st = normalizeStyle(style);
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<ProducerOffer> pageResult = "price_asc".equals(sort)
+                ? offerRepository.searchProductsByPriceAsc(qn, cat, rg, st, pageable)
+                : offerRepository.searchProducts(qn, cat, rg, st, pageable);
         List<ProductCardResponse> cards = toCards(pageResult.getContent());
         return new ListResponse<>(cards, pageResult.getNumber(), pageResult.getSize(),
                 pageResult.getTotalElements(), pageResult.hasNext());

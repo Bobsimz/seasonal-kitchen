@@ -158,6 +158,8 @@ export const useProducts = (params) =>
   useQuery({ queryKey: qk.products(params), queryFn: () => endpoints.listProducts(params), select: unwrapList });
 export const useProduct = (id) =>
   useQuery({ queryKey: qk.product(id), queryFn: () => endpoints.getProduct(id), enabled: !!id });
+export const useInfiniteProductCatalog = (params) =>
+  useInfiniteList(['products'], endpoints.listProducts, params);
 
 // ── Producers ──────────────────────────────────────────────
 export const useProducers = (params) =>

@@ -1,57 +1,57 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Plus, Bell, Search, ShoppingCart, ChevronDown, Check } from 'lucide-react';
-import { useProducts, useMyProducer, useHome, useCart } from '@/lib/queries';
+import { useInfiniteProductCatalog, useMyProducer, useHome, useCart } from '@/lib/queries';
 import { AppHeader, HeaderIconButton } from '@/components/layout';
 import { ChipTabs } from '@/components/ui/SegmentedToggle';
 import { Sheet } from '@/components/ui/Sheet';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState, EmptyState } from '@/components/ui/States';
+import { InfiniteSentinel } from '@/components/ui/InfiniteSentinel';
 import { ProductCard } from '@/components/domain/ProductCard';
 import { cn } from '@/lib/cn';
 
 // 카테고리 칩은 상품에 실제 존재하는 값에서 동적 생성 — 이 배열은 노출 순서만 정한다.
-const CAT_ORDER = ['잎채소', '뿌리채소', '열매채소', '꽃채소', '과일', '양념채소', '기타'];
+const CAT_ORDER = ['채소', '과일', '곡류', '기타'];
 
+// 정렬은 서버에서 처리한다(무한스크롤과 클라이언트 정렬은 충돌 — 페이지가 쌓일 때마다 순서가 흔들림).
+// value 는 백엔드 sort 파라미터값. recommended = 기본(최신순).
 const SORTS = [
-  { value: 'RECOMMENDED', label: '추천순' },
-  { value: 'PRICE_ASC', label: '낮은가격순' },
-  { value: 'REVIEW_DESC', label: '리뷰많은순' },
+  { value: 'recommended', label: '추천순' },
+  { value: 'price_asc', label: '낮은가격순' },
 ];
-// rating/reviewCount 는 백엔드 ProductCardResponse 미구현 필드(현재 mock 한정)라 누락 가능.
-// 누락 시 0 으로 보고 id 로 안정 정렬해 "정렬 안 됨"으로 조용히 무너지지 않게 한다.
-const SORT_FNS = {
-  RECOMMENDED: (a, b) => (b.rating ?? 0) - (a.rating ?? 0) || (b.reviewCount ?? 0) - (a.reviewCount ?? 0) || a.id - b.id,
-  PRICE_ASC: (a, b) => a.price - b.price || a.id - b.id,
-  REVIEW_DESC: (a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0) || a.id - b.id,
-};
 
 export default function ProductsPage() {
   const [category, setCategory] = useState('ALL');
-  const [sort, setSort] = useState('RECOMMENDED');
+  const [sort, setSort] = useState('recommended');
   const [sortOpen, setSortOpen] = useState(false);
 
-  // size 를 크게 잡아 (페이지네이션되는 실제 /products 에서도) 전체 카탈로그를 한 번에 받아
-  // 카테고리 칩·개수·클라이언트 정렬이 첫 페이지에만 적용되는 문제를 막는다.
-  const { data: allProducts = [], isLoading, error, refetch } = useProducts({ size: 100 });
+  // 카테고리 필터는 서버에 맡기고, 목록은 무한 스크롤로 페이지 단위로 받는다.
+  // category 가 바뀌면 queryKey 가 바뀌어 해당 카테고리부터 다시 받아온다.
+  const {
+    items: allProducts,
+    isLoading,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteProductCatalog({
+    category: category === 'ALL' ? undefined : category,
+    sort: sort === 'recommended' ? undefined : sort,
+  });
   const { data: myProducer } = useMyProducer();
   const { data: home } = useHome();
   const { data: cart } = useCart();
   const cartCount = cart?.groups?.reduce((n, g) => n + g.items.length, 0) ?? 0;
 
-  // 노출 순서를 적용해 실제 존재하는 카테고리만 칩으로.
-  const filters = useMemo(() => {
-    const present = new Set(allProducts.map((p) => p.category));
-    const cats = CAT_ORDER.filter((c) => present.has(c)).map((c) => ({ value: c, label: c }));
-    return [{ value: 'ALL', label: '전체' }, ...cats];
-  }, [allProducts]);
+  // 칩은 고정 분류(채소·과일·곡류·기타) — 로드된 상품에 의존하지 않는다.
+  const filters = [{ value: 'ALL', label: '전체' }, ...CAT_ORDER.map((c) => ({ value: c, label: c }))];
 
-  const list = useMemo(() => {
-    const arr = category === 'ALL' ? allProducts : allProducts.filter((p) => p.category === category);
-    return [...arr].sort(SORT_FNS[sort] || SORT_FNS.RECOMMENDED);
-  }, [allProducts, category, sort]);
+  // 서버가 카테고리 필터 + 정렬을 끝냈으니 그대로 사용(클라이언트 재정렬 X — 무한스크롤 순서 안정).
+  const list = allProducts;
 
   const sortLabel = SORTS.find((s) => s.value === sort)?.label ?? '추천순';
 
@@ -83,7 +83,7 @@ export default function ProductsPage() {
             {/* 개수 / 정렬 행 */}
             <div className="flex items-center justify-between px-5 pb-2.5 pt-3.5">
               <span className="text-[12.5px] text-ink-mid">
-                <b className="text-ink">{list.length}개</b>의 상품
+                <b className="text-ink">{list.length}개{hasNextPage ? '+' : ''}</b>의 상품
               </span>
               <button
                 onClick={() => setSortOpen(true)}
@@ -113,6 +113,7 @@ export default function ProductsPage() {
                 ))}
               </div>
             )}
+            <InfiniteSentinel hasMore={hasNextPage} loading={isFetchingNextPage} onLoadMore={fetchNextPage} />
           </div>
         </>
       )}

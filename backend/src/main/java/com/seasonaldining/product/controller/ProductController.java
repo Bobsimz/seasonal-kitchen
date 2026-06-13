@@ -37,10 +37,11 @@ public class ProductController {
             @Parameter(description = "카테고리", example = "잎채소") @RequestParam(required = false) String category,
             @Parameter(description = "지역(부분일치)", example = "영천") @RequestParam(required = false) String region,
             @Parameter(description = "농가 스타일", example = "ORGANIC") @RequestParam(required = false) String style,
+            @Parameter(description = "정렬: price_asc | (기본)추천순") @RequestParam(required = false) String sort,
             @Parameter(description = "페이지(0-base)", example = "0") @RequestParam(defaultValue = "0") @Min(0) int page,
             @Parameter(description = "페이지 크기", example = "20") @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size
     ) {
-        return ApiResponse.success(productService.getProducts(q, category, region, style, page, size), null);
+        return ApiResponse.success(productService.getProducts(q, category, region, style, sort, page, size), null);
     }
 
     @GetMapping("/{id}")
