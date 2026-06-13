@@ -144,15 +144,17 @@ export default function ProductsPage() {
         </div>
       </Sheet>
 
-      {/* 우하단 + FAB — 판매 등록 진입 (프레임 내부 고정) */}
-      <Link
-        href={sellHref}
-        aria-label="판매 등록"
-        className="tap fixed bottom-[96px] right-4 z-30 flex h-[52px] items-center gap-1.5 rounded-full bg-gradient-to-br from-brand to-brand-dark pl-4 pr-5 text-white shadow-[0_8px_20px_rgba(22,193,114,0.4)] sm:bottom-[102px]"
-      >
-        <Plus size={20} strokeWidth={2.4} />
-        <span className="text-[14.5px] font-extrabold tracking-tight">판매 등록</span>
-      </Link>
+      {/* 우하단 + FAB — 내 농가가 있을 때만 노출 */}
+      {myProducer && (
+        <Link
+          href={sellHref}
+          aria-label="판매 등록"
+          className="tap fixed bottom-[96px] right-4 z-30 flex h-[52px] items-center gap-1.5 rounded-full bg-gradient-to-br from-brand to-brand-dark pl-4 pr-5 text-white shadow-[0_8px_20px_rgba(22,193,114,0.4)] sm:bottom-[102px]"
+        >
+          <Plus size={20} strokeWidth={2.4} />
+          <span className="text-[14.5px] font-extrabold tracking-tight">판매 등록</span>
+        </Link>
+      )}
     </>
   );
 }
