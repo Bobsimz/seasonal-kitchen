@@ -14,8 +14,11 @@ public record HomeResponse(
         @Schema(description = "홈 제철 설명", example = "지금이 가장 알뜰한 제철 식재료를 모았어요")
         String seasonSubtitle,
 
-        @Schema(description = "홈 히어로 카드")
+        @Schema(description = "홈 히어로 카드(단일, 하위 호환). heroes[0]과 동일하며 heroes가 비면 null")
         HeroResponse hero,
+
+        @Schema(description = "홈 히어로 카드 목록(캐러셀용 배열). 식재료가 없으면 빈 배열")
+        List<HeroResponse> heroes,
 
         @Schema(description = "홈 추천 식재료") List<IngredientCardResponse> ingredients,
         @Schema(description = "홈 추천 레시피") List<RecipeCardResponse> recipes,
@@ -33,7 +36,13 @@ public record HomeResponse(
             @Schema(description = "주요 이동 대상 유형", example = "INGREDIENT")
             String primaryTargetType,
             @Schema(description = "주요 이동 대상 ID", example = "1", nullable = true)
-            Long primaryTargetId
+            Long primaryTargetId,
+            @Schema(description = "식재료 ID(프론트 카드 키·링크용). INGREDIENT 히어로면 primaryTargetId와 동일", example = "1", nullable = true)
+            Long ingredientId,
+            @Schema(description = "가격 라벨(표시용 문자열). 가격 정보 없으면 null", example = "1,980원/1개", nullable = true)
+            String priceLabel,
+            @Schema(description = "가격 추세 라벨(표시용). 주간 변동 기준, 없으면 null", example = "▼ 12.5%", nullable = true)
+            String trendLabel
     ) {
     }
 

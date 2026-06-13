@@ -1,6 +1,7 @@
 package com.seasonaldining.home.service;
 
 import com.seasonaldining.home.dto.response.HomeResponse;
+import com.seasonaldining.ingredient.dto.response.IngredientCardResponse;
 import com.seasonaldining.ingredient.service.IngredientService;
 import com.seasonaldining.recipe.service.RecipeService;
 import com.seasonaldining.reel.service.ReelService;
@@ -30,17 +31,17 @@ public class HomeService {
     public HomeResponse getHome() {
         PageRequest latest = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "id"));
         var ingredients = ingredientService.getIngredients(latest).items();
-        Long primaryTargetId = ingredients.isEmpty() ? null : ingredients.get(0).id();
+        // 캐러셀용 히어로 배열(상위 식재료 최대 5개). hero(단일)는 하위 호환을 위해 heroes[0]로 유지.
+        List<HomeResponse.HeroResponse> heroes = ingredients.stream()
+                .limit(5)
+                .map(HomeService::toHero)
+                .toList();
+        HomeResponse.HeroResponse hero = heroes.isEmpty() ? null : heroes.get(0);
         return new HomeResponse(
                 "이번 주 제철 식탁",
                 "가격과 제철 흐름을 기준으로 추천했어요",
-                new HomeResponse.HeroResponse(
-                        "지금이 가장 알뜰한 제철 식재료",
-                        "오늘의 추천 재료와 레시피를 한 번에 확인하세요",
-                        ingredients.isEmpty() ? null : ingredients.get(0).imageUrl(),
-                        primaryTargetId == null ? null : "INGREDIENT",
-                        primaryTargetId
-                ),
+                hero,
+                heroes,
                 ingredients,
                 recipeService.getRecipes(latest).items(),
                 reelService.getReels(null).stream()
@@ -59,6 +60,37 @@ public class HomeService {
                         .toList(),
                 searchService.trending(),
                 0
+        );
+    }
+
+    /** 식재료 카드 → 홈 히어로 카드. 가격/추세 라벨은 표시용 문자열로 미리 만들어 내려준다. */
+    private static HomeResponse.HeroResponse toHero(IngredientCardResponse card) {
+        IngredientCardResponse.PriceSummaryResponse price = card.price();
+
+        String priceLabel = null;
+        if (price != null && price.currentPrice() != null) {
+            priceLabel = String.format("%,d원", price.currentPrice().longValue());
+            if (price.unit() != null && !price.unit().isBlank()) {
+                priceLabel += "/" + price.unit();
+            }
+        }
+
+        String trendLabel = null;
+        if (price != null && price.weekChangeRate() != null) {
+            int sign = price.weekChangeRate().signum();
+            String arrow = sign < 0 ? "▼" : sign > 0 ? "▲" : "−";
+            trendLabel = arrow + " " + price.weekChangeRate().abs().stripTrailingZeros().toPlainString() + "%";
+        }
+
+        return new HomeResponse.HeroResponse(
+                card.name(),
+                card.seasonal() ? "지금이 제철이에요" : "이번 주 추천 식재료",
+                card.imageUrl(),
+                "INGREDIENT",
+                card.id(),
+                card.id(),
+                priceLabel,
+                trendLabel
         );
     }
 }

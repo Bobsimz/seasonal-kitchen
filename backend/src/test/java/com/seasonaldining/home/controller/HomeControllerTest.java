@@ -33,11 +33,26 @@ class HomeControllerTest {
         reels.save(new Reel(recipe.getId(),creator.getId(),"무조림 1분","간단 레시피","https://example.com/reel.mp4","https://example.com/reel.png","무,간단",48,"PUBLISHED",java.time.OffsetDateTime.now()));
         mvc.perform(get("/api/v1/home")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.seasonTitle").exists())
-                .andExpect(jsonPath("$.data.hero.title").exists())
+                // 캐러셀용 heroes는 배열이어야 하고(프론트 .map 대상), hero == heroes[0]
+                .andExpect(jsonPath("$.data.heroes").isArray())
+                .andExpect(jsonPath("$.data.heroes.length()").value(1))
+                .andExpect(jsonPath("$.data.heroes[0].title").value("무"))
+                .andExpect(jsonPath("$.data.heroes[0].ingredientId").value(org.hamcrest.Matchers.notNullValue()))
+                // hero(단일)는 heroes[0]과 동일해야 한다
+                .andExpect(jsonPath("$.data.hero.title").value("무"))
+                .andExpect(jsonPath("$.data.hero.ingredientId").value(org.hamcrest.Matchers.notNullValue()))
                 .andExpect(jsonPath("$.data.ingredients.length()").value(1))
                 .andExpect(jsonPath("$.data.recipes.length()").value(1))
                 .andExpect(jsonPath("$.data.reels.length()").value(1))
                 .andExpect(jsonPath("$.data.trendingKeywords").isArray())
                 .andExpect(jsonPath("$.data.unreadNotificationCount").value(0));
+    }
+
+    @Test void emptyIngredients_heroesIsEmptyArrayAndHeroNull() throws Exception {
+        // 식재료가 하나도 없으면 heroes=[](빈 배열), hero=null — 프론트가 heroes.map 해도 안전해야 한다
+        mvc.perform(get("/api/v1/home")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.heroes").isArray())
+                .andExpect(jsonPath("$.data.heroes.length()").value(0))
+                .andExpect(jsonPath("$.data.hero").value(org.hamcrest.Matchers.nullValue()));
     }
 }

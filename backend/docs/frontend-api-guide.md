@@ -869,6 +869,9 @@ targetType별 매핑:
 |---|---|---|---|
 | 🔓 | GET | `/api/v1/home` | 홈 화면(시즌 추천·재료·레시피·릴스·인기검색어·미읽음알림수) |
 | 🔓 | GET | `/api/v1/search?q=&type=ALL\|INGREDIENT\|RECIPE\|PRODUCT` | 통합 검색(PRODUCT=상품 facade) |
+
+> **홈 히어로**: `GET /api/v1/home` 응답에 `hero`(단일, 하위 호환)와 **`heroes`(배열, 캐러셀용)** 둘 다 있습니다. `hero`는 `heroes[0]`과 동일하고, 식재료가 없으면 `hero=null`·`heroes=[]`입니다. 캐러셀 컴포넌트는 `heroes`를 그대로 `.map` 하면 됩니다(단일 객체 아님).
+> 각 hero 필드: `title`(식재료명), `subtitle`, `imageUrl`, `ingredientId`, `primaryTargetType`/`primaryTargetId`, `priceLabel`(예: `"1,980원/1개"`, 가격 없으면 null), `trendLabel`(예: `"▼ 12.5%"`, 없으면 null).
 | 🔓 | GET | `/api/v1/products` | 상품 목록/검색(producer_offers facade, §13) |
 | 🔓 | GET | `/api/v1/products/{id}` | 상품 상세(id=offer id, §13) |
 | 🔓 | GET | `/api/v1/search/trending` | 인기 검색어 |
