@@ -15,8 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
-import org.springframework.data.web.SortDefault.SortDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,15 +39,20 @@ public class IngredientController {
     }
 
     @GetMapping
-    @Operation(summary = "식재료 목록 조회", description = "활성(active=true) 식재료만 페이지네이션으로 조회합니다.")
+    @Operation(summary = "식재료 목록 조회", description = "활성 식재료. category 필터 + sort(price_asc|price_desc|name) 지원.")
     public ApiResponse<ListResponse<IngredientCardResponse>> getIngredients(
-            @Parameter(description = "페이지/정렬 정보")
-            @PageableDefault(size = 20)
-            @SortDefaults({
-                    @SortDefault(sort = "id", direction = org.springframework.data.domain.Sort.Direction.DESC)
-            }) Pageable pageable
+            @Parameter(description = "카테고리 필터", example = "엽채류") @RequestParam(required = false) String category,
+            @Parameter(description = "정렬: price_asc|price_desc|name") @RequestParam(required = false) String sort,
+            @Parameter(description = "페이지 정보(page/size)")
+            @PageableDefault(size = 20) Pageable pageable
     ) {
-        return ApiResponse.success(ingredientService.getIngredients(pageable), null);
+        return ApiResponse.success(ingredientService.getIngredients(category, sort, pageable), null);
+    }
+
+    @GetMapping("/categories")
+    @Operation(summary = "식재료 카테고리 목록", description = "필터 칩용 — 활성 식재료의 카테고리 목록.")
+    public ApiResponse<List<String>> getCategories() {
+        return ApiResponse.success(ingredientService.getCategories(), null);
     }
 
     @GetMapping("/{ingredientId}")

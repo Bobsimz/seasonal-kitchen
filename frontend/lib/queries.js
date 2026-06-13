@@ -2,7 +2,7 @@
 //   const { data, isLoading, error } = useHome();
 'use client';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { endpoints } from './endpoints';
 import { useAuth } from './auth';
 
@@ -44,6 +44,21 @@ export const qk = {
 
 const unwrapList = (d) => (Array.isArray(d) ? d : d?.items || []);
 
+// 무한 스크롤 공통 헬퍼 — ListResponse({ items, page, hasNext })를 페이지 단위로 이어 받는다.
+// 다음 페이지 파라미터는 응답의 hasNext/page 로 계산(없으면 종료 → 단일 페이지).
+const PAGE_SIZE = 20;
+function useInfiniteList(key, fetchPage, params) {
+  const query = useInfiniteQuery({
+    queryKey: [...key, 'infinite', params || {}],
+    queryFn: ({ pageParam = 0 }) => fetchPage({ ...params, page: pageParam, size: PAGE_SIZE }),
+    initialPageParam: 0,
+    getNextPageParam: (last) => (last?.hasNext ? (last.page ?? 0) + 1 : undefined),
+  });
+  // 모든 페이지의 items 를 평탄화해 단일 배열로 노출.
+  const items = (query.data?.pages ?? []).flatMap((p) => unwrapList(p));
+  return { ...query, items };
+}
+
 // ── Home / Search ──────────────────────────────────────────
 export const useHome = () => useQuery({ queryKey: qk.home, queryFn: endpoints.getHome });
 export const useSearch = (q, type = 'ALL', enabled = true) =>
@@ -64,6 +79,10 @@ export const useRecentSearches = () => {
 // ── Ingredients ────────────────────────────────────────────
 export const useIngredients = (params) =>
   useQuery({ queryKey: qk.ingredients(params), queryFn: () => endpoints.listIngredients(params), select: unwrapList });
+export const useInfiniteIngredients = (params) =>
+  useInfiniteList(['ingredients'], endpoints.listIngredients, params);
+export const useIngredientCategories = () =>
+  useQuery({ queryKey: ['ingredient-categories'], queryFn: endpoints.listIngredientCategories });
 export const useIngredient = (id) =>
   useQuery({ queryKey: qk.ingredient(id), queryFn: () => endpoints.getIngredient(id), enabled: !!id });
 export const useIngredientPrices = (id) =>
@@ -82,6 +101,10 @@ export const useIngredientProducts = (id) =>
 // ── Recipes ────────────────────────────────────────────────
 export const useRecipes = (params) =>
   useQuery({ queryKey: qk.recipes(params), queryFn: () => endpoints.listRecipes(params), select: unwrapList });
+export const useInfiniteRecipes = (params) =>
+  useInfiniteList(['recipes'], endpoints.listRecipes, params);
+export const useRecipeTags = () =>
+  useQuery({ queryKey: ['recipe-tags'], queryFn: endpoints.listRecipeTags });
 export const useRecipe = (id) =>
   useQuery({ queryKey: qk.recipe(id), queryFn: () => endpoints.getRecipe(id), enabled: !!id });
 export const useRecipeSteps = (id) =>
@@ -136,6 +159,10 @@ export const useProduct = (id) =>
 // ── Producers ──────────────────────────────────────────────
 export const useProducers = (params) =>
   useQuery({ queryKey: qk.producers(params), queryFn: () => endpoints.listProducers(params), select: unwrapList });
+export const useInfiniteProducers = (params) =>
+  useInfiniteList(['producers'], endpoints.listProducers, params);
+export const useProducerRegions = () =>
+  useQuery({ queryKey: ['producer-regions'], queryFn: endpoints.listProducerRegions });
 export const useProducer = (id) =>
   useQuery({ queryKey: qk.producer(id), queryFn: () => endpoints.getProducer(id), enabled: !!id });
 export const useProducerOffers = (id) =>

@@ -45,6 +45,7 @@ export const endpoints = {
 
   // ── Ingredients ────────────────────────────────────────
   listIngredients: (params) => withFallback(() => api.get('/ingredients', { params }), () => ({ items: mock.listIngredients() })),
+  listIngredientCategories: () => withFallback(() => api.get('/ingredients/categories'), () => []),
   getIngredient: (id) => withFallback(() => api.get(`/ingredients/${id}`), () => mock.getIngredient(id)),
   getIngredientPrices: (id) => withFallback(() => api.get(`/ingredients/${id}/prices`), () => mock.ingredientPrices(id)),
   getIngredientSubstitutes: (id) => withFallback(() => api.get(`/ingredients/${id}/substitutes`), () => mock.ingredientSubstitutes(id)),
@@ -55,6 +56,7 @@ export const endpoints = {
 
   // ── Recipes ────────────────────────────────────────────
   listRecipes: (params) => withFallback(() => api.get('/recipes', { params }), () => ({ items: mock.listRecipes() })),
+  listRecipeTags: () => withFallback(() => api.get('/recipes/tags'), () => []),
   getRecipe: (id) => withFallback(() => api.get(`/recipes/${id}`), () => mock.getRecipe(id)),
   getRecipeSteps: (id) => withFallback(() => api.get(`/recipes/${id}/steps`), () => mock.recipeSteps(id)),
 
@@ -85,6 +87,7 @@ export const endpoints = {
 
   // ── Producers ──────────────────────────────────────────
   listProducers: (params) => withFallback(() => api.get('/producers', { params }), () => ({ items: mock.producers, page: 0, size: 20, totalElements: mock.producers.length, hasNext: false })),
+  listProducerRegions: () => withFallback(() => api.get('/producers/regions'), () => []),
   getProducer: (id) => withFallback(() => api.get(`/producers/${id}`), () => mock.getProducer(id)),
   getProducerOffers: (id) => withFallback(() => api.get(`/producers/${id}/offers`), () => mock.producerOffers(id)),
   getProducerReviews: (id) => withFallback(() => api.get(`/producers/${id}/reviews`), () => mock.producerReviews(id)),

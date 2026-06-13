@@ -119,23 +119,23 @@ class ProducerServiceTest {
 
     @Test
     void search_byIngredientName_findsProducer() {
-        assertThat(producerService.getProducers("시금치", null, null, PageRequest.of(0, 20)).items())
+        assertThat(producerService.getProducers("시금치", null, null, null, PageRequest.of(0, 20)).items())
                 .anySatisfy(c -> assertThat(c.id()).isEqualTo(PID));
     }
 
     @Test
     void search_combinesQWithHonoraryAndStyleFilters() {
         // q + honorary=true → 포함 (PID는 honorary=true)
-        assertThat(producerService.getProducers("시금치", null, true, PageRequest.of(0, 50)).items())
+        assertThat(producerService.getProducers("시금치", null, true, null, PageRequest.of(0, 50)).items())
                 .anySatisfy(c -> assertThat(c.id()).isEqualTo(PID));
         // q + honorary=false → 제외
-        assertThat(producerService.getProducers("시금치", null, false, PageRequest.of(0, 50)).items())
+        assertThat(producerService.getProducers("시금치", null, false, null, PageRequest.of(0, 50)).items())
                 .noneSatisfy(c -> assertThat(c.id()).isEqualTo(PID));
         // q + style 불일치(VALUE) → 제외 (PID는 ORGANIC)
-        assertThat(producerService.getProducers("시금치", "VALUE", null, PageRequest.of(0, 50)).items())
+        assertThat(producerService.getProducers("시금치", "VALUE", null, null, PageRequest.of(0, 50)).items())
                 .noneSatisfy(c -> assertThat(c.id()).isEqualTo(PID));
         // q + style 일치(ORGANIC) → 포함
-        assertThat(producerService.getProducers("시금치", "ORGANIC", null, PageRequest.of(0, 50)).items())
+        assertThat(producerService.getProducers("시금치", "ORGANIC", null, null, PageRequest.of(0, 50)).items())
                 .anySatisfy(c -> assertThat(c.id()).isEqualTo(PID));
     }
 }

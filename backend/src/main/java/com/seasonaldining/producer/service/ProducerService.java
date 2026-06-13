@@ -75,14 +75,22 @@ public class ProducerService {
     }
 
     @Transactional(readOnly = true)
-    public ListResponse<ProducerCardResponse> getProducers(String q, String style, Boolean honorary, Pageable pageable) {
-        // q(특산품명) + style + honorary 를 함께 적용 + 페이지네이션 (통합 쿼리)
+    public ListResponse<ProducerCardResponse> getProducers(String q, String style, Boolean honorary, String region, Pageable pageable) {
+        // q(특산품명) + style + honorary + region 을 함께 적용 + 페이지네이션 (통합 쿼리)
+        // 정렬(rating/reviewCount/name)은 컬럼이라 Pageable 로 그대로 적용된다.
         String qn = (q == null || q.isBlank()) ? null : q.trim();
         String st = (style == null || style.isBlank()) ? null : style.trim().toUpperCase();
-        Page<Producer> page = producerRepository.findAll(producerSearchSpec(qn, st, honorary), pageable);
+        String rg = (region == null || region.isBlank()) ? null : region.trim();
+        Page<Producer> page = producerRepository.findAll(producerSearchSpec(qn, st, honorary, rg), pageable);
         return new ListResponse<>(
                 page.map(this::toCard).getContent(),
                 page.getNumber(), page.getSize(), page.getTotalElements(), page.hasNext());
+    }
+
+    /** 필터 칩용 — 농가 지역 목록. */
+    @Transactional(readOnly = true)
+    public List<String> getRegions() {
+        return producerRepository.findDistinctRegions();
     }
 
     @Transactional(readOnly = true)
@@ -384,7 +392,7 @@ public class ProducerService {
         }
     }
 
-    private Specification<Producer> producerSearchSpec(String q, String style, Boolean honorary) {
+    private Specification<Producer> producerSearchSpec(String q, String style, Boolean honorary, String region) {
         return (root, query, cb) -> {
             var predicate = cb.conjunction();
             if (q != null) {
@@ -402,6 +410,9 @@ public class ProducerService {
             }
             if (honorary != null) {
                 predicate = cb.and(predicate, cb.equal(root.get("honorary"), honorary));
+            }
+            if (region != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("region"), region));
             }
             return predicate;
         };

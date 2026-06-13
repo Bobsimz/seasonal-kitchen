@@ -4,6 +4,8 @@ import com.seasonaldining.recipe.entity.Recipe;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 import java.util.List;
@@ -15,4 +17,43 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     Optional<Recipe> findByIdAndStatus(Long id, String status);
     List<Recipe> findTop20ByStatusAndTitleContainingIgnoreCaseOrderByIdDesc(String status, String title);
     List<Recipe> findByIdInAndStatus(List<Long> ids, String status);
+
+    /** 컬럼 기반 정렬(minutes/title 등)용 — 상태 + 선택적 태그 필터. 정렬은 Pageable 로 전달. */
+    @Query("""
+            select r from Recipe r
+            where r.status = :status
+              and (:tag is null or exists (
+                    select 1 from RecipeTag t where t.recipeId = r.id and t.tag = :tag))
+            """)
+    Page<Recipe> findPublishedFiltered(@Param("status") String status,
+                                       @Param("tag") String tag,
+                                       Pageable pageable);
+
+    /**
+     * 좋아요(연결 릴스 like_count 합) 내림차순 — 파생값이라 네이티브로 조인 정렬.
+     * 선택적 태그 필터. 정렬이 쿼리에 고정돼 있으므로 Pageable 에는 정렬을 넣지 않는다(page/size 만).
+     */
+    @Query(value = """
+            select r.* from recipes r
+            left join (
+                select rl.recipe_id, sum(rl.like_count) as likes
+                from reels rl
+                where rl.status = 'PUBLISHED' and rl.recipe_id is not null
+                group by rl.recipe_id
+            ) agg on agg.recipe_id = r.id
+            where r.status = :status
+              and (:tag is null or exists (
+                    select 1 from recipe_tags t where t.recipe_id = r.id and t.tag = :tag))
+            order by coalesce(agg.likes, 0) desc, r.id desc
+            """,
+            countQuery = """
+            select count(*) from recipes r
+            where r.status = :status
+              and (:tag is null or exists (
+                    select 1 from recipe_tags t where t.recipe_id = r.id and t.tag = :tag))
+            """,
+            nativeQuery = true)
+    Page<Recipe> findPublishedOrderByLikesDesc(@Param("status") String status,
+                                               @Param("tag") String tag,
+                                               Pageable pageable);
 }

@@ -35,14 +35,22 @@ public class ProducerController {
     }
 
     @GetMapping
-    @Operation(summary = "농가 목록/검색 조회", description = "q(식재료명 검색), style, honorary 필터를 지원합니다.")
+    @Operation(summary = "농가 목록/검색 조회", description = "q(식재료명 검색), style, honorary, region 필터 + 정렬(sort=rating,desc 등)을 지원합니다.")
     public ApiResponse<ListResponse<ProducerCardResponse>> getProducers(
             @Parameter(description = "식재료명 검색어", example = "봄동") @RequestParam(required = false) String q,
             @Parameter(description = "스타일", example = "PREMIUM") @RequestParam(required = false) String style,
             @Parameter(description = "명예 농가만", example = "true") @RequestParam(required = false) Boolean honorary,
+            @Parameter(description = "지역 필터", example = "전남") @RequestParam(required = false) String region,
+            @Parameter(description = "정렬: rating,desc | reviewCount,desc | name,asc")
             @PageableDefault(size = 20) @SortDefault(sort = "rating", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return ApiResponse.success(producerService.getProducers(q, style, honorary, pageable), null);
+        return ApiResponse.success(producerService.getProducers(q, style, honorary, region, pageable), null);
+    }
+
+    @GetMapping("/regions")
+    @Operation(summary = "농가 지역 목록", description = "필터 칩용 — 농가 지역 목록.")
+    public ApiResponse<List<String>> getRegions() {
+        return ApiResponse.success(producerService.getRegions(), null);
     }
 
     @GetMapping("/{producerId}")

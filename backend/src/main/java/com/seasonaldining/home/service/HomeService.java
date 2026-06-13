@@ -30,7 +30,7 @@ public class HomeService {
 
     public HomeResponse getHome() {
         PageRequest latest = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "id"));
-        var ingredients = ingredientService.getIngredients(latest).items();
+        var ingredients = ingredientService.getIngredients(null, null, latest).items();
         // 캐러셀용 히어로 배열(상위 식재료 최대 5개). hero(단일)는 하위 호환을 위해 heroes[0]로 유지.
         List<HomeResponse.HeroResponse> heroes = ingredients.stream()
                 .limit(5)
@@ -43,7 +43,7 @@ public class HomeService {
                 hero,
                 heroes,
                 ingredients,
-                recipeService.getRecipes(latest).items(),
+                recipeService.getRecipes(null, null, latest).items(),
                 reelService.getReels(null).stream()
                         .limit(6)
                         .map(reel -> new HomeResponse.HomeReelResponse(

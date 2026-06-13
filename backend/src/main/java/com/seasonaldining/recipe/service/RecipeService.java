@@ -18,12 +18,15 @@ import com.seasonaldining.recipe.entity.RecipeStep;
 import com.seasonaldining.recipe.repository.RecipeIngredientRepository;
 import com.seasonaldining.recipe.repository.RecipeRepository;
 import com.seasonaldining.recipe.repository.RecipeStepRepository;
+import com.seasonaldining.recipe.repository.RecipeTagRepository;
 import com.seasonaldining.reel.entity.ReelReaction;
 import com.seasonaldining.reel.repository.CreatorRepository;
 import com.seasonaldining.reel.repository.ReelReactionRepository;
 import com.seasonaldining.reel.repository.ReelRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +50,7 @@ public class RecipeService {
     private final ReelRepository reelRepository;
     private final CreatorRepository creatorRepository;
     private final ReelReactionRepository reelReactionRepository;
+    private final RecipeTagRepository recipeTagRepository;
     private final MediaUrlResolver mediaUrls;
 
     public RecipeService(
@@ -58,6 +62,7 @@ public class RecipeService {
             ReelRepository reelRepository,
             CreatorRepository creatorRepository,
             ReelReactionRepository reelReactionRepository,
+            RecipeTagRepository recipeTagRepository,
             MediaUrlResolver mediaUrls
     ) {
         this.recipeRepository = recipeRepository;
@@ -68,6 +73,7 @@ public class RecipeService {
         this.reelRepository = reelRepository;
         this.creatorRepository = creatorRepository;
         this.reelReactionRepository = reelReactionRepository;
+        this.recipeTagRepository = recipeTagRepository;
         this.mediaUrls = mediaUrls;
     }
 
@@ -158,8 +164,26 @@ public class RecipeService {
         );
     }
 
-    public ListResponse<RecipeCardResponse> getRecipes(Pageable pageable) {
-        Page<Recipe> recipePage = recipeRepository.findByStatus(PUBLISHED, pageable);
+    /**
+     * 레시피 목록 — 선택적 태그 필터 + 정렬(서버사이드).
+     * sort: "likes"(기본, 좋아요 많은 순) | "time_asc"(조리 빠른 순) | "title"(이름순).
+     * 좋아요는 파생값이라 네이티브 조인 정렬, 나머지는 컬럼 정렬(Pageable).
+     */
+    public ListResponse<RecipeCardResponse> getRecipes(String tag, String sort, Pageable pageable) {
+        String tagFilter = (tag == null || tag.isBlank()) ? null : tag;
+        int page = pageable.getPageNumber();
+        int size = pageable.getPageSize();
+
+        Page<Recipe> recipePage = switch (sort == null ? "" : sort) {
+            case "time_asc" -> recipeRepository.findPublishedFiltered(
+                    PUBLISHED, tagFilter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "minutes")));
+            case "title" -> recipeRepository.findPublishedFiltered(
+                    PUBLISHED, tagFilter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "title")));
+            // 기본 "likes" 및 미지정 — 좋아요 많은 순(네이티브 조인 정렬, page/size 만 전달).
+            default -> recipeRepository.findPublishedOrderByLikesDesc(
+                    PUBLISHED, tagFilter, PageRequest.of(page, size));
+        };
+
         List<RecipeCardResponse> items = recipePage.getContent().stream()
                 .map(this::toCardResponse)
                 .toList();
@@ -171,6 +195,11 @@ public class RecipeService {
                 recipePage.getTotalElements(),
                 recipePage.hasNext()
         );
+    }
+
+    /** 필터 칩용 — 사용 중인 레시피 태그 목록. */
+    public List<String> getTags() {
+        return recipeTagRepository.findDistinctTags();
     }
 
     public RecipeCardResponse toCardResponse(Recipe recipe) {

@@ -28,7 +28,9 @@ import com.seasonaldining.store.entity.StoreOffer;
 import com.seasonaldining.store.repository.StoreOfferRepository;
 import com.seasonaldining.store.repository.StoreRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,8 +94,25 @@ public class IngredientService {
                 .toList();
     }
 
-    public ListResponse<IngredientCardResponse> getIngredients(Pageable pageable) {
-        Page<Ingredient> ingredientPage = ingredientRepository.findByActiveTrue(pageable);
+    /**
+     * 식재료 목록 — 선택적 카테고리 필터 + 정렬(서버사이드).
+     * sort: "price_asc" | "price_desc"(최신 시세 기준, 파생값 → 네이티브 조인) | "name"(이름순) | 기본(id desc).
+     */
+    public ListResponse<IngredientCardResponse> getIngredients(String category, String sort, Pageable pageable) {
+        String categoryFilter = (category == null || category.isBlank()) ? null : category;
+        int page = pageable.getPageNumber();
+        int size = pageable.getPageSize();
+
+        Page<Ingredient> ingredientPage = switch (sort == null ? "" : sort) {
+            case "price_asc" -> ingredientRepository.findActiveOrderByPriceAsc(
+                    categoryFilter, PageRequest.of(page, size));
+            case "price_desc" -> ingredientRepository.findActiveOrderByPriceDesc(
+                    categoryFilter, PageRequest.of(page, size));
+            case "name" -> ingredientRepository.findActiveFiltered(
+                    categoryFilter, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "name")));
+            default -> ingredientRepository.findActiveFiltered(
+                    categoryFilter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
+        };
 
         List<IngredientCardResponse> items = ingredientPage.getContent().stream()
                 .map(this::toCardResponse)
@@ -106,6 +125,11 @@ public class IngredientService {
                 ingredientPage.getTotalElements(),
                 ingredientPage.hasNext()
         );
+    }
+
+    /** 필터 칩용 — 활성 식재료의 카테고리 목록. */
+    public List<String> getCategories() {
+        return ingredientRepository.findDistinctCategories();
     }
 
     public IngredientDetailResponse getIngredientDetail(Long ingredientId) {

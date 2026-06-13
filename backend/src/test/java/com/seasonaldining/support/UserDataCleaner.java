@@ -20,6 +20,7 @@ public final class UserDataCleaner {
         jdbcTemplate.update("DELETE FROM ingredient_substitutes");
         jdbcTemplate.update("DELETE FROM recipe_steps");
         jdbcTemplate.update("DELETE FROM recipe_ingredients");
+        jdbcTemplate.update("DELETE FROM recipe_tags");   // recipes FK 참조 → 레시피 삭제 전에 정리
         jdbcTemplate.update("DELETE FROM recipes");
         jdbcTemplate.update("DELETE FROM price_forecasts");
         jdbcTemplate.update("DELETE FROM price_snapshots");

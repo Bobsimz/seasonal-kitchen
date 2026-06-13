@@ -125,7 +125,7 @@ class ProducerSelfRegistrationTest {
                 new CreateOfferRequest(null, "당근", new BigDecimal("3000"), "kg", null, null, null, null, null, null, null,
                         List.of("무농약"), null, "냉장 보관", null, null, null, null));
         // q='당근' 검색에서 내 농가가 나와야 한다 (specialty upsert 덕분)
-        assertThat(producerService.getProducers("당근", null, null, PageRequest.of(0, 50)).items())
+        assertThat(producerService.getProducers("당근", null, null, null, PageRequest.of(0, 50)).items())
                 .anySatisfy(c -> assertThat(c.id()).isEqualTo(d.id()));
     }
 
