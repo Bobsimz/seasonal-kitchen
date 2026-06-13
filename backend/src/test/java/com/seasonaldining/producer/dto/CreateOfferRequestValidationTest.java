@@ -28,7 +28,7 @@ class CreateOfferRequestValidationTest {
         return new CreateOfferRequest(
                 null, "봄동", new BigDecimal("4500"), "봉", "당일수확",
                 null, null, null, null, null, null,
-                certifications, 120, storageMethod, null);
+                certifications, 120, storageMethod, null, null, null, null);
     }
 
     @Test

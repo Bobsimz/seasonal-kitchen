@@ -89,7 +89,7 @@ class ProducerSelfRegistrationTest {
         producerService.registerMyProducer(userId, sampleReq());
         var offer = producerService.addMyOffer(userId,
                 new CreateOfferRequest(null, "봄동", new BigDecimal("4500"), "봉", "당일수확", null, null, null, null, null, null,
-                        List.of("무농약"), null, "냉장 보관", null));
+                        List.of("무농약"), null, "냉장 보관", null, null, null, null));
         assertThat(offer.ingredientName()).isEqualTo("봄동");
         assertThat(offer.price()).isEqualByComparingTo("4500");
         assertThat(offer.unit()).isEqualTo("봉");
@@ -100,7 +100,7 @@ class ProducerSelfRegistrationTest {
         // userId2는 농가 등록을 안 했음
         assertThatThrownBy(() -> producerService.addMyOffer(userId2,
                 new CreateOfferRequest(null, "무", new BigDecimal("2200"), "개", null, null, null, null, null, null, null,
-                        List.of("무농약"), null, "냉장 보관", null)))
+                        List.of("무농약"), null, "냉장 보관", null, null, null, null)))
                 .isInstanceOf(BusinessException.class)
                 .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
                         .isEqualTo(ErrorCode.PRODUCER_NOT_FOUND));
@@ -111,7 +111,7 @@ class ProducerSelfRegistrationTest {
         producerService.registerMyProducer(userId, sampleReq());
         assertThatThrownBy(() -> producerService.addMyOffer(userId,
                 new CreateOfferRequest(999999L, "봄동", new BigDecimal("4500"), "봉", null, null, null, null, null, null, null,
-                        List.of("무농약"), null, "냉장 보관", null)))
+                        List.of("무농약"), null, "냉장 보관", null, null, null, null)))
                 .isInstanceOf(BusinessException.class)
                 .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
                         .isEqualTo(ErrorCode.INGREDIENT_NOT_FOUND));
@@ -123,7 +123,7 @@ class ProducerSelfRegistrationTest {
         // 초기 specialties에 없던 '당근' 상품을 등록
         producerService.addMyOffer(userId,
                 new CreateOfferRequest(null, "당근", new BigDecimal("3000"), "kg", null, null, null, null, null, null, null,
-                        List.of("무농약"), null, "냉장 보관", null));
+                        List.of("무농약"), null, "냉장 보관", null, null, null, null));
         // q='당근' 검색에서 내 농가가 나와야 한다 (specialty upsert 덕분)
         assertThat(producerService.getProducers("당근", null, null, PageRequest.of(0, 50)).items())
                 .anySatisfy(c -> assertThat(c.id()).isEqualTo(d.id()));

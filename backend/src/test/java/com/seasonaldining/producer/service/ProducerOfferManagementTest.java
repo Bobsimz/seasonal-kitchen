@@ -68,7 +68,7 @@ class ProducerOfferManagementTest {
         return new CreateOfferRequest(null, ingredient, price, "봉", "당일수확",
                 title, "설명", "잎채소",
                 List.of("https://img/x.png"), List.of("산지직송"), null,
-                List.of("무농약"), 100, "냉장 보관", "신문지 보관");
+                List.of("무농약"), 100, "냉장 보관", "신문지 보관", null, null, null);
     }
 
     @Test
