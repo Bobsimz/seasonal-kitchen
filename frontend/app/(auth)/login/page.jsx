@@ -56,10 +56,7 @@ function LoginInner() {
         </Button>
       </form>
 
-      <p className="mt-3 text-center text-[12px] text-ink-soft">
-        백엔드가 꺼져 있어도 데모 계정으로 자동 로그인됩니다.
-      </p>
-
+    
       <div className="mt-auto pt-8 text-center text-[14px] text-ink-soft">
         아직 회원이 아니신가요? <Link href="/signup" className="font-bold text-brand">가입하기</Link>
       </div>
