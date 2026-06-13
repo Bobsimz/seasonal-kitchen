@@ -287,8 +287,9 @@ function CommentsSheet({ reel, open, onClose }) {
   };
 
   return (
-    <Sheet open={open} onClose={onClose} title={`댓글 ${comments.length || ''}`.trim()}>
-      <div className="space-y-5 pt-1">
+    <Sheet open={open} onClose={onClose} title={`댓글 ${comments.length || ''}`.trim()} className="h-[72dvh] !pb-0">
+      {/* 댓글 목록 — 이 영역만 스크롤 */}
+      <div className="min-h-0 flex-1 space-y-5 overflow-y-auto phone-scroll pb-3 pt-1">
         {isLoading && <p className="py-8 text-center text-[13px] text-ink-soft">댓글을 불러오는 중…</p>}
         {!isLoading && comments.length === 0 && (
           <p className="py-10 text-center text-[13px] text-ink-soft">아직 댓글이 없어요. 첫 댓글을 남겨보세요!</p>
@@ -298,10 +299,10 @@ function CommentsSheet({ reel, open, onClose }) {
         ))}
       </div>
 
-      {/* 입력 — 시트 하단에 붙여 스크롤해도 항상 보이게(sticky). -mb-6 로 시트 하단 패딩까지 채운다. */}
+      {/* 입력 — 시트 하단 고정(스크롤 영역 밖). 위로 댓글이 비치지 않는다. */}
       <form
         onSubmit={submit}
-        className="sticky bottom-0 -mx-5 -mb-6 mt-3 flex items-center gap-2 border-t border-line bg-white px-5 pb-[max(0.875rem,env(safe-area-inset-bottom))] pt-3"
+        className="-mx-5 flex shrink-0 items-center gap-2 border-t border-line bg-white px-5 pb-[max(0.875rem,env(safe-area-inset-bottom))] pt-3"
       >
         <input
           value={text}
