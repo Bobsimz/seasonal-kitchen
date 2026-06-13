@@ -56,7 +56,16 @@ public record CreateOfferRequest(
         @Size(max = 30) String storageMethod,
 
         @Schema(description = "보관 안내 설명(선택)", example = "신문지에 싸서 냉장 보관하면 2주까지 신선해요.", nullable = true)
-        @Size(max = 500) String storageNote
+        @Size(max = 500) String storageNote,
+
+        @Schema(description = "AI 생성 여부", example = "true", nullable = true)
+        Boolean aiGenerated,
+
+        @Schema(description = "소구 키워드 목록(AI 생성 시, freshness_label에 콤마 구분 저장)", example = "[\"아삭함\",\"당도\"]", nullable = true)
+        List<@Size(max = 40) String> appealKeywords,
+
+        @Schema(description = "소구 문장(AI 생성 시, description에 저장)", example = "해남 황토밭에서 자란 아삭한 봄동이에요.", nullable = true)
+        @Size(max = 1000) String appealSentence
 ) {
     @Schema(description = "상품 옵션 입력 — 라벨을 강제하지 않고 수량+단위(자유)+가격으로 받음")
     public record OptionInput(

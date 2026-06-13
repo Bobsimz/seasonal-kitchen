@@ -141,10 +141,18 @@ public class ProducerService {
             ingredientId = resolveIngredientId(req.ingredientName());
         }
 
+        // AI 생성 시 appealKeywords → freshness_label, appealSentence → description
+        String freshnessLabel = (req.appealKeywords() != null && !req.appealKeywords().isEmpty())
+                ? String.join(", ", req.appealKeywords())
+                : req.freshnessLabel();
+        String description = (req.appealSentence() != null && !req.appealSentence().isBlank())
+                ? req.appealSentence()
+                : req.description();
+
         ProducerOffer saved = offerRepository.save(ProducerOffer.create(
                 producer.getId(), ingredientId, req.ingredientName(),
-                req.price(), req.unit(), req.freshnessLabel(),
-                req.title(), req.description(), req.category(),
+                req.price(), req.unit(), freshnessLabel,
+                req.title(), description, req.category(),
                 req.stockQuantity(), req.storageMethod(), req.storageNote()));
 
         // 상품 사진(첫 번째가 대표) 저장
