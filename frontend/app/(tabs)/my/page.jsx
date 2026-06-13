@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import {
-  ShoppingBag,
+  ShoppingCart,
   Package,
   Heart,
   BellRing,
@@ -35,7 +35,7 @@ export default function MyPage() {
     <>
       <AppHeader
         title="마이페이지"
-        right={<HeaderIconButton icon={ShoppingBag} href="/cart" label="장바구니" badge={3} />}
+        right={<HeaderIconButton icon={ShoppingCart} href="/cart" label="장바구니" badge={3} />}
       />
 
       {isLoading && !showLoginPrompt && <LoadingScreen />}

@@ -2,11 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Plus, ShoppingBag } from 'lucide-react';
-import { useProducers, useMyProducer, useProducerOffers } from '@/lib/queries';
+import { Plus, Bell, Search, ShoppingCart } from 'lucide-react';
+import { useProducers, useMyProducer, useProducerOffers, useHome, useCart } from '@/lib/queries';
 import { AppHeader, HeaderIconButton } from '@/components/layout';
-import { SearchBar } from '@/components/ui/SearchBar';
 import { ChipTabs } from '@/components/ui/SegmentedToggle';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState, EmptyState } from '@/components/ui/States';
@@ -22,10 +20,12 @@ const FILTERS = [
 ];
 
 export default function ProductsPage() {
-  const router = useRouter();
   const [filter, setFilter] = useState('ALL');
   const { data: producers = [], isLoading, error, refetch } = useProducers();
   const { data: myProducer } = useMyProducer();
+  const { data: home } = useHome();
+  const { data: cart } = useCart();
+  const cartCount = cart?.groups?.reduce((n, g) => n + g.items.length, 0) ?? 0;
 
   const list = filter === 'ALL' ? producers : producers.filter((p) => p.style === filter);
 
@@ -36,14 +36,16 @@ export default function ProductsPage() {
     <>
       <AppHeader
         title="상품"
-        right={<HeaderIconButton icon={ShoppingBag} href="/cart" label="장바구니" />}
+        right={
+          <>
+            <HeaderIconButton icon={Bell} href="/notifications" label="알림" badge={home?.unreadNotificationCount} />
+            <HeaderIconButton icon={Search} href="/search" label="검색" />
+            <HeaderIconButton icon={ShoppingCart} href="/cart" label="장바구니" badge={cartCount} />
+          </>
+        }
       />
 
-      <div className="px-4 pb-3 pt-3">
-        <SearchBar readOnly onClick={() => router.push('/search')} placeholder="농가·상품 검색" />
-      </div>
-
-      {/* 필터 칩 — 스크롤 시 헤더 바로 아래 고정 (검색바는 위로 사라짐) */}
+      {/* 필터 칩 — 스크롤 시 헤더 바로 아래 고정 */}
       <ChipTabs options={FILTERS} value={filter} onChange={setFilter} sticky className="sticky top-14" />
 
       {isLoading && <LoadingScreen />}

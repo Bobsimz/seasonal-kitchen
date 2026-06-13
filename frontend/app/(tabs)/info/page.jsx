@@ -1,11 +1,10 @@
 'use client';
 
 import { Suspense, useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { ChevronDown } from 'lucide-react';
-import { useIngredients, useRecipes, useProducers } from '@/lib/queries';
-import { AppHeader } from '@/components/layout';
-import { SearchBar } from '@/components/ui/SearchBar';
+import { useSearchParams } from 'next/navigation';
+import { Bell, Search, ShoppingCart, ChevronDown } from 'lucide-react';
+import { useIngredients, useRecipes, useProducers, useHome, useCart } from '@/lib/queries';
+import { AppHeader, HeaderIconButton } from '@/components/layout';
 import { SegmentedToggle, ChipTabs } from '@/components/ui/SegmentedToggle';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState, EmptyState } from '@/components/ui/States';
@@ -28,15 +27,23 @@ export default function InfoPage() {
   );
 }
 
-// 헤더/검색바만 그린 폴백 (서스펜스 동안 레이아웃 유지).
+// 헤더만 그린 폴백 (서스펜스 동안 레이아웃 유지). 홈과 동일하게 알림/검색/장바구니 액션 노출.
 function InfoShell({ children }) {
-  const router = useRouter();
+  const { data: home } = useHome();
+  const { data: cart } = useCart();
+  const cartCount = cart?.groups?.reduce((n, g) => n + g.items.length, 0) ?? 0;
   return (
     <>
-      <AppHeader title="정보" />
-      <div className="px-4 pb-3 pt-3">
-        <SearchBar readOnly onClick={() => router.push('/search')} />
-      </div>
+      <AppHeader
+        title="정보"
+        right={
+          <>
+            <HeaderIconButton icon={Bell} href="/notifications" label="알림" badge={home?.unreadNotificationCount} />
+            <HeaderIconButton icon={Search} href="/search" label="검색" />
+            <HeaderIconButton icon={ShoppingCart} href="/cart" label="장바구니" badge={cartCount} />
+          </>
+        }
+      />
       {children}
     </>
   );
