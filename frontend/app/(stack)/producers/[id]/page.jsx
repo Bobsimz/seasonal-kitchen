@@ -39,7 +39,7 @@ export default function ProducerDetailPage({ params }) {
 
   return (
     <>
-      <AppHeader title={producer ? `${producer.region} ${producer.name}` : '농가'} back transparent />
+      <AppHeader title={producer ? `${producer.region} ${producer.name}` : '농가'} back transparent scrollAware />
 
       {isLoading && <LoadingScreen />}
       {error && <ErrorState onRetry={refetch} />}
@@ -179,7 +179,7 @@ function OffersTab({ id }) {
       </div>
       <Card className="overflow-hidden p-0">
         {offers.map((offer, i) => (
-          <OfferRow key={offer.id} offer={offer} divider={i < offers.length - 1} />
+          <OfferRow key={offer.id} offer={offer} divider={i < offers.length - 1} showCart={false} />
         ))}
       </Card>
     </div>

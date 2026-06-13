@@ -45,16 +45,17 @@ export default function RecipeDetailPage({ params }) {
         title={recipe.title}
         back
         transparent
-        right={
+        scrollAware
+        right={(scrolled) => (
           <FavoriteHeart
             targetType="RECIPE"
             targetId={recipe.id}
             size={22}
             className="grid h-10 w-10 place-items-center"
-            iconClassName="text-white drop-shadow"
+            iconClassName={scrolled ? 'text-ink' : 'text-white drop-shadow'}
             nextHref={`/recipes/${id}`}
           />
-        }
+        )}
       />
 
       <div className="animate-fade-up pb-6">

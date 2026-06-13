@@ -110,9 +110,11 @@ export default function IngredientDetailPage({ params }) {
 
   return (
     <>
-      {/* 히어로 이미지 위에 투명 헤더 */}
-      <div className="relative">
-        <AppHeader title={ingredient.name} back transparent className="absolute inset-x-0 top-0" />
+      {/* 투명 헤더 — 스크롤하면 흰 배경으로 전환되며 상단 고정 */}
+      <AppHeader title={ingredient.name} back transparent scrollAware />
+
+      {/* 히어로 — 헤더 뒤로 끌어올림 */}
+      <div className="relative -mt-14">
         <div className="relative aspect-[16/11] w-full overflow-hidden bg-brand-bg">
           {ingredient.imageUrl ? (
             <img src={ingredient.imageUrl} alt={ingredient.name} className="h-full w-full object-cover" />
