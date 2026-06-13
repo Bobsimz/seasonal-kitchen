@@ -258,7 +258,7 @@ public class RecipeService {
                         reel.getTitle(),
                         mediaUrls.resolve(reel.getThumbnailUrl()),
                         creatorRepository.findById(reel.getCreatorId()).map(c -> c.getDisplayName()).orElse(null),
-                        reel.getLikeCount() + reelReactionRepository.countByReelIdAndReactionType(reel.getId(), ReelReaction.LIKE),
+                        reelReactionRepository.countByReelIdAndReactionType(reel.getId(), ReelReaction.LIKE),
                         reel.getDurationSeconds(),
                         reel.getPublishedAt()
                 ))

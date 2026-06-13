@@ -28,8 +28,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -155,6 +157,9 @@ public class ProductService {
         // 대표 이미지(첫 사진) — sort_order asc 첫 행
         Map<Long, String> firstPhotoByOffer = offerPhotoRepository.findByOfferIdInOrderBySortOrderAsc(offerIds)
                 .stream().collect(Collectors.toMap(OfferPhoto::getOfferId, OfferPhoto::getUrl, (a, b) -> a));
+        // 기본 포장 수량 — 단위(예 "g")엔 수량이 없어, 기본가가 가리키는 옵션 수량을 카드에 함께 내려준다(→ "/100g").
+        Map<Long, List<OfferOption>> optionsByOffer = offerOptionRepository.findByOfferIdInOrderBySortOrderAsc(offerIds)
+                .stream().collect(Collectors.groupingBy(OfferOption::getOfferId));
         List<Long> producerIds = offers.stream().map(ProducerOffer::getProducerId).distinct().toList();
         Map<Long, Producer> producers = producerRepository.findAllById(producerIds).stream()
                 .collect(Collectors.toMap(Producer::getId, pp -> pp));
@@ -163,9 +168,21 @@ public class ProductService {
             return new ProductCardResponse(
                     o.getId(), nameOf(o), o.getIngredientId(), o.getIngredientName(),
                     o.getProducerId(), p != null ? p.getName() : null, p != null ? p.getRegion() : null,
-                    o.getPrice(), o.getUnit(), firstPhotoByOffer.get(o.getId()),
+                    o.getPrice(), o.getUnit(), basePackQuantity(o, optionsByOffer.get(o.getId())),
+                    firstPhotoByOffer.get(o.getId()),
                     StockStatus.from(o.getStockQuantity()), o.getCategory());
         }).toList();
+    }
+
+    /** 기본가(offer.price)가 적용되는 포장 수량 — 가격이 일치하는 옵션, 없으면 첫(최소규격) 옵션. 옵션 없으면 null. */
+    private BigDecimal basePackQuantity(ProducerOffer o, List<OfferOption> opts) {
+        if (opts == null || opts.isEmpty()) return null;
+        return opts.stream()
+                .filter(op -> op.getPrice() != null && o.getPrice() != null && op.getPrice().compareTo(o.getPrice()) == 0)
+                .map(OfferOption::getQuantity)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseGet(() -> opts.get(0).getQuantity());
     }
 
     private String nameOf(ProducerOffer o) {

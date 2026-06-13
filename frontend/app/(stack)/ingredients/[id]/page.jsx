@@ -151,7 +151,7 @@ export default function IngredientDetailPage({ params }) {
             {hasProducts && signal && <Chip tone={signal.tone}>{signal.label}</Chip>}
           </div>
 
-          {/* 현재가 (KAMIS) — 판매 제품이 있을 때만. 살 수 없는데 가격만 노출하지 않는다. */}
+          {/* 현재가 — 데이터 출처는 KAMIS 시세지만 화면엔 '농가 공식 시세'로 노출. 판매 제품이 있을 때만(살 수 없는데 가격만 노출하지 않는다). */}
           {hasProducts && (
             <Card className="mt-4 p-[18px]">
               <p className="text-[12px] font-semibold text-ink-mid">현재 가격</p>
@@ -164,7 +164,7 @@ export default function IngredientDetailPage({ params }) {
                   <TrendBadge direction={ingredient.trendDirection} label={ingredient.priceChangeLabel} />
                 )}
               </div>
-              <p className="mt-1 text-[11.5px] text-ink-soft">KAMIS 공식 시세 · 주요 매장 기준</p>
+              <p className="mt-1 text-[11.5px] text-ink-soft">농가 공식 시세</p>
             </Card>
           )}
 

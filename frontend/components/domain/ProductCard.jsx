@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { Star } from 'lucide-react';
 import { cn } from '@/lib/cn';
-import { won, compact } from '@/lib/format';
+import { won, compact, unitLabel } from '@/lib/format';
 import { Card } from '@/components/ui/Card';
 import { VegImage } from './VegImage';
-import { AddToCartButton } from './AddToCartButton';
+
 
 // 상품 리스트용 상품 카드 (2열 그리드).
 // /products(ProductCardResponse) 형태를 그대로 받는다 — id = producer_offers.id = 담기용 offerId.
@@ -53,7 +53,7 @@ export function ProductCard({ product: p, href, className, showCart = true }) {
   const price = (
     <div className="flex items-baseline gap-0.5">
       <span className="text-[15px] font-extrabold text-ink tabular">{won(p.price)}</span>
-      <span className="text-[10.5px] text-ink-soft">원/{p.unit}</span>
+      <span className="text-[10.5px] text-ink-soft">원/{unitLabel(p.packQuantity, p.unit)}</span>
     </div>
   );
 
@@ -78,7 +78,6 @@ export function ProductCard({ product: p, href, className, showCart = true }) {
       </Link>
       <div className="mt-auto flex items-end justify-between px-3 pb-3 pt-2">
         {price}
-        {!soldOut && <AddToCartButton offerId={p.id} />}
       </div>
     </Card>
   );

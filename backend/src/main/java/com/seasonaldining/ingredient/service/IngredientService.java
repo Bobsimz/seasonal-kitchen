@@ -155,7 +155,7 @@ public class IngredientService {
                 ingredient.getId(),
                 ingredient.getName(),
                 ingredient.getCategory(),
-                ingredient.getImageUrl(),
+                mediaUrls.resolve(ingredient.getImageUrl()),
                 ingredient.getBaseUnit(),
                 false,
                 p.hot,
@@ -246,7 +246,7 @@ public class IngredientService {
         return new IngredientCardResponse(
                 ingredient.getId(),
                 ingredient.getName(),
-                ingredient.getImageUrl(),
+                mediaUrls.resolve(ingredient.getImageUrl()),
                 ingredient.getCategory(),
                 p.currentPrice,
                 p.unit,
@@ -338,7 +338,7 @@ public class IngredientService {
                 ingredient == null ? null : ingredient.getName(),
                 substitute.getScore(),
                 substitute.getReason(),
-                ingredient == null ? null : ingredient.getImageUrl(),
+                ingredient == null ? null : mediaUrls.resolve(ingredient.getImageUrl()),
                 latestPrice(substitute.getSubstituteIngredientId()),
                 latestPriceUnit(substitute.getSubstituteIngredientId()),
                 null

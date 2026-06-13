@@ -130,10 +130,11 @@ public class ReelService {
 
     private ReelResponse toResponse(Reel reel, Long userId) {
         Creator creator = creators.findById(reel.getCreatorId()).orElse(null);
-        // 표시용 = 시드 baseline(reels.*_count) + 실제 사용자 액션(reactions/comments).
-        long likeCount = reel.getLikeCount() + reactions.countByReelIdAndReactionType(reel.getId(), ReelReaction.LIKE);
-        long saveCount = reel.getSaveCount() + reactions.countByReelIdAndReactionType(reel.getId(), ReelReaction.SAVE);
-        long commentCount = reel.getCommentCount() + comments.countByReelIdAndStatus(reel.getId(), ACTIVE);
+        // 표시용 = 실제 사용자 액션(reactions/comments) 기준. V49 시드 baseline(reels.*_count)은
+        // 보여주기용이라 합산하지 않는다 — DB 컬럼은 그대로 두고 코드에서만 무시한다.
+        long likeCount = reactions.countByReelIdAndReactionType(reel.getId(), ReelReaction.LIKE);
+        long saveCount = reactions.countByReelIdAndReactionType(reel.getId(), ReelReaction.SAVE);
+        long commentCount = comments.countByReelIdAndStatus(reel.getId(), ACTIVE);
         boolean liked = userId != null && reactions.existsByReelIdAndUserIdAndReactionType(reel.getId(), userId, ReelReaction.LIKE);
         boolean saved = userId != null && reactions.existsByReelIdAndUserIdAndReactionType(reel.getId(), userId, ReelReaction.SAVE);
         List<String> tagNames = tags(reel.getIngredientTags());

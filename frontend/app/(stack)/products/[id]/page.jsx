@@ -18,7 +18,7 @@ import { ProducerAvatar } from '@/components/domain/ProducerCard';
 import { StyleBadge } from '@/components/domain/StyleBadge';
 import { FavoriteHeart } from '@/components/domain/FavoriteHeart';
 import { PurchaseSheet } from '@/components/domain/PurchaseSheet';
-import { won, wonLabel, compact } from '@/lib/format';
+import { won, wonLabel, compact, packLabel } from '@/lib/format';
 import { cn } from '@/lib/cn';
 
 export default function ProductDetailPage({ params }) {
@@ -155,9 +155,9 @@ function ProductDetail({ producerId }) {
             {/* 상품 hero + 가격 */}
             <div className="px-4 pt-3">
               <div className="flex gap-3.5 rounded-2xl border border-line-soft bg-white p-4">
-                <VegImage name={offer.ingredientName} size={84} />
+                <VegImage name={offer.ingredientName} src={offer.photoUrls?.[0]} size={84} />
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-[18px] font-extrabold tracking-tight text-ink">{offer.ingredientName}</h1>
+                  <h1 className="text-[18px] font-extrabold tracking-tight text-ink">{offer.title || offer.ingredientName}</h1>
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {offer.freshnessLabel && (
                       <Chip tone="brand">🌱 {offer.freshnessLabel}</Chip>
@@ -166,7 +166,7 @@ function ProductDetail({ producerId }) {
                   </div>
                   <div className="mt-2.5 text-[20px] font-extrabold tabular text-ink">
                     {won(offer.price)}
-                    <span className="text-[13px] font-semibold text-ink-mid"> 원 /{offer.unit}</span>
+                    <span className="text-[13px] font-semibold text-ink-mid"> 원 / {packLabel(offer)}</span>
                   </div>
                 </div>
               </div>
@@ -218,11 +218,11 @@ function ProductDetail({ producerId }) {
                       href={`/products/${producer.id}?offer=${o.id}`}
                       className="tap block w-[132px] shrink-0 rounded-2xl border border-line-soft bg-white p-3"
                     >
-                      <VegImage name={o.ingredientName} size={56} className="mx-auto" />
-                      <p className="mt-2 truncate text-center text-[13px] font-bold text-ink">{o.ingredientName}</p>
+                      <VegImage name={o.ingredientName} src={o.photoUrls?.[0]} size={56} className="mx-auto" />
+                      <p className="mt-2 truncate text-center text-[13px] font-bold text-ink">{o.title || o.ingredientName}</p>
                       <p className="mt-0.5 text-center text-[13px] font-extrabold tabular text-ink">
                         {won(o.price)}
-                        <span className="text-[11px] font-semibold text-ink-mid"> 원/{o.unit}</span>
+                        <span className="text-[11px] font-semibold text-ink-mid"> 원/{packLabel(o)}</span>
                       </p>
                     </Link>
                   ))}

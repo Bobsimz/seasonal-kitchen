@@ -23,6 +23,26 @@ export function priceRange(value, pct = 0.1) {
   return `${lo.toLocaleString('ko-KR')}~${hi.toLocaleString('ko-KR')}`;
 }
 
+// 수량+단위 → "100g"·"1kg"·"10개". 단위(예 "g")엔 수량이 없어, 포장 수량을 앞에 붙여 표기한다.
+// quantity 가 없으면(옵션 미등록 등) 단위만 반환 → 기존 "g" 폴백과 동일.
+export function unitLabel(quantity, unit) {
+  const u = unit || '';
+  if (quantity == null) return u;
+  const n = toNumber(quantity);
+  return Number.isFinite(n) ? `${n}${u}` : u;
+}
+
+// 옵션을 가진 offer → 기본가가 가리키는 포장 규격 라벨("100g"·"1kg").
+// 가격 일치 옵션 → 없으면 첫(최소규격) 옵션 → 옵션 없으면 단위만 폴백.
+export function packLabel(offer) {
+  const opts = offer?.options;
+  if (opts?.length) {
+    const base = opts.find((o) => Number(o.price) === Number(offer?.price)) || opts[0];
+    return unitLabel(base.quantity, base.unit || offer?.unit);
+  }
+  return offer?.unit || '';
+}
+
 // 큰 숫자 축약: 1280 → "1.3천", 15000 → "1.5만"
 export function compact(value) {
   const n = toNumber(value) || 0;
