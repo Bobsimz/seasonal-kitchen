@@ -218,7 +218,7 @@ export default function SellerRegisterPage() {
             </p>
             <Link href="/my/seller/dashboard" className="mt-4 block">
               <Button block size="lg">
-                판매자 대시보드로 이동 <ChevronRight size={18} />
+                농가 대시보드로 이동 <ChevronRight size={18} />
               </Button>
             </Link>
           </Card>
@@ -232,7 +232,7 @@ export default function SellerRegisterPage() {
             <div className="px-4 pt-3.5">
               <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-brand-dark p-5 text-white">
                 <Sprout size={88} className="absolute -right-3 -top-3 opacity-15" />
-                <div className="text-[12px] font-extrabold tracking-wide text-white/90">농가 판매자 신청</div>
+                <div className="text-[12px] font-extrabold tracking-wide text-white/90">농가 신청</div>
                 <div className="mt-1 text-[18px] font-extrabold leading-snug tracking-tight">
                   내 농가 상품을
                   <br />
