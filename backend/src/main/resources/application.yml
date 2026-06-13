@@ -35,6 +35,9 @@ app:
     dir: ${UPLOADS_DIR:uploads}
     public-base-url: ${UPLOADS_PUBLIC_BASE_URL:}
     max-bytes: ${UPLOADS_MAX_BYTES:5242880}
+    s3:                                  # storage=s3 일 때만 사용 (LocalFileStorage 경로에선 무시됨)
+      bucket: ${S3_BUCKET:}
+      region: ${AWS_REGION:}
 
 gemini:
   api:
