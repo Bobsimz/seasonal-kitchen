@@ -2,9 +2,10 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Heart, MessageCircle, Bookmark, Share2, Play, ChevronRight, Plus, Search } from 'lucide-react';
 import { useReels } from '@/lib/queries';
+import { useAuth } from '@/lib/auth';
 import { AppHeader, HeaderIconButton } from '@/components/layout';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState, EmptyState } from '@/components/ui/States';
@@ -64,7 +65,9 @@ function ReelsInner() {
 }
 
 function ReelItem({ reel }) {
+  const router = useRouter();
   const toast = useToast();
+  const { isAuthenticated } = useAuth();
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const videoRef = useRef(null);
@@ -73,6 +76,17 @@ function ReelItem({ reel }) {
   // 좋아요/저장 로컬 옵티미스틱 토글 + 카운트 보정
   const likeCount = useMemo(() => (reel.likes ?? 0) + (liked ? 1 : 0), [reel.likes, liked]);
   const saveCount = useMemo(() => (reel.saves ?? 0) + (saved ? 1 : 0), [reel.saves, saved]);
+
+  // 좋아요·저장은 로그인 필요 — 비로그인 시 로그인 유도 후 중단(FavoriteHeart와 동일 동작)
+  const requireAuth = () => {
+    if (isAuthenticated) return true;
+    toast.show('로그인이 필요해요', { type: 'error' });
+    const back = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/reels';
+    router.push('/login?next=' + encodeURIComponent(back));
+    return false;
+  };
+  const onLike = () => requireAuth() && setLiked((v) => !v);
+  const onSave = () => requireAuth() && setSaved((v) => !v);
 
   // 세로 피드라 화면에 보이는 릴만 재생 (스크롤 이탈 시 일시정지)
   useEffect(() => {
@@ -147,9 +161,9 @@ function ReelItem({ reel }) {
           </span>
         </div>
 
-        <RailAction icon={Heart} count={likeCount} active={liked} activeClass="fill-hot text-hot" onClick={() => setLiked((v) => !v)} />
+        <RailAction icon={Heart} count={likeCount} active={liked} activeClass="fill-hot text-hot" onClick={onLike} />
         <RailAction icon={MessageCircle} count={reel.comments} />
-        <RailAction icon={Bookmark} count={saveCount} active={saved} activeClass="fill-white text-white" onClick={() => setSaved((v) => !v)} />
+        <RailAction icon={Bookmark} count={saveCount} active={saved} activeClass="fill-white text-white" onClick={onSave} />
         <RailAction icon={Share2} label="공유" onClick={onShare} />
       </div>
 
