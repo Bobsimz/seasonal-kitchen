@@ -10,8 +10,8 @@ import { AppHeader } from '@/components/layout';
 import { BottomBar } from '@/components/layout/BottomBar';
 import { Button } from '@/components/ui/Button';
 import { Chip } from '@/components/ui/Chip';
-import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState, EmptyState } from '@/components/ui/States';
+import { ProductDetailSkeleton, DetailSectionsSkeleton } from '@/components/domain/skeletons';
 import { useToast } from '@/components/ui/Toast';
 import { VegImage } from '@/components/domain/VegImage';
 import { ProducerAvatar } from '@/components/domain/ProducerCard';
@@ -24,7 +24,14 @@ import { cn } from '@/lib/cn';
 export default function ProductDetailPage({ params }) {
   const producerId = params.id;
   return (
-    <Suspense fallback={<LoadingScreen />}>
+    <Suspense
+      fallback={
+        <>
+          <AppHeader title="상품 상세" back />
+          <ProductDetailSkeleton />
+        </>
+      }
+    >
       <ProductDetail producerId={producerId} />
     </Suspense>
   );
@@ -54,7 +61,7 @@ function ProductDetail({ producerId }) {
   }, [offers, focusedOfferId]);
 
   // 상품 상세 보강(옵션·상세섹션) — offer 확정 후 조회. 실패/미로딩 시 폴백으로 대체.
-  const { data: product } = useProduct(offer?.id);
+  const { data: product, isLoading: productLoading } = useProduct(offer?.id);
 
   // 옵션: 백엔드 options 가 있으면 그대로, 없으면 기준가 단일 옵션으로 폴백 → 구매 플로우 항상 동작.
   const options = useMemo(() => {
@@ -109,7 +116,7 @@ function ProductDetail({ producerId }) {
     <>
       <AppHeader title="상품 상세" back />
 
-      {isLoading && <LoadingScreen />}
+      {isLoading && <ProductDetailSkeleton />}
       {error && <ErrorState onRetry={() => { refetchProducer(); refetchOffers(); }} />}
 
       {!isLoading && !error && (!offer || !producer) && (
@@ -188,8 +195,12 @@ function ProductDetail({ producerId }) {
               </div>
             </div>
 
-            {/* 상품 상세정보 — 접기/펼치기 */}
-            <DetailSections sections={detailSections} />
+            {/* 상품 상세정보 — 접기/펼치기. 상세 데이터가 늦게 와서 튀어나오지 않도록 로딩 중엔 스켈레톤 */}
+            {detailSections.length > 0 ? (
+              <DetailSections sections={detailSections} />
+            ) : productLoading ? (
+              <DetailSectionsSkeleton />
+            ) : null}
 
             {/* 같은 농가의 다른 상품 */}
             {otherOffers.length > 0 && (

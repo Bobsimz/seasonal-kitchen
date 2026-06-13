@@ -5,8 +5,8 @@ import { ChevronRight } from 'lucide-react';
 import { useHome, useProducers, useCart } from '@/lib/queries';
 import { HomeHeader } from '@/components/layout';
 import { Section } from '@/components/ui/Card';
-import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/States';
+import { HomeSkeleton } from '@/components/domain/skeletons';
 import { HeroCarousel } from '@/components/domain/HeroCarousel';
 import { IngredientCard } from '@/components/domain/IngredientCard';
 import { RecipeCard } from '@/components/domain/RecipeCard';
@@ -31,9 +31,9 @@ export default function HomePage() {
 
   return (
     <>
-      <HomeHeader unreadCount={data?.unreadNotificationCount} cartCount={cartCount} floating={heroes.length > 0} />
+      <HomeHeader unreadCount={data?.unreadNotificationCount} cartCount={cartCount} floating={isLoading || heroes.length > 0} />
 
-      {isLoading && <LoadingScreen />}
+      {isLoading && <HomeSkeleton />}
       {error && <ErrorState onRetry={refetch} />}
 
       {data && (
