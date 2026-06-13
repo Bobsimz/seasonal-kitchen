@@ -18,6 +18,9 @@ public class Reel {
     @Column(nullable = false, length = 50) private String status;
     @Column(name = "published_at") private OffsetDateTime publishedAt;
     @Column(name = "view_count", nullable = false) private long viewCount;
+    @Column(name = "like_count", nullable = false) private long likeCount;
+    @Column(name = "comment_count", nullable = false) private long commentCount;
+    @Column(name = "save_count", nullable = false) private long saveCount;
     protected Reel() {}
     public Reel(Long recipeId, Long creatorId, String title, String description, String videoUrl, String thumbnailUrl, String ingredientTags, Integer durationSeconds, String status, OffsetDateTime publishedAt) {
         this.recipeId = recipeId; this.creatorId = creatorId; this.title = title; this.description = description; this.videoUrl = videoUrl; this.thumbnailUrl = thumbnailUrl; this.ingredientTags = ingredientTags; this.durationSeconds = durationSeconds; this.status = status; this.publishedAt = publishedAt;
@@ -35,4 +38,7 @@ public class Reel {
     public String getStatus() { return status; }
     public OffsetDateTime getPublishedAt() { return publishedAt; }
     public long getViewCount() { return viewCount; }
+    public long getLikeCount() { return likeCount; }
+    public long getCommentCount() { return commentCount; }
+    public long getSaveCount() { return saveCount; }
 }

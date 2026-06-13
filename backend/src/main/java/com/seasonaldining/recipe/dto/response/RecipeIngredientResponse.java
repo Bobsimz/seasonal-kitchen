@@ -26,8 +26,6 @@ public record RecipeIngredientResponse(
         @Schema(description = "식재료 이미지 URL", nullable = true)
         String ingredientImageUrl,
         @Schema(description = "예상 가격", example = "1980", nullable = true)
-        BigDecimal estimatedPrice,
-        @Schema(description = "가격 추세 방향", example = "DOWN", nullable = true)
-        String priceTrendDirection
+        BigDecimal estimatedPrice
 ) {
 }

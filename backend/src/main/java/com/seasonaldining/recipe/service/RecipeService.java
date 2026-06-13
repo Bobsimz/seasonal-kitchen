@@ -106,7 +106,7 @@ public class RecipeService {
                         .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add),
                 List.of(recipe.getDifficulty(), recipe.getMinutes() + "분"),
                 null,
-                0,
+                recipeLikes(recipe.getId()),
                 relatedReels.stream().map(RecipeDetailResponse.RelatedReelResponse::id).toList(),
                 relatedReels
         );
@@ -133,8 +133,7 @@ public class RecipeService {
                 recipeIngredient.getUnit(),
                 recipeIngredient.isOptional(),
                 imageUrl,
-                price,
-                null
+                price
         );
     }
 
@@ -183,7 +182,7 @@ public class RecipeService {
                 recipe.getDifficulty(),
                 recipe.getMinutes(),
                 recipe.getServings(),
-                0,
+                recipeLikes(recipe.getId()),
                 0,
                 null,
                 List.of(recipe.getDifficulty(), recipe.getMinutes() + "분"),
@@ -214,6 +213,14 @@ public class RecipeService {
         return snapshots.isEmpty() ? null : snapshots.get(snapshots.size() - 1).getPrice();
     }
 
+    /** 레시피 좋아요 수 = 연결 릴스의 시드 baseline(reels.like_count) + 실제 좋아요(reactions) 합. */
+    private long recipeLikes(Long recipeId) {
+        return reelRepository.findTop3ByRecipeIdAndStatusOrderByPublishedAtDesc(recipeId, PUBLISHED).stream()
+                .mapToLong(reel -> reel.getLikeCount()
+                        + reelReactionRepository.countByReelIdAndReactionType(reel.getId(), ReelReaction.LIKE))
+                .sum();
+    }
+
     private List<RecipeDetailResponse.RelatedReelResponse> relatedReels(Long recipeId) {
         return reelRepository.findTop3ByRecipeIdAndStatusOrderByPublishedAtDesc(recipeId, PUBLISHED).stream()
                 .map(reel -> new RecipeDetailResponse.RelatedReelResponse(
@@ -221,7 +228,7 @@ public class RecipeService {
                         reel.getTitle(),
                         mediaUrls.resolve(reel.getThumbnailUrl()),
                         creatorRepository.findById(reel.getCreatorId()).map(c -> c.getDisplayName()).orElse(null),
-                        reelReactionRepository.countByReelIdAndReactionType(reel.getId(), ReelReaction.LIKE),
+                        reel.getLikeCount() + reelReactionRepository.countByReelIdAndReactionType(reel.getId(), ReelReaction.LIKE),
                         reel.getDurationSeconds(),
                         reel.getPublishedAt()
                 ))

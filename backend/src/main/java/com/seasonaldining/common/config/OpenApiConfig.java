@@ -84,7 +84,7 @@ public class OpenApiConfig {
                             "creatorName": "제철키친",
                             "likeCount": 12,
                             "tags": ["EASY", "20분"],
-                            "ingredients": [{"ingredientName": "봄동", "estimatedPrice": 4500, "priceTrendDirection": "STABLE"}],
+                            "ingredients": [{"ingredientName": "봄동", "estimatedPrice": 4500}],
                             "relatedReels": [{"id": 1, "title": "봄동 비빔밥 1분"}]
                           },
                           "error": null

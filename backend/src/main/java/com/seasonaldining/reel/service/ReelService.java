@@ -86,9 +86,10 @@ public class ReelService {
 
     private ReelResponse toResponse(Reel reel, Long userId) {
         Creator creator = creators.findById(reel.getCreatorId()).orElse(null);
-        long likeCount = reactions.countByReelIdAndReactionType(reel.getId(), ReelReaction.LIKE);
-        long saveCount = reactions.countByReelIdAndReactionType(reel.getId(), ReelReaction.SAVE);
-        long commentCount = comments.countByReelIdAndStatus(reel.getId(), ACTIVE);
+        // 표시용 = 시드 baseline(reels.*_count) + 실제 사용자 액션(reactions/comments).
+        long likeCount = reel.getLikeCount() + reactions.countByReelIdAndReactionType(reel.getId(), ReelReaction.LIKE);
+        long saveCount = reel.getSaveCount() + reactions.countByReelIdAndReactionType(reel.getId(), ReelReaction.SAVE);
+        long commentCount = reel.getCommentCount() + comments.countByReelIdAndStatus(reel.getId(), ACTIVE);
         boolean liked = userId != null && reactions.existsByReelIdAndUserIdAndReactionType(reel.getId(), userId, ReelReaction.LIKE);
         boolean saved = userId != null && reactions.existsByReelIdAndUserIdAndReactionType(reel.getId(), userId, ReelReaction.SAVE);
         return new ReelResponse(
