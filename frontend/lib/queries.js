@@ -183,7 +183,11 @@ export function useToggleFavorite() {
   return useMutation({
     mutationFn: ({ action, targetType, targetId, favoriteId }) =>
       action === 'add' ? endpoints.addFavorite({ targetType, targetId }) : endpoints.removeFavorite(favoriteId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: qk.favorites }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: qk.favorites });
+      // 마이페이지 찜 카운트(users/me/summary)도 즉시 갱신.
+      qc.invalidateQueries({ queryKey: qk.mySummary });
+    },
   });
 }
 

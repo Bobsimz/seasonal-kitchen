@@ -14,29 +14,40 @@ import {
   ChevronRight,
   LogIn,
 } from 'lucide-react';
-import { useMySummary } from '@/lib/queries';
+import { useMySummary, useCart } from '@/lib/queries';
 import { useAuth } from '@/lib/auth';
 import { cn } from '@/lib/cn';
 import { wonLabel } from '@/lib/format';
 import { AppHeader, HeaderIconButton } from '@/components/layout';
-import { Card, Section } from '@/components/ui/Card';
+import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/States';
-import { IngredientCard } from '@/components/domain/IngredientCard';
 
 export default function MyPage() {
   const { user: authUser, isAuthenticated, ready } = useAuth();
   const { data, isLoading, error, refetch } = useMySummary();
+  const { data: cart } = useCart();
 
   // 비로그인 상태 — 통계 대신 로그인 유도 카드.
   const showLoginPrompt = ready && !isAuthenticated;
+
+  // 실제 장바구니에 담긴 상품(라인) 수 — 헤더 뱃지용.
+  const cartCount =
+    cart?.groups?.reduce((n, g) => n + (g.items?.length ?? 0), 0) ?? 0;
 
   return (
     <>
       <AppHeader
         title="마이페이지"
-        right={<HeaderIconButton icon={ShoppingCart} href="/cart" label="장바구니" badge={3} />}
+        right={
+          <HeaderIconButton
+            icon={ShoppingCart}
+            href="/cart"
+            label="장바구니"
+            badge={cartCount > 0 ? cartCount : undefined}
+          />
+        }
       />
 
       {isLoading && !showLoginPrompt && <LoadingScreen />}
@@ -60,17 +71,6 @@ export default function MyPage() {
 
                 {/* 메뉴 리스트 */}
                 <MenuList counts={data.counts} />
-
-                {/* 개인화 제철 추천 */}
-                {data.personalized?.length > 0 && (
-                  <Section title="민지님 맞춤 제철 추천">
-                    <div className="flex gap-3 overflow-x-auto phone-scroll px-4 pb-1">
-                      {data.personalized.map((i) => (
-                        <IngredientCard key={i.id} ingredient={i} />
-                      ))}
-                    </div>
-                  </Section>
-                )}
               </>
             )
           )}

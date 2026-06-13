@@ -75,6 +75,11 @@ function FavoriteRow({ favorite, divider }) {
   const meta = TYPE_META[(favorite.targetType || '').toUpperCase()] || TYPE_META.INGREDIENT;
   const Icon = meta.icon;
 
+  // 백엔드가 대상 요약(title/imageUrl/subtitle)을 내려주면 실제 이름을 쓰고,
+  // 없으면(데모 모드·삭제된 대상) 기존 "식재료 #번호" 폴백.
+  const title = favorite.title || `${meta.label} #${favorite.targetId}`;
+  const subtitle = favorite.subtitle || `찜한 ${meta.noun}`;
+
   const onRemove = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -97,14 +102,20 @@ function FavoriteRow({ favorite, divider }) {
       href={meta.href(favorite.targetId)}
       className={cn('tap flex items-center gap-3 px-4 py-3', divider && 'border-b border-line-soft')}
     >
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-bg text-brand">
-        <Icon size={22} />
-      </div>
+      {favorite.imageUrl ? (
+        <img
+          src={favorite.imageUrl}
+          alt={title}
+          className="h-12 w-12 shrink-0 rounded-xl object-cover"
+        />
+      ) : (
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-bg text-brand">
+          <Icon size={22} />
+        </div>
+      )}
       <div className="min-w-0 flex-1">
-        <p className="text-[14px] font-bold text-ink">
-          {meta.label} <span className="text-ink-mid">#{favorite.targetId}</span>
-        </p>
-        <p className="mt-0.5 text-[11.5px] font-medium text-ink-soft">찜한 {meta.noun}</p>
+        <p className="truncate text-[14px] font-bold text-ink">{title}</p>
+        <p className="mt-0.5 truncate text-[11.5px] font-medium text-ink-soft">{subtitle}</p>
       </div>
       <button
         onClick={onRemove}
