@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Sprout, ChevronRight, Plus, Check } from 'lucide-react';
+import { Sprout, ChevronRight, Plus, Check, X } from 'lucide-react';
 import { useMyProducer, useRegisterProducer } from '@/lib/queries';
 import { useAuth } from '@/lib/auth';
 import { AppHeader, BottomBar } from '@/components/layout';
@@ -37,6 +37,57 @@ function FormField({ label, value, onChange, placeholder, required }) {
         className="h-12 w-full rounded-2xl border border-line bg-surface-soft px-4 text-[14px] font-medium text-ink placeholder:text-ink-soft focus:border-brand focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand/20"
       />
     </label>
+  );
+}
+
+// 자유 입력 태그 — 텍스트로 직접 입력 후 추가, 칩 클릭(X)으로 제거.
+function TagInput({ items, setItems, placeholder }) {
+  const [text, setText] = useState('');
+  const add = () => {
+    const v = text.trim();
+    if (!v) return;
+    if (!items.includes(v)) setItems([...items, v]);
+    setText('');
+  };
+  return (
+    <div>
+      <div className="flex gap-2">
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              add();
+            }
+          }}
+          placeholder={placeholder}
+          className="h-12 flex-1 rounded-2xl border border-line bg-surface-soft px-4 text-[14px] font-medium text-ink placeholder:text-ink-soft focus:border-brand focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand/20"
+        />
+        <button
+          type="button"
+          onClick={add}
+          className="tap shrink-0 rounded-2xl border border-brand bg-brand-bg px-4 text-[13px] font-extrabold text-brand-dark"
+        >
+          추가
+        </button>
+      </div>
+      {items.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {items.map((it) => (
+            <button
+              key={it}
+              type="button"
+              onClick={() => setItems(items.filter((x) => x !== it))}
+              className="tap inline-flex items-center gap-1 rounded-full border border-brand bg-brand-bg py-1.5 pl-3 pr-2 text-[13px] font-bold text-brand-dark"
+            >
+              {it}
+              <X size={13} />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -249,20 +300,9 @@ export default function SellerRegisterPage() {
                 <LevelPills value={form.freshnessLevel} onChange={(v) => set('freshnessLevel', v)} />
               </FieldGroup>
 
-              {/* 주력 품목 */}
-              <FieldGroup label="주력 품목" hint={specialties.length ? `${specialties.length}개 선택` : '복수 선택 가능'}>
-                <div className="flex flex-wrap gap-2">
-                  {SPECIALTY_PRESET.map((it) => (
-                    <ToggleChip
-                      key={it}
-                      active={specialties.includes(it)}
-                      onClick={() => toggle(specialties, setSpecialties, it)}
-                      icon={specialties.includes(it) ? Check : Plus}
-                    >
-                      {it}
-                    </ToggleChip>
-                  ))}
-                </div>
+              {/* 주력 품목 — 직접 입력 */}
+              <FieldGroup label="주력 품목" hint={specialties.length ? `${specialties.length}개 입력` : '직접 입력 후 추가'}>
+                <TagInput items={specialties} setItems={setSpecialties} placeholder="예) 무, 봄동, 시금치" />
               </FieldGroup>
 
               {/* 배지 */}
