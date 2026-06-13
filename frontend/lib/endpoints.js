@@ -66,6 +66,9 @@ export const endpoints = {
   unlikeReel: (id) => withFallback(() => api.del(`/reels/${id}/likes`, { auth: true }), () => ({ liked: false })),
   commentReel: (id, body) => withFallback(() => api.post(`/reels/${id}/comments`, body, { auth: true }), () => ({ id: Date.now(), ...body, createdAt: new Date().toISOString() })),
 
+  // ── Products ───────────────────────────────────────────
+  listProducts: (params) => withFallback(() => api.get('/products', { params }), () => mock.products(params)),
+
   // ── Producers ──────────────────────────────────────────
   listProducers: (params) => withFallback(() => api.get('/producers', { params }), () => ({ items: mock.producers, page: 0, size: 20, totalElements: mock.producers.length, hasNext: false })),
   getProducer: (id) => withFallback(() => api.get(`/producers/${id}`), () => mock.getProducer(id)),

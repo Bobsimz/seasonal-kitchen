@@ -248,6 +248,39 @@ export function ingredientProducts(id) {
   return list.sort((a, b) => a.price - b.price);
 }
 
+// 전체 상품 목록 — 모든 농가의 판매 offer 를 평탄화한 ProductCardResponse[].
+// (농가, 품목) 단위로 카드 1개 = 멀티셀러. ingredientProducts 와 동일 형태에
+// 정렬용 rating/reviewCount(농가 값)를 더한다. offer id 는 결정적이라 담기/딥링크와 호환.
+const PRODUCT_SORTS = {
+  PRICE_ASC: (a, b) => a.price - b.price,
+  REVIEW_DESC: (a, b) => b.reviewCount - a.reviewCount,
+  RECOMMENDED: (a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount,
+};
+export function products(params = {}) {
+  const { category, sort } = params || {};
+  let list = PRODUCERS.flatMap((p) => {
+    const producerId = pid(p);
+    return producerOffers(producerId).map((o) => ({
+      id: o.id,
+      name: `${o.region} ${o.ingredientName} · ${o.freshnessLabel}`,
+      ingredientId: o.ingredientId,
+      ingredientName: o.ingredientName,
+      producerId,
+      producerName: o.producerName,
+      region: o.region,
+      price: o.price,
+      unit: o.unit,
+      imageUrl: vegImg(o.ingredientName),
+      stockStatus: 'IN_STOCK',
+      category: ING.find((i) => i.id === o.ingredientId)?.cat || '기타',
+      rating: p.rating,
+      reviewCount: p.reviewCount,
+    }));
+  });
+  if (category && category !== 'ALL') list = list.filter((x) => x.category === category);
+  return list.sort(PRODUCT_SORTS[sort] || PRODUCT_SORTS.RECOMMENDED);
+}
+
 // ── 레시피 ───────────────────────────────────────────────────────
 const RECIPES = [
   { id: 101, title: '봄동 비빔밥', img: DISH_IMG.봄동비빔밥, time: 20, difficulty: '쉬움', likes: 1240, servings: 2, ings: ['봄동', '쌀', '고추장', '계란'], tags: ['#봄동', '#한그릇', '#제철'], creator: '쿠킹맘', seasonal: true },

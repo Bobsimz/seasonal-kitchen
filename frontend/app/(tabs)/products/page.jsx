@@ -1,33 +1,55 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Plus, Bell, Search, ShoppingCart } from 'lucide-react';
-import { useProducers, useMyProducer, useProducerOffers, useHome, useCart } from '@/lib/queries';
+import { Plus, Bell, Search, ShoppingCart, ChevronDown, Check } from 'lucide-react';
+import { useProducts, useMyProducer, useHome, useCart } from '@/lib/queries';
 import { AppHeader, HeaderIconButton } from '@/components/layout';
 import { ChipTabs } from '@/components/ui/SegmentedToggle';
+import { Sheet } from '@/components/ui/Sheet';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState, EmptyState } from '@/components/ui/States';
-import { ProducerRow } from '@/components/domain/ProducerCard';
-import { wonLabel } from '@/lib/format';
+import { ProductCard } from '@/components/domain/ProductCard';
+import { cn } from '@/lib/cn';
 
-// 명예/스타일 필터 칩 → 농가 style enum 매핑. value=null 이면 전체.
-const FILTERS = [
-  { value: 'ALL', label: '전체' },
-  { value: 'ORGANIC', label: '유기농' },
-  { value: 'PREMIUM', label: '프리미엄' },
-  { value: 'VALUE', label: '실속' },
+// 카테고리 칩은 상품에 실제 존재하는 값에서 동적 생성 — 이 배열은 노출 순서만 정한다.
+const CAT_ORDER = ['잎채소', '뿌리채소', '열매채소', '꽃채소', '과일', '양념채소', '기타'];
+
+const SORTS = [
+  { value: 'RECOMMENDED', label: '추천순' },
+  { value: 'PRICE_ASC', label: '낮은가격순' },
+  { value: 'REVIEW_DESC', label: '리뷰많은순' },
 ];
+const SORT_FNS = {
+  RECOMMENDED: (a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount,
+  PRICE_ASC: (a, b) => a.price - b.price,
+  REVIEW_DESC: (a, b) => b.reviewCount - a.reviewCount,
+};
 
 export default function ProductsPage() {
-  const [filter, setFilter] = useState('ALL');
-  const { data: producers = [], isLoading, error, refetch } = useProducers();
+  const [category, setCategory] = useState('ALL');
+  const [sort, setSort] = useState('RECOMMENDED');
+  const [sortOpen, setSortOpen] = useState(false);
+
+  const { data: allProducts = [], isLoading, error, refetch } = useProducts();
   const { data: myProducer } = useMyProducer();
   const { data: home } = useHome();
   const { data: cart } = useCart();
   const cartCount = cart?.groups?.reduce((n, g) => n + g.items.length, 0) ?? 0;
 
-  const list = filter === 'ALL' ? producers : producers.filter((p) => p.style === filter);
+  // 노출 순서를 적용해 실제 존재하는 카테고리만 칩으로.
+  const filters = useMemo(() => {
+    const present = new Set(allProducts.map((p) => p.category));
+    const cats = CAT_ORDER.filter((c) => present.has(c)).map((c) => ({ value: c, label: c }));
+    return [{ value: 'ALL', label: '전체' }, ...cats];
+  }, [allProducts]);
+
+  const list = useMemo(() => {
+    const arr = category === 'ALL' ? allProducts : allProducts.filter((p) => p.category === category);
+    return [...arr].sort(SORT_FNS[sort] || SORT_FNS.RECOMMENDED);
+  }, [allProducts, category, sort]);
+
+  const sortLabel = SORTS.find((s) => s.value === sort)?.label ?? '추천순';
 
   // 판매 등록 진입: 내 농가가 있으면 상품 등록, 없으면 농가 등록.
   const sellHref = myProducer ? '/my/seller/offers/new' : '/my/seller/register';
@@ -45,41 +67,71 @@ export default function ProductsPage() {
         }
       />
 
-      {/* 필터 칩 — 스크롤 시 헤더 바로 아래 고정 */}
-      <ChipTabs options={FILTERS} value={filter} onChange={setFilter} sticky className="sticky top-14" />
+      {/* 카테고리 칩 — 스크롤 시 헤더 바로 아래 고정 */}
+      <ChipTabs options={filters} value={category} onChange={setCategory} sticky className="sticky top-14" />
 
       {isLoading && <LoadingScreen />}
       {error && <ErrorState onRetry={refetch} />}
 
       {!isLoading && !error && (
         <div className="animate-fade-up pb-24">
-          {/* 정렬/개수 행 */}
-          <div className="flex items-center justify-between px-5 pb-2 pt-3.5">
+          {/* 개수 / 정렬 행 */}
+          <div className="flex items-center justify-between px-5 pb-2.5 pt-3.5">
             <span className="text-[12.5px] text-ink-mid">
-              <b className="text-ink">{list.length}</b>개 농가
+              <b className="text-ink">{list.length}</b>개 상품
             </span>
-            <span className="text-[12.5px] font-bold text-ink-mid">추천순</span>
+            <button
+              onClick={() => setSortOpen(true)}
+              className="tap flex items-center gap-0.5 text-[12.5px] font-bold text-ink-mid"
+            >
+              {sortLabel}
+              <ChevronDown size={14} />
+            </button>
           </div>
 
           {list.length === 0 ? (
             <EmptyState
-              title="조건에 맞는 농가가 없어요"
-              description="다른 필터를 선택해 보세요."
+              title="조건에 맞는 상품이 없어요"
+              description="다른 카테고리를 선택해 보세요."
             />
           ) : (
-            <div className="px-2">
+            <div className="grid grid-cols-2 gap-3 px-4">
               {list.map((p) => (
-                <ProducerRow
+                <ProductCard
                   key={p.id}
-                  producer={p}
-                  href={`/products/${p.id}`}
-                  footer={<OffersFooter producerId={p.id} />}
+                  product={p}
+                  href={`/products/${p.producerId}?offer=${p.id}`}
                 />
               ))}
             </div>
           )}
         </div>
       )}
+
+      {/* 정렬 바텀시트 */}
+      <Sheet open={sortOpen} onClose={() => setSortOpen(false)} title="정렬">
+        <div className="flex flex-col">
+          {SORTS.map((s) => {
+            const active = s.value === sort;
+            return (
+              <button
+                key={s.value}
+                onClick={() => {
+                  setSort(s.value);
+                  setSortOpen(false);
+                }}
+                className={cn(
+                  'tap flex items-center justify-between py-3 text-[14.5px]',
+                  active ? 'font-extrabold text-brand-dark' : 'font-semibold text-ink',
+                )}
+              >
+                {s.label}
+                {active && <Check size={18} strokeWidth={2.6} />}
+              </button>
+            );
+          })}
+        </div>
+      </Sheet>
 
       {/* 우하단 + FAB — 판매 등록 진입 (프레임 내부 고정) */}
       <Link
@@ -91,28 +143,5 @@ export default function ProductsPage() {
         <span className="text-[14.5px] font-extrabold tracking-tight">판매 등록</span>
       </Link>
     </>
-  );
-}
-
-// 농가별 대표 상품 2-3개를 행 하단에 노출 (ingredientName + price).
-function OffersFooter({ producerId }) {
-  const { data: offers = [] } = useProducerOffers(producerId);
-  if (offers.length === 0) return null;
-  return (
-    <div className="flex gap-2 overflow-x-auto phone-scroll">
-      {offers.slice(0, 3).map((o) => (
-        <Link
-          key={o.id}
-          href={`/products/${producerId}`}
-          className="tap flex shrink-0 items-center gap-2 rounded-xl border border-line-soft bg-surface-soft px-2.5 py-1.5"
-        >
-          <span className="text-[12px] font-bold text-ink">{o.ingredientName}</span>
-          <span className="text-[12px] font-extrabold text-brand-dark">
-            {wonLabel(o.price)}
-            <span className="font-medium text-ink-soft">/{o.unit}</span>
-          </span>
-        </Link>
-      ))}
-    </div>
   );
 }
