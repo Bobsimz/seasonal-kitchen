@@ -1,5 +1,6 @@
 package com.seasonaldining.home.dto.response;
 
+import com.seasonaldining.curation.dto.response.CurationCardResponse;
 import com.seasonaldining.ingredient.dto.response.IngredientCardResponse;
 import com.seasonaldining.recipe.dto.response.RecipeCardResponse;
 import com.seasonaldining.search.dto.response.SearchKeywordResponse;
@@ -14,11 +15,11 @@ public record HomeResponse(
         @Schema(description = "홈 제철 설명", example = "지금이 가장 알뜰한 제철 식재료를 모았어요")
         String seasonSubtitle,
 
-        @Schema(description = "홈 히어로 카드(단일, 하위 호환). heroes[0]과 동일하며 heroes가 비면 null")
-        HeroResponse hero,
+        @Schema(description = "홈 히어로 큐레이션 카드(단일, 하위 호환). heroes[0]과 동일하며 heroes가 비면 null")
+        CurationCardResponse hero,
 
-        @Schema(description = "홈 히어로 카드 목록(캐러셀용 배열). 식재료가 없으면 빈 배열")
-        List<HeroResponse> heroes,
+        @Schema(description = "홈 히어로 큐레이션 카드 목록(캐러셀용). 큐레이션이 없으면 빈 배열")
+        List<CurationCardResponse> heroes,
 
         @Schema(description = "홈 추천 식재료") List<IngredientCardResponse> ingredients,
         @Schema(description = "홈 추천 레시피") List<RecipeCardResponse> recipes,
@@ -26,26 +27,6 @@ public record HomeResponse(
         @Schema(description = "인기 검색어") List<SearchKeywordResponse> trendingKeywords,
         @Schema(description = "읽지 않은 알림 수. 비로그인 홈에서는 0") long unreadNotificationCount
 ) {
-    public record HeroResponse(
-            @Schema(description = "히어로 제목", example = "지금이 가장 알뜰한 제철 식재료")
-            String title,
-            @Schema(description = "히어로 부제", example = "가격이 내려간 봄동과 무를 확인해보세요")
-            String subtitle,
-            @Schema(description = "히어로 이미지 URL", nullable = true)
-            String imageUrl,
-            @Schema(description = "주요 이동 대상 유형", example = "INGREDIENT")
-            String primaryTargetType,
-            @Schema(description = "주요 이동 대상 ID", example = "1", nullable = true)
-            Long primaryTargetId,
-            @Schema(description = "식재료 ID(프론트 카드 키·링크용). INGREDIENT 히어로면 primaryTargetId와 동일", example = "1", nullable = true)
-            Long ingredientId,
-            @Schema(description = "가격 라벨(표시용 문자열). 가격 정보 없으면 null", example = "1,980원/1개", nullable = true)
-            String priceLabel,
-            @Schema(description = "가격 추세 라벨(표시용). 주간 변동 기준, 없으면 null", example = "▼ 12.5%", nullable = true)
-            String trendLabel
-    ) {
-    }
-
     public record HomeReelResponse(
             @Schema(description = "릴스 ID", example = "1")
             Long id,

@@ -416,38 +416,75 @@ export function reelComments(id) {
   ];
 }
 
+// ── 큐레이션 ─────────────────────────────────────────────────────
+// 메인 이미지/타이틀/서브타이틀 + 제철 이야기 + 관련 식재료/레시피. 홈 히어로 = 큐레이션 카드.
+const CURATIONS = [
+  {
+    id: 1,
+    title: '무, 겨울을 견디는 단단한 단맛',
+    subtitle: '시원한 국물부터 아삭한 무생채까지, 지금이 가장 맛있어요',
+    seasonalStory:
+      '찬 바람을 맞을수록 무는 속이 꽉 차고 단맛이 깊어집니다. 겨울 무는 수분이 많고 아린 맛이 적어, 뭇국이나 무조림처럼 푹 익히는 요리에 제격이에요. 채 썰어 새콤하게 무친 무생채는 입맛을 돋우고, 큼직하게 썰어 끓인 맑은 국은 속을 편안하게 데워줍니다. 1년 중 가장 달고 단단한 지금, 무 한 개로 식탁을 풍성하게 채워보세요.',
+    ingredientNames: ['무', '대파', '배추'],
+  },
+  {
+    id: 2,
+    title: '봄동, 봄을 가장 먼저 알리는 채소',
+    subtitle: '겨우내 단맛을 머금은 봄의 첫 잎채소',
+    seasonalStory:
+      '겨울을 견디며 땅에 납작 엎드려 자란 봄동은, 추위를 이겨낸 만큼 잎이 도톰하고 단맛이 깊습니다. 살짝 데쳐 된장에 무치거나 겉절이로 무쳐내면 식탁에 가장 먼저 봄이 찾아와요. 부드러운 잎은 쌈으로도, 국으로도 잘 어울립니다. 1년 중 지금이 가장 연하고 달큰한 때, 봄동으로 봄을 맞이해보세요.',
+    ingredientNames: ['봄동', '시금치', '배추'],
+  },
+  {
+    id: 3,
+    title: '시금치, 겨울 햇살을 머금은 잎채소',
+    subtitle: '데쳐도 볶아도 좋은, 철분 가득 보약 채소',
+    seasonalStory:
+      '한겨울 노지에서 자란 시금치는 추위에 맞서 당분을 끌어모아 잎이 두껍고 뿌리가 붉으며 단맛이 진합니다. 살짝 데쳐 참기름에 무치면 향이 살아나고, 된장국에 넣으면 국물이 한결 구수해져요. 철분과 비타민이 풍부해 겨울철 기력 보충에 제격인 채소랍니다.',
+    ingredientNames: ['시금치', '봄동', '브로콜리'],
+  },
+];
+
+function curationRelated(c) {
+  const relatedIngredients = c.ingredientNames
+    .map((n) => ingredients.find((i) => i.name === n))
+    .filter(Boolean);
+  const mainId = ingredientIdByName(c.ingredientNames[0]);
+  const relatedRecipes = (mainId ? recipesForIngredient(mainId) : recipes).slice(0, 8);
+  return { relatedIngredients, relatedRecipes };
+}
+
+function curationImage(c) {
+  const { relatedRecipes, relatedIngredients } = curationRelated(c);
+  return relatedRecipes[0]?.imageUrl || relatedIngredients[0]?.imageUrl || vegImg(c.ingredientNames[0]);
+}
+
+export const curationCards = () =>
+  CURATIONS.map((c) => ({ id: c.id, imageUrl: curationImage(c), title: c.title, subtitle: c.subtitle }));
+
+export function curation(id) {
+  const c = CURATIONS.find((x) => x.id === Number(id)) ?? CURATIONS[0];
+  const { relatedIngredients, relatedRecipes } = curationRelated(c);
+  return {
+    id: c.id,
+    imageUrl: curationImage(c),
+    title: c.title,
+    subtitle: c.subtitle,
+    seasonalStory: c.seasonalStory,
+    relatedIngredients,
+    relatedRecipes,
+  };
+}
+
 // ── 홈 ───────────────────────────────────────────────────────────
 export function home() {
-  const hero = {
-    title: '지금이 제철, 봄동',
-    subtitle: '이번 주 시세 -15% · 구매 적기',
-    ingredientId: 12,
-    imageUrl: DISH_IMG.봄동비빔밥히어로,
-    priceLabel: '4,500원/봉',
-    trendLabel: '-15%',
-  };
+  const heroes = curationCards(); // 홈 히어로 = 큐레이션 카드(이미지/타이틀/서브타이틀)
   const seasonalIngredients = ingredients.filter((i) => i.seasonal || i.hot).slice(0, 8);
-  // 히어로 캐러셀 슬라이드 — 대표(봄동) + 시세 하락폭이 큰 "지금 구매 적기" 식재료 4종.
-  // (데모 season 기준상 제철 항목이 적을 수 있어, 전체 식재료에서 시세 매력도 순으로 보강)
-  const heroPool = ingredients
-    .filter((i) => i.id !== hero.ingredientId)
-    .sort((a, b) => (a.priceChangePct ?? 0) - (b.priceChangePct ?? 0))
-    .slice(0, 4);
-  const heroes = [
-    hero,
-    ...heroPool.map((i) => ({
-      title: `지금이 제철, ${i.name}`,
-      subtitle: i.priceChangeLabel ? `이번 주 ${i.priceChangeLabel} · 지금이 구매 적기` : '제철 맞이 · 지금이 가장 신선해요',
-      ingredientId: i.id,
-      imageUrl: i.imageUrl,
-      priceLabel: `${i.currentPrice.toLocaleString()}원/${i.unit}`,
-      trendLabel: i.priceChangeLabel ?? '제철',
-    })),
-  ];
   return {
-    locationLabel: '우리 동네 제철',
+    seasonTitle: '이번 주 제철 식탁',
+    seasonSubtitle: '가격과 제철 흐름을 기준으로 추천했어요',
     unreadNotificationCount: 2,
-    hero,
+    hero: heroes[0] ?? null,
     heroes,
     ingredients: seasonalIngredients,
     recipes: recipes.slice(0, 6),

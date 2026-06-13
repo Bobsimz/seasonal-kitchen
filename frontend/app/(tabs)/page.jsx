@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { Bell, Search, ShoppingCart, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useHome, useProducers, useCart } from '@/lib/queries';
-import { AppHeader, HeaderIconButton } from '@/components/layout';
+import { HomeHeader } from '@/components/layout';
 import { Section } from '@/components/ui/Card';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/States';
@@ -25,29 +25,25 @@ export default function HomePage() {
   const { data, isLoading, error, refetch } = useHome();
   const { data: cart } = useCart();
   const cartCount = cart?.groups?.reduce((n, g) => n + g.items.length, 0) ?? 0;
+  // 히어로 목록 — 헤더의 투명/떠있음(floating) 여부와 -mt-14 적용을 "실제 렌더되는 히어로"에 맞춘다.
+  // (백엔드가 heroes:[] 를 줄 수 있어 data 존재만으론 판단하면 안 됨)
+  const heroes = (data?.heroes ?? [data?.hero]).filter(Boolean);
 
   return (
     <>
-      <AppHeader
-        title={<span className="font-display">제철식탁</span>}
-        right={
-          <>
-            <HeaderIconButton icon={Bell} href="/notifications" label="알림" badge={data?.unreadNotificationCount} />
-            <HeaderIconButton icon={Search} href="/search" label="검색" />
-            <HeaderIconButton icon={ShoppingCart} href="/cart" label="장바구니" badge={cartCount} />
-          </>
-        }
-      />
+      <HomeHeader unreadCount={data?.unreadNotificationCount} cartCount={cartCount} floating={heroes.length > 0} />
 
       {isLoading && <LoadingScreen />}
       {error && <ErrorState onRetry={refetch} />}
 
       {data && (
         <div className="animate-fade-up pb-6">
-          {/* 히어로 — 이번 주 제철 (여러 카드 스와이프 → 제철 큐레이션) */}
-          <div className="pt-1">
-            <HeroCarousel heroes={data.heroes ?? [data.hero]} locationLabel={data.locationLabel} />
-          </div>
+          {/* 히어로 — 큐레이션 (풀블리드, 헤더가 위에 떠 있도록 -mt-14 로 끌어올린다) */}
+          {heroes.length > 0 && (
+            <div className="-mt-14">
+              <HeroCarousel heroes={heroes} />
+            </div>
+          )}
 
           {/* 제철 식재료 */}
           <Section title="지금 제철 식재료" action={<MoreLink href="/info" />}>

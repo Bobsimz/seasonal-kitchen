@@ -43,6 +43,9 @@ export const endpoints = {
   search: (q, type = 'ALL') => withFallback(() => api.get('/search', { params: { q, type } }), () => mock.search(q, type)),
   getTrending: () => withFallback(() => api.get('/search/trending'), () => mock.trending()),
 
+  // ── Curations ──────────────────────────────────────────
+  getCuration: (id) => withFallback(() => api.get(`/curations/${id}`), () => mock.curation(id)),
+
   // ── Ingredients ────────────────────────────────────────
   listIngredients: (params) => withFallback(() => api.get('/ingredients', { params }), () => ({ items: mock.listIngredients() })),
   listIngredientCategories: () => withFallback(() => api.get('/ingredients/categories'), () => []),

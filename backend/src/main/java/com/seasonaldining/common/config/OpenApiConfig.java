@@ -40,7 +40,8 @@ public class OpenApiConfig {
                           "data": {
                             "seasonTitle": "이번 주 제철 추천",
                             "seasonSubtitle": "봄동과 무 가격이 안정적입니다.",
-                            "hero": {"title": "봄동 비빔밥", "ingredientName": "봄동", "imageUrl": "https://example.com/bomdong.png"},
+                            "hero": {"id": 2, "title": "봄동, 봄을 가장 먼저 알리는 채소", "subtitle": "겨우내 단맛을 머금은 봄의 첫 잎채소", "imageUrl": "https://example.com/bomdong.png"},
+                            "heroes": [{"id": 2, "title": "봄동, 봄을 가장 먼저 알리는 채소", "subtitle": "겨우내 단맛을 머금은 봄의 첫 잎채소", "imageUrl": "https://example.com/bomdong.png"}],
                             "ingredients": [{"id": 1, "name": "봄동", "price": 4500, "tags": ["제철", "추천"]}],
                             "recipes": [{"id": 1, "title": "봄동 비빔밥", "likeCount": 12, "tags": ["EASY", "20분"]}],
                             "reels": [{"id": 1, "title": "봄동 비빔밥 1분", "creatorName": "제철키친", "viewCount": 1200}],

@@ -8,6 +8,7 @@ import { useAuth } from './auth';
 
 export const qk = {
   home: ['home'],
+  curation: (id) => ['curation', String(id)],
   search: (q, type) => ['search', q, type],
   trending: ['trending'],
   recentSearches: ['recent-searches'],
@@ -61,6 +62,8 @@ function useInfiniteList(key, fetchPage, params) {
 
 // ── Home / Search ──────────────────────────────────────────
 export const useHome = () => useQuery({ queryKey: qk.home, queryFn: endpoints.getHome });
+export const useCuration = (id) =>
+  useQuery({ queryKey: qk.curation(id), queryFn: () => endpoints.getCuration(id), enabled: !!id });
 export const useSearch = (q, type = 'ALL', enabled = true) =>
   useQuery({ queryKey: qk.search(q, type), queryFn: () => endpoints.search(q, type), enabled });
 export const useTrending = () => useQuery({ queryKey: qk.trending, queryFn: endpoints.getTrending });

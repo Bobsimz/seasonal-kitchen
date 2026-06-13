@@ -4,73 +4,79 @@ import Link from 'next/link';
 import { useCallback, useRef, useState } from 'react';
 import { cn } from '@/lib/cn';
 
-// 홈 상단 히어로 — 여러 제철 카드를 좌우로 넘기는 캐러셀.
-// scroll-snap 으로 손가락/트랙패드 스와이프에 자연스럽게 붙고, 활성 카드만 100%·
-// 양옆 카드는 살짝 축소돼 "뒤에 카드가 있는 것처럼 삐죽" 보이는 코버플로우 느낌을 준다.
-// 카드 탭 → 제철 큐레이션(07) 화면.
-export function HeroCarousel({ heroes, locationLabel }) {
+// 홈 상단 히어로 — 풀블리드 큐레이션 캐러셀.
+// 큐레이션의 메인 이미지/타이틀/서브타이틀만 보여주고, 카드 탭 → 큐레이션 상세(/curation/{id}).
+// 헤더(HomeHeader)가 그 위에 글래스 버튼으로 떠 있다. 좌우 스와이프(scroll-snap)로 넘긴다.
+export function HeroCarousel({ heroes }) {
   const trackRef = useRef(null);
   const [active, setActive] = useState(0);
 
   const handleScroll = useCallback(() => {
     const el = trackRef.current;
     if (!el || el.children.length === 0) return;
-    // 카드 간 이동 거리(stride)는 첫 두 카드의 위치 차로 계산 — 축소(scale) 변형은
-    // offsetLeft(레이아웃 위치)를 바꾸지 않으므로 stride 가 일정하게 유지된다.
     const stride =
-      el.children.length > 1
-        ? el.children[1].offsetLeft - el.children[0].offsetLeft
-        : el.clientWidth;
+      el.children.length > 1 ? el.children[1].offsetLeft - el.children[0].offsetLeft : el.clientWidth;
     const idx = Math.round(el.scrollLeft / stride);
     setActive(Math.max(0, Math.min(heroes.length - 1, idx)));
   }, [heroes.length]);
 
   return (
-    <div>
+    <div className="relative">
       <div
         ref={trackRef}
         onScroll={handleScroll}
-        className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth phone-scroll px-4"
+        className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth phone-scroll"
       >
         {heroes.map((h, i) => (
-          <Link
-            key={h.ingredientId ?? i}
-            href="/curation"
-            className={cn(
-              'tap block w-[85%] shrink-0 snap-center overflow-hidden rounded-3xl transition-[transform,opacity] duration-300 ease-out',
-              i === active ? 'scale-100 opacity-100' : 'scale-[0.92] opacity-70',
-            )}
-          >
-            <div className="relative aspect-[16/10] w-full">
-              <img src={h.imageUrl} alt={h.title} className="h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-                <span className="inline-block rounded-full bg-brand px-2.5 py-1 text-[11px] font-bold">
-                  {locationLabel}
-                </span>
-                <h2 className="mt-2 text-[24px] font-extrabold leading-tight tracking-tight">{h.title}</h2>
-                <p className="mt-1 text-[13.5px] font-medium text-white/85">{h.subtitle}</p>
-                <div className="mt-2 flex items-center gap-2 text-[14px] font-bold">
-                  <span>{h.priceLabel}</span>
-                  {h.trendLabel && (
-                    <span className="rounded-md bg-white/20 px-1.5 py-0.5 text-[12px]">{h.trendLabel}</span>
-                  )}
-                </div>
+          <Link key={h.id ?? i} href={`/curation/${h.id}`} className="relative block w-full shrink-0 snap-center">
+            <div className="relative h-[clamp(320px,46svh,400px)] w-full overflow-hidden">
+              {/* 배경 이미지 */}
+              <img
+                src={h.imageUrl}
+                alt={h.title ?? '제철 큐레이션'}
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{ objectPosition: 'center 32%' }}
+              />
+              {/* 다크 오버레이 — 상단(헤더 아이콘 가독)·하단(타이틀/서브) 진하게, 가운데는 옅게 */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(180deg, rgba(15,26,20,0.42) 0%, rgba(15,26,20,0.22) 38%, rgba(15,26,20,0.82) 100%)',
+                }}
+              />
+
+              {/* 카피 — 메인 타이틀 + 서브타이틀 (하단 정렬) */}
+              <div className="relative flex h-full flex-col justify-end px-5 pb-9 pt-[72px] text-white">
+                <h2
+                  className="font-display text-[26px] font-extrabold leading-[1.15] tracking-[-0.5px]"
+                  style={{ textShadow: '0 2px 18px rgba(0,0,0,0.4)' }}
+                >
+                  {h.title}
+                </h2>
+                {h.subtitle && (
+                  <p
+                    className="mt-2 max-w-[92%] text-[13.5px] font-medium leading-snug text-white/85"
+                    style={{ textShadow: '0 1px 10px rgba(0,0,0,0.45)' }}
+                  >
+                    {h.subtitle}
+                  </p>
+                )}
               </div>
             </div>
           </Link>
         ))}
       </div>
 
-      {/* 페이지 인디케이터 */}
+      {/* 페이지 인디케이터 — 히어로 하단 중앙(이미지 위) */}
       {heroes.length > 1 && (
-        <div className="mt-3 flex items-center justify-center gap-1.5">
+        <div className="pointer-events-none absolute inset-x-0 bottom-3 flex items-center justify-center gap-1.5">
           {heroes.map((_, i) => (
             <span
               key={i}
               className={cn(
-                'h-1.5 rounded-full transition-all duration-200',
-                i === active ? 'w-3.5 bg-ink/85' : 'w-1.5 bg-ink/25',
+                'h-[5px] rounded-full transition-all duration-200',
+                i === active ? 'w-3.5 bg-white' : 'w-[5px] bg-white/45',
               )}
             />
           ))}
