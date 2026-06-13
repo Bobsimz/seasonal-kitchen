@@ -13,19 +13,24 @@ env:
 
 jobs:
   # 1) 어떤 폴더가 바뀌었는지 감지
+  # workflow_dispatch 수동 실행 시: 항상 backend=true, frontend=true 로 처리해 강제 배포
   changes:
     runs-on: ubuntu-latest
     outputs:
-      backend: ${{ steps.filter.outputs.backend }}
-      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ github.event_name == 'workflow_dispatch' && 'true' || steps.filter.outputs.backend }}
+      frontend: ${{ github.event_name == 'workflow_dispatch' && 'true' || steps.filter.outputs.frontend }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
         id: filter
+        if: github.event_name != 'workflow_dispatch'
         with:
           filters: |
             backend:
-              - 'backend/**'
+              - 'backend/src/**'
+              - 'backend/build.gradle'
+              - 'backend/settings.gradle'
+              - 'backend/Dockerfile'
             frontend:
               - 'frontend/**'
 
@@ -147,18 +152,19 @@ jobs:
             cd ~/seasonal-kitchen
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d
+            docker compose -f docker-compose.prod.yml up -d --force-recreate
             docker image prune -f
             docker logout ghcr.io
-            # 배포 후 헬스체크 (최대 60초 대기). 실패하면 배포 job 도 실패 처리.
-            echo "헬스체크 대기..."
-            for i in $(seq 1 12); do
+            # 배포 후 헬스체크 (최대 150초 대기). 실패하면 배포 job 도 실패 처리.
+            echo "헬스체크 대기 (최대 150초)..."
+            sleep 10
+            for i in $(seq 1 14); do
               if curl -fsSLk https://localhost/api/v1/health >/dev/null 2>&1; then
                 echo "헬스체크 통과 (${i}회차)"; exit 0
               fi
-              sleep 5
+              sleep 10
             done
-            echo "헬스체크 실패: /api/v1/health 가 60초 내 응답하지 않음"; exit 1
+            echo "헬스체크 실패: /api/v1/health 가 150초 내 응답하지 않음"; exit 1
 
   # 알림) 결과 — 성공/실패 (배포 job 끝난 뒤 항상 실행)
   notify-done:
