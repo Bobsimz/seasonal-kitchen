@@ -118,19 +118,12 @@ public class RecipeService {
     }
 
     private RecipeIngredientResponse toIngredientResponse(RecipeIngredient recipeIngredient, Ingredient ingredient) {
-        String name = ingredient == null ? null : ingredient.getName();
+        // 카탈로그에 없는 비농산물 재료(계란·쌀 등)는 Ingredient 행이 없으므로 recipeIngredient.getName() 으로 폴백.
+        String name = ingredient != null ? ingredient.getName() : recipeIngredient.getName();
         String imageUrl = ingredient == null ? null : ingredient.getImageUrl();
-        java.math.BigDecimal price = latestPrice(recipeIngredient.getIngredientId());
+        java.math.BigDecimal price = ingredient == null ? null : latestPrice(recipeIngredient.getIngredientId());
         return new RecipeIngredientResponse(
                 recipeIngredient.getIngredientId(),
-<<<<<<< HEAD
-                ingredient != null ? ingredient.getName() : recipeIngredient.getName(),
-                recipeIngredient.getQuantity(),
-                recipeIngredient.getUnit(),
-                recipeIngredient.isOptional(),
-                ingredient == null ? null : ingredient.getImageUrl(),
-                ingredient == null ? null : latestPrice(recipeIngredient.getIngredientId()),
-=======
                 name,
                 amountLabel(recipeIngredient.getQuantity(), recipeIngredient.getUnit()),
                 imageUrl,
@@ -141,7 +134,6 @@ public class RecipeService {
                 recipeIngredient.isOptional(),
                 imageUrl,
                 price,
->>>>>>> 46903ee (feat: 백엔드 프론트 동기화)
                 null
         );
     }

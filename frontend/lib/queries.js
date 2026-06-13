@@ -4,6 +4,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { endpoints } from './endpoints';
+import { useAuth } from './auth';
 
 export const qk = {
   home: ['home'],
@@ -97,10 +98,17 @@ export const useProducerReviews = (id) =>
   useQuery({ queryKey: qk.producerReviews(id), queryFn: () => endpoints.getProducerReviews(id), enabled: !!id });
 export const useProducerNews = (id) =>
   useQuery({ queryKey: qk.producerNews(id), queryFn: () => endpoints.getProducerNews(id), enabled: !!id });
-export const useMyProducer = () => useQuery({ queryKey: qk.myProducer, queryFn: endpoints.getMyProducer });
+// 인증 전용 조회 — 비로그인 시 실행하지 않는다(401 → 전역 SessionGate 모달이 공개 페이지에 뜨는 것 방지).
+export const useMyProducer = () => {
+  const { isAuthenticated } = useAuth();
+  return useQuery({ queryKey: qk.myProducer, queryFn: endpoints.getMyProducer, enabled: isAuthenticated });
+};
 
 // ── MyPage / User ──────────────────────────────────────────
-export const useMySummary = () => useQuery({ queryKey: qk.mySummary, queryFn: endpoints.getMySummary });
+export const useMySummary = () => {
+  const { isAuthenticated } = useAuth();
+  return useQuery({ queryKey: qk.mySummary, queryFn: endpoints.getMySummary, enabled: isAuthenticated });
+};
 export const useSavePreferences = () => useMutation({ mutationFn: (body) => endpoints.savePreferences(body) });
 export function useUpdateMe() {
   const qc = useQueryClient();
@@ -111,7 +119,10 @@ export function useUpdateMe() {
 }
 
 // ── Cart / Orders ──────────────────────────────────────────
-export const useCart = () => useQuery({ queryKey: qk.cart, queryFn: endpoints.getCart });
+export const useCart = () => {
+  const { isAuthenticated } = useAuth();
+  return useQuery({ queryKey: qk.cart, queryFn: endpoints.getCart, enabled: isAuthenticated });
+};
 export const useOrders = () => useQuery({ queryKey: qk.orders, queryFn: endpoints.listOrders });
 export const useOrder = (id) => useQuery({ queryKey: qk.order(id), queryFn: () => endpoints.getOrder(id), enabled: !!id });
 
@@ -151,7 +162,10 @@ export function useCreateOrder() {
 }
 
 // ── Favorites ──────────────────────────────────────────────
-export const useFavorites = () => useQuery({ queryKey: qk.favorites, queryFn: endpoints.listFavorites });
+export const useFavorites = () => {
+  const { isAuthenticated } = useAuth();
+  return useQuery({ queryKey: qk.favorites, queryFn: endpoints.listFavorites, enabled: isAuthenticated });
+};
 export function useToggleFavorite() {
   const qc = useQueryClient();
   return useMutation({

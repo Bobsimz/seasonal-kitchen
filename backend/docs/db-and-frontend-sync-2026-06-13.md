@@ -19,7 +19,9 @@
 
 | 마이그레이션 | 종류 | 내용 |
 | --- | --- | --- |
-| `V37__backfill_offer_category.sql` | **데이터 백필**(스키마 변경 아님) | 시드된 `producer_offers.category`가 전부 NULL이라 상품탭 카테고리 칩이 '전체'만 떴음 → 식재료명 기준 분류(잎채소/뿌리채소/…)로 백필. `WHERE category IS NULL` 멱등. |
+| `V39__backfill_offer_category.sql` | **데이터 백필**(스키마 변경 아님) | 시드된 `producer_offers.category`가 전부 NULL이라 상품탭 카테고리 칩이 '전체'만 떴음 → 식재료명 기준 분류(잎채소/뿌리채소/…)로 백필. `WHERE category IS NULL` 멱등. |
+
+> ⚠️ **버전 번호 주의**: 이 백필은 처음 `V37`로 작성했으나, 머지된 팀원 작업이 이미 `V37__recipe_ingredient_freetext_name.sql`을 점유해 **Flyway 버전 충돌(중복 V37)** 이 발생했다(빌드/기동/통합테스트 전부 실패). 그래서 **`V39`로 재번호**했다. 현재 순서: V37(freetext name) → V38(seed_recipes) → V39(backfill_category). 새 마이그레이션 추가 시 최신 번호를 먼저 확인할 것.
 
 ### 참고: "있으면 더 좋은" 컬럼 (필수 아님, 후속 과제)
 지금은 조인/파생으로 처리했지만, 성능·스냅샷 정합성을 위해 훗날 추가를 고려할 수 있는 항목.
@@ -74,9 +76,7 @@
 
 ## 4. 잔여 권고사항 (이번 변경 범위 밖, 별도 판단 필요)
 
-- **운영(supabase) 프로필 레시피 시드 없음**: `recipes/recipe_steps/recipe_ingredients`는 런타임 데모시드(`local/dev`에서만, `app.demo-seed.enabled` 기본 false)로만 채워진다.
-  reels는 Flyway(V32)로 시드되지만 recipes는 아님 → **운영에서 `GET /recipes/{id}`가 404**가 되어 레시피 상세/조리 화면이 깨진다.
-  로컬/dev에서는 정상. 운영 정합을 위해 reels처럼 Flyway 시드 마이그레이션 추가를 권장.
+- ~~**운영(supabase) 프로필 레시피 시드 없음**~~ → **해결됨**: 머지된 팀원 작업 `V38__seed_recipes.sql`이 레시피 233건 + 스텝 + 재료(비농산물 free-text 포함)를 Flyway로 시드하고 릴스 `recipe_id`도 연결한다. 이제 모든 프로필에서 `GET /recipes/{id}`가 동작한다. (관련: 비농산물 재료용 `recipe_ingredients.name` 컬럼은 `V37__recipe_ingredient_freetext_name.sql`에서 추가.)
 - **제철(seasonal/seasonMonths) 데이터 소스 부재**: 현재 백엔드에 제철 월 정보가 없어 `seasonal=false`로 나간다. 제철 배지를 살리려면 `ingredient_seasons` 류 데이터가 필요.
 - **미사용(데드) 프론트 엔드포인트**: `getMe`/`getRecentSearches`/`getReel`/리뷰목록/가격알림 CRUD 등은 정의돼 있으나 호출 페이지가 없다(현재 무해). 추후 연결 시 형태 재검증 필요(문서 §의 INFO 항목 참고).
 

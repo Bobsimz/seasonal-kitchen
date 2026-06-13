@@ -67,10 +67,35 @@ function ReelItem({ reel }) {
   const toast = useToast();
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
+  const videoRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
 
   // 좋아요/저장 로컬 옵티미스틱 토글 + 카운트 보정
   const likeCount = useMemo(() => (reel.likes ?? 0) + (liked ? 1 : 0), [reel.likes, liked]);
   const saveCount = useMemo(() => (reel.saves ?? 0) + (saved ? 1 : 0), [reel.saves, saved]);
+
+  // 세로 피드라 화면에 보이는 릴만 재생 (스크롤 이탈 시 일시정지)
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(video);
+    return () => io.disconnect();
+  }, []);
+
+  // 탭하여 재생/일시정지 토글
+  const togglePlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) video.play().catch(() => {});
+    else video.pause();
+  };
 
   const onShare = () => toast.show('링크를 복사했어요');
 
@@ -79,16 +104,34 @@ function ReelItem({ reel }) {
       data-reel-id={reel.id}
       className="relative h-full w-full shrink-0 snap-start overflow-hidden bg-black"
     >
-      {/* 풀블리드 썸네일 + 다크 그라데이션 */}
-      {reel.thumbnailUrl && (
-        <img src={reel.thumbnailUrl} alt={reel.title} className="absolute inset-0 h-full w-full object-cover" />
+      {/* 풀블리드 영상(없으면 썸네일) + 다크 그라데이션 */}
+      {reel.videoUrl ? (
+        <video
+          ref={videoRef}
+          src={reel.videoUrl}
+          poster={reel.thumbnailUrl || undefined}
+          className="absolute inset-0 h-full w-full object-cover"
+          playsInline
+          muted
+          loop
+          preload="metadata"
+          onClick={togglePlay}
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+        />
+      ) : (
+        reel.thumbnailUrl && (
+          <img src={reel.thumbnailUrl} alt={reel.title} className="absolute inset-0 h-full w-full object-cover" />
+        )
       )}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/10 to-black/65" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-black/10 to-black/65" />
 
-      {/* 중앙 재생 인디케이터 */}
-      <div className="absolute left-1/2 top-1/2 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/15 backdrop-blur-xl">
-        <Play size={24} className="fill-white text-white" />
-      </div>
+      {/* 중앙 재생 인디케이터 — 일시정지 상태에서만 표시 */}
+      {!playing && (
+        <div className="pointer-events-none absolute left-1/2 top-1/2 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white/15 backdrop-blur-xl">
+          <Play size={24} className="fill-white text-white" />
+        </div>
+      )}
 
       {/* 우측 액션 레일 */}
       <div className="absolute bottom-28 right-3 z-[5] flex flex-col items-center gap-[18px]">

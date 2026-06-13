@@ -40,4 +40,14 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	// Testcontainers가 Docker 데몬을 찾게 한다. Colima(Docker Desktop 아님) 사용 시 DOCKER_HOST가
+	// 비어 있으면 Flyway*IntegrationTest 9개가 "DockerClientProviderStrategy" 예외로 죽는다.
+	// DOCKER_HOST 미설정 + 표준 Colima 소켓이 존재할 때만 주입하므로 CI/Docker Desktop에선 무영향.
+	if (!System.getenv('DOCKER_HOST')) {
+		def colimaSock = "${System.getProperty('user.home')}/.colima/default/docker.sock"
+		if (file(colimaSock).exists()) {
+			environment 'DOCKER_HOST', "unix://${colimaSock}"
+			environment 'TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE', '/var/run/docker.sock'
+		}
+	}
 }
