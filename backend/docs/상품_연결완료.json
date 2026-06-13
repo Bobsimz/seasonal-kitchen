@@ -1,0 +1,6491 @@
+[
+  {
+    "producerId": 102,
+    "ingredientName": "쌀",
+    "ingredientId": null,
+    "title": "쌀 20kg 산지직송",
+    "description": "잘 여문 쌀을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 62480,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 직사광선 없는 서늘한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 20,
+        "unit": "kg",
+        "price": 62480
+      },
+      {
+        "quantity": 40,
+        "unit": "kg",
+        "price": 118720
+      }
+    ]
+  },
+  {
+    "producerId": 101,
+    "ingredientName": "쌀",
+    "ingredientId": null,
+    "title": "쌀 20kg 알뜰 실속",
+    "description": "잘 여문 쌀을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 57480,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 직사광선 없는 서늘한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 20,
+        "unit": "kg",
+        "price": 57480
+      },
+      {
+        "quantity": 40,
+        "unit": "kg",
+        "price": 109220
+      }
+    ]
+  },
+  {
+    "producerId": 106,
+    "ingredientName": "쌀",
+    "ingredientId": null,
+    "title": "쌀 20kg 프리미엄 선별",
+    "description": "잘 여문 쌀을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 69980,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 직사광선 없는 서늘한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 20,
+        "unit": "kg",
+        "price": 69980
+      },
+      {
+        "quantity": 40,
+        "unit": "kg",
+        "price": 132970
+      }
+    ]
+  },
+  {
+    "producerId": 104,
+    "ingredientName": "찹쌀",
+    "ingredientId": null,
+    "title": "찹쌀 1kg 산지직송",
+    "description": "잘 여문 찹쌀을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 5390,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘하고 건조한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 5390
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 10250
+      }
+    ]
+  },
+  {
+    "producerId": 108,
+    "ingredientName": "찹쌀",
+    "ingredientId": null,
+    "title": "찹쌀 1kg 알뜰 실속",
+    "description": "잘 여문 찹쌀을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 4960,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘하고 건조한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 4960
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 9430
+      }
+    ]
+  },
+  {
+    "producerId": 103,
+    "ingredientName": "찹쌀",
+    "ingredientId": null,
+    "title": "찹쌀 1kg 프리미엄 선별",
+    "description": "잘 여문 찹쌀을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 6040,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘하고 건조한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 6040
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 11480
+      }
+    ]
+  },
+  {
+    "producerId": 109,
+    "ingredientName": "콩",
+    "ingredientId": null,
+    "title": "콩 500g 산지직송",
+    "description": "잘 여문 콩을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 5020,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘한 곳에 보관(장기보관은 냉장)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 5020
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 13850
+      },
+      {
+        "quantity": 2500,
+        "unit": "g",
+        "price": 22080
+      }
+    ]
+  },
+  {
+    "producerId": 105,
+    "ingredientName": "콩",
+    "ingredientId": null,
+    "title": "콩 500g 알뜰 실속",
+    "description": "잘 여문 콩을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 4620,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘한 곳에 보관(장기보관은 냉장)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 4620
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 12740
+      },
+      {
+        "quantity": 2500,
+        "unit": "g",
+        "price": 20310
+      }
+    ]
+  },
+  {
+    "producerId": 111,
+    "ingredientName": "콩",
+    "ingredientId": null,
+    "title": "콩 500g 프리미엄 선별",
+    "description": "잘 여문 콩을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 5620,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘한 곳에 보관(장기보관은 냉장)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 5620
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 15510
+      },
+      {
+        "quantity": 2500,
+        "unit": "g",
+        "price": 24730
+      }
+    ]
+  },
+  {
+    "producerId": 112,
+    "ingredientName": "팥",
+    "ingredientId": null,
+    "title": "팥 500g 산지직송",
+    "description": "잘 여문 팥을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 13240,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐해 서늘하고 건조한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 13240
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 36560
+      },
+      {
+        "quantity": 2500,
+        "unit": "g",
+        "price": 58280
+      }
+    ]
+  },
+  {
+    "producerId": 110,
+    "ingredientName": "팥",
+    "ingredientId": null,
+    "title": "팥 500g 알뜰 실속",
+    "description": "잘 여문 팥을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 12180,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐해 서늘하고 건조한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 12180
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 33630
+      },
+      {
+        "quantity": 2500,
+        "unit": "g",
+        "price": 53620
+      }
+    ]
+  },
+  {
+    "producerId": 116,
+    "ingredientName": "팥",
+    "ingredientId": null,
+    "title": "팥 500g 프리미엄 선별",
+    "description": "잘 여문 팥을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 14830,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐해 서늘하고 건조한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 14830
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 40940
+      },
+      {
+        "quantity": 2500,
+        "unit": "g",
+        "price": 65270
+      }
+    ]
+  },
+  {
+    "producerId": 112,
+    "ingredientName": "녹두",
+    "ingredientId": null,
+    "title": "녹두 500g 산지직송",
+    "description": "잘 여문 녹두을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 11870,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 11870
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 32760
+      },
+      {
+        "quantity": 2500,
+        "unit": "g",
+        "price": 52220
+      }
+    ]
+  },
+  {
+    "producerId": 105,
+    "ingredientName": "녹두",
+    "ingredientId": null,
+    "title": "녹두 500g 알뜰 실속",
+    "description": "잘 여문 녹두을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 10920,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 10920
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 30140
+      },
+      {
+        "quantity": 2500,
+        "unit": "g",
+        "price": 48050
+      }
+    ]
+  },
+  {
+    "producerId": 117,
+    "ingredientName": "녹두",
+    "ingredientId": null,
+    "title": "녹두 500g 프리미엄 선별",
+    "description": "잘 여문 녹두을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 13290,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 13290
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 36690
+      },
+      {
+        "quantity": 2500,
+        "unit": "g",
+        "price": 58490
+      }
+    ]
+  },
+  {
+    "producerId": 107,
+    "ingredientName": "고구마",
+    "ingredientId": null,
+    "title": "고구마 1kg 산지직송",
+    "description": "잘 여문 고구마을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 5870,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "신문지에 싸 12~15℃ 서늘한 곳에 보관(냉장 금지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 5870
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 11160
+      }
+    ]
+  },
+  {
+    "producerId": 101,
+    "ingredientName": "고구마",
+    "ingredientId": null,
+    "title": "고구마 1kg 알뜰 실속",
+    "description": "잘 여문 고구마을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 5400,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "신문지에 싸 12~15℃ 서늘한 곳에 보관(냉장 금지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 5400
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 10270
+      }
+    ]
+  },
+  {
+    "producerId": 106,
+    "ingredientName": "고구마",
+    "ingredientId": null,
+    "title": "고구마 1kg 프리미엄 선별",
+    "description": "잘 여문 고구마을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 6580,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "신문지에 싸 12~15℃ 서늘한 곳에 보관(냉장 금지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 6580
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 12500
+      }
+    ]
+  },
+  {
+    "producerId": 102,
+    "ingredientName": "감자",
+    "ingredientId": null,
+    "title": "감자 100g 산지직송",
+    "description": "잘 여문 감자을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 380,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "사과와 떨어뜨려 어둡고 서늘한 곳에 보관(냉장 금지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 380
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 1050
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 1680
+      }
+    ]
+  },
+  {
+    "producerId": 113,
+    "ingredientName": "감자",
+    "ingredientId": null,
+    "title": "감자 100g 알뜰 실속",
+    "description": "잘 여문 감자을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 350,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "사과와 떨어뜨려 어둡고 서늘한 곳에 보관(냉장 금지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 350
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 970
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 1540
+      }
+    ]
+  },
+  {
+    "producerId": 111,
+    "ingredientName": "감자",
+    "ingredientId": null,
+    "title": "감자 100g 프리미엄 선별",
+    "description": "잘 여문 감자을(를) 산지에서 직접 보내드립니다. 믿고 드세요.",
+    "category": "곡류",
+    "price": 430,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "사과와 떨어뜨려 어둡고 서늘한 곳에 보관(냉장 금지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 430
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 1180
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 1880
+      }
+    ]
+  },
+  {
+    "producerId": 109,
+    "ingredientName": "배추",
+    "ingredientId": null,
+    "title": "배추 1포기 산지직송",
+    "description": "산지에서 바로 보내는 신선한 배추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3580,
+    "unit": "포기",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "신문지에 싸 세워서 보관, 1~2주",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "포기",
+        "price": 3580
+      },
+      {
+        "quantity": 3,
+        "unit": "포기",
+        "price": 9890
+      },
+      {
+        "quantity": 5,
+        "unit": "포기",
+        "price": 15760
+      }
+    ]
+  },
+  {
+    "producerId": 105,
+    "ingredientName": "배추",
+    "ingredientId": null,
+    "title": "배추 1포기 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 배추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3300,
+    "unit": "포기",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "신문지에 싸 세워서 보관, 1~2주",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "포기",
+        "price": 3300
+      },
+      {
+        "quantity": 3,
+        "unit": "포기",
+        "price": 9100
+      },
+      {
+        "quantity": 5,
+        "unit": "포기",
+        "price": 14500
+      }
+    ]
+  },
+  {
+    "producerId": 118,
+    "ingredientName": "배추",
+    "ingredientId": null,
+    "title": "배추 1포기 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 배추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 4010,
+    "unit": "포기",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "신문지에 싸 세워서 보관, 1~2주",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "포기",
+        "price": 4010
+      },
+      {
+        "quantity": 3,
+        "unit": "포기",
+        "price": 11070
+      },
+      {
+        "quantity": 5,
+        "unit": "포기",
+        "price": 17650
+      }
+    ]
+  },
+  {
+    "producerId": 102,
+    "ingredientName": "양배추",
+    "ingredientId": null,
+    "title": "양배추 1포기 산지직송",
+    "description": "산지에서 바로 보내는 신선한 양배추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3160,
+    "unit": "포기",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "심지를 도려내고 젖은 키친타월을 끼워 비닐에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "포기",
+        "price": 3160
+      },
+      {
+        "quantity": 3,
+        "unit": "포기",
+        "price": 8730
+      },
+      {
+        "quantity": 5,
+        "unit": "포기",
+        "price": 13910
+      }
+    ]
+  },
+  {
+    "producerId": 114,
+    "ingredientName": "양배추",
+    "ingredientId": null,
+    "title": "양배추 1포기 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 양배추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2910,
+    "unit": "포기",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "심지를 도려내고 젖은 키친타월을 끼워 비닐에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "포기",
+        "price": 2910
+      },
+      {
+        "quantity": 3,
+        "unit": "포기",
+        "price": 8030
+      },
+      {
+        "quantity": 5,
+        "unit": "포기",
+        "price": 12800
+      }
+    ]
+  },
+  {
+    "producerId": 111,
+    "ingredientName": "양배추",
+    "ingredientId": null,
+    "title": "양배추 1포기 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 양배추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3540,
+    "unit": "포기",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "심지를 도려내고 젖은 키친타월을 끼워 비닐에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "포기",
+        "price": 3540
+      },
+      {
+        "quantity": 3,
+        "unit": "포기",
+        "price": 9770
+      },
+      {
+        "quantity": 5,
+        "unit": "포기",
+        "price": 15580
+      }
+    ]
+  },
+  {
+    "producerId": 109,
+    "ingredientName": "시금치",
+    "ingredientId": null,
+    "title": "시금치 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 시금치입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 730,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 비닐봉지에 세워 보관, 3~5일",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 730
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 2030
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 3230
+      }
+    ]
+  },
+  {
+    "producerId": 108,
+    "ingredientName": "시금치",
+    "ingredientId": null,
+    "title": "시금치 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 시금치입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 680,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 비닐봉지에 세워 보관, 3~5일",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 680
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 1860
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 2970
+      }
+    ]
+  },
+  {
+    "producerId": 103,
+    "ingredientName": "시금치",
+    "ingredientId": null,
+    "title": "시금치 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 시금치입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 820,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 비닐봉지에 세워 보관, 3~5일",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 820
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 2270
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 3620
+      }
+    ]
+  },
+  {
+    "producerId": 107,
+    "ingredientName": "상추",
+    "ingredientId": null,
+    "title": "상추 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 상추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1030,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1030
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 2840
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 4530
+      }
+    ]
+  },
+  {
+    "producerId": 101,
+    "ingredientName": "상추",
+    "ingredientId": null,
+    "title": "상추 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 상추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 950,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 950
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 2620
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 4170
+      }
+    ]
+  },
+  {
+    "producerId": 116,
+    "ingredientName": "상추",
+    "ingredientId": null,
+    "title": "상추 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 상추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1150,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1150
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 3180
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 5080
+      }
+    ]
+  },
+  {
+    "producerId": 115,
+    "ingredientName": "얼갈이배추",
+    "ingredientId": null,
+    "title": "얼갈이배추 1kg 산지직송",
+    "description": "산지에서 바로 보내는 신선한 얼갈이배추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2430,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "신문지·키친타월에 싸 비닐에 세워 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 2430
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 4610
+      }
+    ]
+  },
+  {
+    "producerId": 101,
+    "ingredientName": "얼갈이배추",
+    "ingredientId": null,
+    "title": "얼갈이배추 1kg 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 얼갈이배추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2230,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "신문지·키친타월에 싸 비닐에 세워 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 2230
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 4240
+      }
+    ]
+  },
+  {
+    "producerId": 117,
+    "ingredientName": "얼갈이배추",
+    "ingredientId": null,
+    "title": "얼갈이배추 1kg 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 얼갈이배추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2720,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "신문지·키친타월에 싸 비닐에 세워 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 2720
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 5170
+      }
+    ]
+  },
+  {
+    "producerId": 107,
+    "ingredientName": "수박",
+    "ingredientId": null,
+    "title": "수박 1개 산지직송",
+    "description": "산지에서 바로 보내는 신선한 수박입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 23600,
+    "unit": "개",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "통째는 실온, 자른 것은 랩으로 싸 냉장 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 23600
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 65150
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 103860
+      }
+    ]
+  },
+  {
+    "producerId": 110,
+    "ingredientName": "수박",
+    "ingredientId": null,
+    "title": "수박 1개 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 수박입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 21720,
+    "unit": "개",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "통째는 실온, 자른 것은 랩으로 싸 냉장 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 21720
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 59940
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 95550
+      }
+    ]
+  },
+  {
+    "producerId": 111,
+    "ingredientName": "수박",
+    "ingredientId": null,
+    "title": "수박 1개 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 수박입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 26440,
+    "unit": "개",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "통째는 실온, 자른 것은 랩으로 싸 냉장 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 26440
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 72970
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 116320
+      }
+    ]
+  },
+  {
+    "producerId": 104,
+    "ingredientName": "참외",
+    "ingredientId": null,
+    "title": "참외 10개 산지직송",
+    "description": "산지에서 바로 보내는 신선한 참외입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 17520,
+    "unit": "개",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "씻지 않고 비닐에 담아 냉장 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 17520
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 48360
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 77090
+      }
+    ]
+  },
+  {
+    "producerId": 108,
+    "ingredientName": "참외",
+    "ingredientId": null,
+    "title": "참외 10개 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 참외입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 16120,
+    "unit": "개",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "씻지 않고 비닐에 담아 냉장 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 16120
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 44490
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 70920
+      }
+    ]
+  },
+  {
+    "producerId": 111,
+    "ingredientName": "참외",
+    "ingredientId": null,
+    "title": "참외 10개 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 참외입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 19620,
+    "unit": "개",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "씻지 않고 비닐에 담아 냉장 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 19620
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 54160
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 86340
+      }
+    ]
+  },
+  {
+    "producerId": 115,
+    "ingredientName": "오이",
+    "ingredientId": null,
+    "title": "오이 10개 산지직송",
+    "description": "산지에서 바로 보내는 신선한 오이입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 7340,
+    "unit": "개",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 키친타월·비닐에 싸 세워서 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 7340
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 20270
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 32320
+      }
+    ]
+  },
+  {
+    "producerId": 108,
+    "ingredientName": "오이",
+    "ingredientId": null,
+    "title": "오이 10개 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 오이입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 6760,
+    "unit": "개",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 키친타월·비닐에 싸 세워서 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 6760
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 18650
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 29730
+      }
+    ]
+  },
+  {
+    "producerId": 106,
+    "ingredientName": "오이",
+    "ingredientId": null,
+    "title": "오이 10개 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 오이입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 8230,
+    "unit": "개",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 키친타월·비닐에 싸 세워서 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 8230
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 22700
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 36200
+      }
+    ]
+  },
+  {
+    "producerId": 104,
+    "ingredientName": "호박",
+    "ingredientId": null,
+    "title": "호박 1개 산지직송",
+    "description": "산지에서 바로 보내는 신선한 호박입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1190,
+    "unit": "개",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "랩에 싸 냉장 보관, 자른 것은 빨리 사용",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 1190
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 3280
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 5230
+      }
+    ]
+  },
+  {
+    "producerId": 110,
+    "ingredientName": "호박",
+    "ingredientId": null,
+    "title": "호박 1개 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 호박입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1090,
+    "unit": "개",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "랩에 싸 냉장 보관, 자른 것은 빨리 사용",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 1090
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 3020
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 4810
+      }
+    ]
+  },
+  {
+    "producerId": 118,
+    "ingredientName": "호박",
+    "ingredientId": null,
+    "title": "호박 1개 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 호박입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1330,
+    "unit": "개",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "랩에 싸 냉장 보관, 자른 것은 빨리 사용",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 1330
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 3670
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 5850
+      }
+    ]
+  },
+  {
+    "producerId": 102,
+    "ingredientName": "토마토",
+    "ingredientId": null,
+    "title": "토마토 1kg 산지직송",
+    "description": "산지에서 바로 보내는 신선한 토마토입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3950,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "덜 익은 것은 실온에서 후숙",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 3950
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 7510
+      }
+    ]
+  },
+  {
+    "producerId": 113,
+    "ingredientName": "토마토",
+    "ingredientId": null,
+    "title": "토마토 1kg 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 토마토입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3640,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "덜 익은 것은 실온에서 후숙",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 3640
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 6910
+      }
+    ]
+  },
+  {
+    "producerId": 111,
+    "ingredientName": "토마토",
+    "ingredientId": null,
+    "title": "토마토 1kg 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 토마토입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 4430,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "덜 익은 것은 실온에서 후숙",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 4430
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 8410
+      }
+    ]
+  },
+  {
+    "producerId": 109,
+    "ingredientName": "무",
+    "ingredientId": null,
+    "title": "무 1개 산지직송",
+    "description": "산지에서 바로 보내는 신선한 무입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1780,
+    "unit": "개",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "잎을 잘라내고 신문지에 싸 비닐에 세워 보관, 2~3주",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 1780
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 4920
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 7840
+      }
+    ]
+  },
+  {
+    "producerId": 105,
+    "ingredientName": "무",
+    "ingredientId": null,
+    "title": "무 1개 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 무입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1640,
+    "unit": "개",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "잎을 잘라내고 신문지에 싸 비닐에 세워 보관, 2~3주",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 1640
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 4530
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 7220
+      }
+    ]
+  },
+  {
+    "producerId": 103,
+    "ingredientName": "무",
+    "ingredientId": null,
+    "title": "무 1개 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 무입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2000,
+    "unit": "개",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "잎을 잘라내고 신문지에 싸 비닐에 세워 보관, 2~3주",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 2000
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 5510
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 8790
+      }
+    ]
+  },
+  {
+    "producerId": 102,
+    "ingredientName": "당근",
+    "ingredientId": null,
+    "title": "당근 1kg 산지직송",
+    "description": "산지에서 바로 보내는 신선한 당근입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3370,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 신문지에 싸 비닐에 세워 보관, 2~3주",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 3370
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 6400
+      }
+    ]
+  },
+  {
+    "producerId": 114,
+    "ingredientName": "당근",
+    "ingredientId": null,
+    "title": "당근 1kg 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 당근입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3100,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 신문지에 싸 비닐에 세워 보관, 2~3주",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 3100
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 5890
+      }
+    ]
+  },
+  {
+    "producerId": 116,
+    "ingredientName": "당근",
+    "ingredientId": null,
+    "title": "당근 1kg 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 당근입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3770,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 신문지에 싸 비닐에 세워 보관, 2~3주",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 3770
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 7160
+      }
+    ]
+  },
+  {
+    "producerId": 112,
+    "ingredientName": "열무",
+    "ingredientId": null,
+    "title": "열무 1kg 산지직송",
+    "description": "산지에서 바로 보내는 신선한 열무입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2380,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 신문지에 싸 비닐에 담아 보관(빨리 사용)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 2380
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 4510
+      }
+    ]
+  },
+  {
+    "producerId": 101,
+    "ingredientName": "열무",
+    "ingredientId": null,
+    "title": "열무 1kg 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 열무입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2190,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 신문지에 싸 비닐에 담아 보관(빨리 사용)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 2190
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 4150
+      }
+    ]
+  },
+  {
+    "producerId": 106,
+    "ingredientName": "열무",
+    "ingredientId": null,
+    "title": "열무 1kg 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 열무입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2660,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 신문지에 싸 비닐에 담아 보관(빨리 사용)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 2660
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 5060
+      }
+    ]
+  },
+  {
+    "producerId": 104,
+    "ingredientName": "건고추",
+    "ingredientId": null,
+    "title": "건고추 600g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 건고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 17260,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘하고 건조한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 17260
+      },
+      {
+        "quantity": 1800,
+        "unit": "g",
+        "price": 47630
+      },
+      {
+        "quantity": 3000,
+        "unit": "g",
+        "price": 75930
+      }
+    ]
+  },
+  {
+    "producerId": 108,
+    "ingredientName": "건고추",
+    "ingredientId": null,
+    "title": "건고추 600g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 건고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 15880,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘하고 건조한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 15880
+      },
+      {
+        "quantity": 1800,
+        "unit": "g",
+        "price": 43820
+      },
+      {
+        "quantity": 3000,
+        "unit": "g",
+        "price": 69860
+      }
+    ]
+  },
+  {
+    "producerId": 117,
+    "ingredientName": "건고추",
+    "ingredientId": null,
+    "title": "건고추 600g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 건고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 19330,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘하고 건조한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 19330
+      },
+      {
+        "quantity": 1800,
+        "unit": "g",
+        "price": 53340
+      },
+      {
+        "quantity": 3000,
+        "unit": "g",
+        "price": 85040
+      }
+    ]
+  },
+  {
+    "producerId": 107,
+    "ingredientName": "풋고추",
+    "ingredientId": null,
+    "title": "풋고추 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 풋고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1590,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1590
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 4390
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 7000
+      }
+    ]
+  },
+  {
+    "producerId": 113,
+    "ingredientName": "풋고추",
+    "ingredientId": null,
+    "title": "풋고추 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 풋고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1460,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1460
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 4040
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 6440
+      }
+    ]
+  },
+  {
+    "producerId": 103,
+    "ingredientName": "풋고추",
+    "ingredientId": null,
+    "title": "풋고추 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 풋고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1780,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1780
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 4920
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 7840
+      }
+    ]
+  },
+  {
+    "producerId": 104,
+    "ingredientName": "붉은고추",
+    "ingredientId": null,
+    "title": "붉은고추 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 붉은고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2390,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2390
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 6600
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 10520
+      }
+    ]
+  },
+  {
+    "producerId": 108,
+    "ingredientName": "붉은고추",
+    "ingredientId": null,
+    "title": "붉은고추 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 붉은고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2200,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2200
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 6070
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 9680
+      }
+    ]
+  },
+  {
+    "producerId": 118,
+    "ingredientName": "붉은고추",
+    "ingredientId": null,
+    "title": "붉은고추 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 붉은고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2680,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2680
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 7390
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 11780
+      }
+    ]
+  },
+  {
+    "producerId": 115,
+    "ingredientName": "양파",
+    "ingredientId": null,
+    "title": "양파 1kg 산지직송",
+    "description": "산지에서 바로 보내는 신선한 양파입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1830,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "망에 담아 통풍 잘되는 서늘한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 1830
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 3470
+      }
+    ]
+  },
+  {
+    "producerId": 105,
+    "ingredientName": "양파",
+    "ingredientId": null,
+    "title": "양파 1kg 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 양파입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1680,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "망에 담아 통풍 잘되는 서늘한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 1680
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 3190
+      }
+    ]
+  },
+  {
+    "producerId": 103,
+    "ingredientName": "양파",
+    "ingredientId": null,
+    "title": "양파 1kg 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 양파입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2040,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "망에 담아 통풍 잘되는 서늘한 곳에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 2040
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 3890
+      }
+    ]
+  },
+  {
+    "producerId": 112,
+    "ingredientName": "파",
+    "ingredientId": null,
+    "title": "파 1kg 산지직송",
+    "description": "산지에서 바로 보내는 신선한 파입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2940,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "흙을 털고 신문지에 싸 세워서 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 2940
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 5580
+      }
+    ]
+  },
+  {
+    "producerId": 101,
+    "ingredientName": "파",
+    "ingredientId": null,
+    "title": "파 1kg 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 파입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2700,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "흙을 털고 신문지에 싸 세워서 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 2700
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 5140
+      }
+    ]
+  },
+  {
+    "producerId": 116,
+    "ingredientName": "파",
+    "ingredientId": null,
+    "title": "파 1kg 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 파입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3290,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "흙을 털고 신문지에 싸 세워서 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 3290
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 6250
+      }
+    ]
+  },
+  {
+    "producerId": 115,
+    "ingredientName": "생강",
+    "ingredientId": null,
+    "title": "생강 1kg 산지직송",
+    "description": "산지에서 바로 보내는 신선한 생강입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 15630,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 15630
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 29700
+      }
+    ]
+  },
+  {
+    "producerId": 110,
+    "ingredientName": "생강",
+    "ingredientId": null,
+    "title": "생강 1kg 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 생강입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 14380,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 14380
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 27320
+      }
+    ]
+  },
+  {
+    "producerId": 117,
+    "ingredientName": "생강",
+    "ingredientId": null,
+    "title": "생강 1kg 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 생강입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 17510,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 17510
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 33260
+      }
+    ]
+  },
+  {
+    "producerId": 104,
+    "ingredientName": "고춧가루",
+    "ingredientId": null,
+    "title": "고춧가루 1kg 산지직송",
+    "description": "산지에서 바로 보내는 신선한 고춧가루입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 33490,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉동 보관",
+    "storageNote": "밀폐용기에 담아 냉동 보관(색·향 유지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 33490
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 63640
+      }
+    ]
+  },
+  {
+    "producerId": 108,
+    "ingredientName": "고춧가루",
+    "ingredientId": null,
+    "title": "고춧가루 1kg 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 고춧가루입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 30810,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉동 보관",
+    "storageNote": "밀폐용기에 담아 냉동 보관(색·향 유지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 30810
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 58540
+      }
+    ]
+  },
+  {
+    "producerId": 118,
+    "ingredientName": "고춧가루",
+    "ingredientId": null,
+    "title": "고춧가루 1kg 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 고춧가루입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 37510,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉동 보관",
+    "storageNote": "밀폐용기에 담아 냉동 보관(색·향 유지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 37510
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 71270
+      }
+    ]
+  },
+  {
+    "producerId": 107,
+    "ingredientName": "미나리",
+    "ingredientId": null,
+    "title": "미나리 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 미나리입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1420,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 신문지에 싸 비닐에 세워 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1420
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 3910
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 6230
+      }
+    ]
+  },
+  {
+    "producerId": 114,
+    "ingredientName": "미나리",
+    "ingredientId": null,
+    "title": "미나리 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 미나리입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1300,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 신문지에 싸 비닐에 세워 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1300
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 3600
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 5730
+      }
+    ]
+  },
+  {
+    "producerId": 103,
+    "ingredientName": "미나리",
+    "ingredientId": null,
+    "title": "미나리 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 미나리입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1590,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 신문지에 싸 비닐에 세워 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1590
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 4380
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 6980
+      }
+    ]
+  },
+  {
+    "producerId": 107,
+    "ingredientName": "깻잎",
+    "ingredientId": null,
+    "title": "깻잎 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 깻잎입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2420,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2420
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 6680
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 10640
+      }
+    ]
+  },
+  {
+    "producerId": 113,
+    "ingredientName": "깻잎",
+    "ingredientId": null,
+    "title": "깻잎 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 깻잎입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2220,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2220
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 6140
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 9790
+      }
+    ]
+  },
+  {
+    "producerId": 103,
+    "ingredientName": "깻잎",
+    "ingredientId": null,
+    "title": "깻잎 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 깻잎입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2710,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2710
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 7480
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 11920
+      }
+    ]
+  },
+  {
+    "producerId": 112,
+    "ingredientName": "피망",
+    "ingredientId": null,
+    "title": "피망 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 피망입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1530,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "꼭지째 키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1530
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 4220
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 6720
+      }
+    ]
+  },
+  {
+    "producerId": 114,
+    "ingredientName": "피망",
+    "ingredientId": null,
+    "title": "피망 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 피망입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1410,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "꼭지째 키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1410
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 3880
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 6180
+      }
+    ]
+  },
+  {
+    "producerId": 106,
+    "ingredientName": "피망",
+    "ingredientId": null,
+    "title": "피망 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 피망입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1710,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "꼭지째 키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1710
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 4720
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 7530
+      }
+    ]
+  },
+  {
+    "producerId": 109,
+    "ingredientName": "파프리카",
+    "ingredientId": null,
+    "title": "파프리카 200g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 파프리카입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1440,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 1440
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 3970
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 6330
+      }
+    ]
+  },
+  {
+    "producerId": 110,
+    "ingredientName": "파프리카",
+    "ingredientId": null,
+    "title": "파프리카 200g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 파프리카입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1320,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 1320
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 3650
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 5820
+      }
+    ]
+  },
+  {
+    "producerId": 111,
+    "ingredientName": "파프리카",
+    "ingredientId": null,
+    "title": "파프리카 200g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 파프리카입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1610,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 1610
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 4440
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 7090
+      }
+    ]
+  },
+  {
+    "producerId": 115,
+    "ingredientName": "멜론",
+    "ingredientId": null,
+    "title": "멜론 1개 산지직송",
+    "description": "산지에서 바로 보내는 신선한 멜론입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 12040,
+    "unit": "개",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "덜 익으면 실온 후숙",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 12040
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 33220
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 52950
+      }
+    ]
+  },
+  {
+    "producerId": 105,
+    "ingredientName": "멜론",
+    "ingredientId": null,
+    "title": "멜론 1개 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 멜론입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 11070,
+    "unit": "개",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "덜 익으면 실온 후숙",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 11070
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 30560
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 48720
+      }
+    ]
+  },
+  {
+    "producerId": 106,
+    "ingredientName": "멜론",
+    "ingredientId": null,
+    "title": "멜론 1개 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 멜론입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 13480,
+    "unit": "개",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "덜 익으면 실온 후숙",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 13480
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 37200
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 59310
+      }
+    ]
+  },
+  {
+    "producerId": 112,
+    "ingredientName": "깐마늘(국산)",
+    "ingredientId": null,
+    "title": "깐마늘(국산) 1kg 산지직송",
+    "description": "산지에서 바로 보내는 신선한 깐마늘(국산)입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 12470,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "밀폐용기에 키친타월을 깔고 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 12470
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 23690
+      }
+    ]
+  },
+  {
+    "producerId": 108,
+    "ingredientName": "깐마늘(국산)",
+    "ingredientId": null,
+    "title": "깐마늘(국산) 1kg 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 깐마늘(국산)입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 11470,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "밀폐용기에 키친타월을 깔고 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 11470
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 21800
+      }
+    ]
+  },
+  {
+    "producerId": 111,
+    "ingredientName": "깐마늘(국산)",
+    "ingredientId": null,
+    "title": "깐마늘(국산) 1kg 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 깐마늘(국산)입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 13970,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "밀폐용기에 키친타월을 깔고 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 13970
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 26540
+      }
+    ]
+  },
+  {
+    "producerId": 102,
+    "ingredientName": "알배기배추",
+    "ingredientId": null,
+    "title": "알배기배추 1포기 산지직송",
+    "description": "산지에서 바로 보내는 신선한 알배기배추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2680,
+    "unit": "포기",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월·비닐에 싸 세워 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "포기",
+        "price": 2680
+      },
+      {
+        "quantity": 3,
+        "unit": "포기",
+        "price": 7380
+      },
+      {
+        "quantity": 5,
+        "unit": "포기",
+        "price": 11770
+      }
+    ]
+  },
+  {
+    "producerId": 113,
+    "ingredientName": "알배기배추",
+    "ingredientId": null,
+    "title": "알배기배추 1포기 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 알배기배추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2460,
+    "unit": "포기",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월·비닐에 싸 세워 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "포기",
+        "price": 2460
+      },
+      {
+        "quantity": 3,
+        "unit": "포기",
+        "price": 6790
+      },
+      {
+        "quantity": 5,
+        "unit": "포기",
+        "price": 10830
+      }
+    ]
+  },
+  {
+    "producerId": 116,
+    "ingredientName": "알배기배추",
+    "ingredientId": null,
+    "title": "알배기배추 1포기 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 알배기배추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3000,
+    "unit": "포기",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월·비닐에 싸 세워 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "포기",
+        "price": 3000
+      },
+      {
+        "quantity": 3,
+        "unit": "포기",
+        "price": 8270
+      },
+      {
+        "quantity": 5,
+        "unit": "포기",
+        "price": 13180
+      }
+    ]
+  },
+  {
+    "producerId": 109,
+    "ingredientName": "브로콜리",
+    "ingredientId": null,
+    "title": "브로콜리 1개 산지직송",
+    "description": "산지에서 바로 보내는 신선한 브로콜리입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2120,
+    "unit": "개",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 비닐에 담아 세워 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 2120
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 5860
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 9340
+      }
+    ]
+  },
+  {
+    "producerId": 114,
+    "ingredientName": "브로콜리",
+    "ingredientId": null,
+    "title": "브로콜리 1개 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 브로콜리입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1950,
+    "unit": "개",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 비닐에 담아 세워 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 1950
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 5390
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 8590
+      }
+    ]
+  },
+  {
+    "producerId": 111,
+    "ingredientName": "브로콜리",
+    "ingredientId": null,
+    "title": "브로콜리 1개 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 브로콜리입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2380,
+    "unit": "개",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 비닐에 담아 세워 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 2380
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 6560
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 10460
+      }
+    ]
+  },
+  {
+    "producerId": 107,
+    "ingredientName": "방울토마토",
+    "ingredientId": null,
+    "title": "방울토마토 1kg 산지직송",
+    "description": "산지에서 바로 보내는 신선한 방울토마토입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 7260,
+    "unit": "kg",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "꼭지를 떼고 밀폐용기에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 7260
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 13800
+      }
+    ]
+  },
+  {
+    "producerId": 110,
+    "ingredientName": "방울토마토",
+    "ingredientId": null,
+    "title": "방울토마토 1kg 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 방울토마토입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 6680,
+    "unit": "kg",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "꼭지를 떼고 밀폐용기에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 6680
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 12690
+      }
+    ]
+  },
+  {
+    "producerId": 111,
+    "ingredientName": "방울토마토",
+    "ingredientId": null,
+    "title": "방울토마토 1kg 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 방울토마토입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 8130,
+    "unit": "kg",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "꼭지를 떼고 밀폐용기에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "kg",
+        "price": 8130
+      },
+      {
+        "quantity": 2,
+        "unit": "kg",
+        "price": 15450
+      }
+    ]
+  },
+  {
+    "producerId": 115,
+    "ingredientName": "참깨",
+    "ingredientId": null,
+    "title": "참깨 500g 산지직송",
+    "description": "고소하고 신선한 참깨. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 18020,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘한 곳에 보관(볶은 것은 냉동)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 18020
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 49740
+      },
+      {
+        "quantity": 2500,
+        "unit": "g",
+        "price": 79290
+      }
+    ]
+  },
+  {
+    "producerId": 110,
+    "ingredientName": "참깨",
+    "ingredientId": null,
+    "title": "참깨 500g 알뜰 실속",
+    "description": "고소하고 신선한 참깨. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 16580,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘한 곳에 보관(볶은 것은 냉동)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 16580
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 45760
+      },
+      {
+        "quantity": 2500,
+        "unit": "g",
+        "price": 72940
+      }
+    ]
+  },
+  {
+    "producerId": 117,
+    "ingredientName": "참깨",
+    "ingredientId": null,
+    "title": "참깨 500g 프리미엄 선별",
+    "description": "고소하고 신선한 참깨. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 20180,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐용기에 담아 서늘한 곳에 보관(볶은 것은 냉동)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 20180
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 55700
+      },
+      {
+        "quantity": 2500,
+        "unit": "g",
+        "price": 88800
+      }
+    ]
+  },
+  {
+    "producerId": 107,
+    "ingredientName": "땅콩",
+    "ingredientId": null,
+    "title": "땅콩 100g 산지직송",
+    "description": "고소하고 신선한 땅콩. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 3550,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐해 서늘한 곳에, 장기보관은 냉장·냉동",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 3550
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 9790
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 15610
+      }
+    ]
+  },
+  {
+    "producerId": 113,
+    "ingredientName": "땅콩",
+    "ingredientId": null,
+    "title": "땅콩 100g 알뜰 실속",
+    "description": "고소하고 신선한 땅콩. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 3260,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐해 서늘한 곳에, 장기보관은 냉장·냉동",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 3260
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 9010
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 14360
+      }
+    ]
+  },
+  {
+    "producerId": 106,
+    "ingredientName": "땅콩",
+    "ingredientId": null,
+    "title": "땅콩 100g 프리미엄 선별",
+    "description": "고소하고 신선한 땅콩. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 3970,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "밀폐해 서늘한 곳에, 장기보관은 냉장·냉동",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 3970
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 10970
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 17480
+      }
+    ]
+  },
+  {
+    "producerId": 104,
+    "ingredientName": "느타리버섯",
+    "ingredientId": null,
+    "title": "느타리버섯 100g 산지직송",
+    "description": "고소하고 신선한 느타리버섯. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 1000,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관(물기 금지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1000
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 2770
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 4420
+      }
+    ]
+  },
+  {
+    "producerId": 114,
+    "ingredientName": "느타리버섯",
+    "ingredientId": null,
+    "title": "느타리버섯 100g 알뜰 실속",
+    "description": "고소하고 신선한 느타리버섯. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 920,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관(물기 금지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 920
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 2550
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 4060
+      }
+    ]
+  },
+  {
+    "producerId": 118,
+    "ingredientName": "느타리버섯",
+    "ingredientId": null,
+    "title": "느타리버섯 100g 프리미엄 선별",
+    "description": "고소하고 신선한 느타리버섯. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 1120,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관(물기 금지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1120
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 3100
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 4950
+      }
+    ]
+  },
+  {
+    "producerId": 102,
+    "ingredientName": "팽이버섯",
+    "ingredientId": null,
+    "title": "팽이버섯 150g 산지직송",
+    "description": "고소하고 신선한 팽이버섯. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 440,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "포장째 또는 키친타월에 싸 냉장 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 150,
+        "unit": "g",
+        "price": 440
+      },
+      {
+        "quantity": 450,
+        "unit": "g",
+        "price": 1220
+      },
+      {
+        "quantity": 750,
+        "unit": "g",
+        "price": 1950
+      }
+    ]
+  },
+  {
+    "producerId": 110,
+    "ingredientName": "팽이버섯",
+    "ingredientId": null,
+    "title": "팽이버섯 150g 알뜰 실속",
+    "description": "고소하고 신선한 팽이버섯. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 410,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "포장째 또는 키친타월에 싸 냉장 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 150,
+        "unit": "g",
+        "price": 410
+      },
+      {
+        "quantity": 450,
+        "unit": "g",
+        "price": 1120
+      },
+      {
+        "quantity": 750,
+        "unit": "g",
+        "price": 1790
+      }
+    ]
+  },
+  {
+    "producerId": 116,
+    "ingredientName": "팽이버섯",
+    "ingredientId": null,
+    "title": "팽이버섯 150g 프리미엄 선별",
+    "description": "고소하고 신선한 팽이버섯. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 500,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "포장째 또는 키친타월에 싸 냉장 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 150,
+        "unit": "g",
+        "price": 500
+      },
+      {
+        "quantity": 450,
+        "unit": "g",
+        "price": 1370
+      },
+      {
+        "quantity": 750,
+        "unit": "g",
+        "price": 2180
+      }
+    ]
+  },
+  {
+    "producerId": 112,
+    "ingredientName": "새송이버섯",
+    "ingredientId": null,
+    "title": "새송이버섯 100g 산지직송",
+    "description": "고소하고 신선한 새송이버섯. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 550,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 550
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 1510
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 2410
+      }
+    ]
+  },
+  {
+    "producerId": 108,
+    "ingredientName": "새송이버섯",
+    "ingredientId": null,
+    "title": "새송이버섯 100g 알뜰 실속",
+    "description": "고소하고 신선한 새송이버섯. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 500,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 500
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 1390
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 2210
+      }
+    ]
+  },
+  {
+    "producerId": 117,
+    "ingredientName": "새송이버섯",
+    "ingredientId": null,
+    "title": "새송이버섯 100g 프리미엄 선별",
+    "description": "고소하고 신선한 새송이버섯. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 610,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 610
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 1690
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 2700
+      }
+    ]
+  },
+  {
+    "producerId": 104,
+    "ingredientName": "호두",
+    "ingredientId": null,
+    "title": "호두 100g 산지직송",
+    "description": "고소하고 신선한 호두. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 2030,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "산패 방지를 위해 밀폐해 냉장·냉동 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2030
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 5610
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 8940
+      }
+    ]
+  },
+  {
+    "producerId": 101,
+    "ingredientName": "호두",
+    "ingredientId": null,
+    "title": "호두 100g 알뜰 실속",
+    "description": "고소하고 신선한 호두. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 1870,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "산패 방지를 위해 밀폐해 냉장·냉동 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1870
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 5160
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 8230
+      }
+    ]
+  },
+  {
+    "producerId": 118,
+    "ingredientName": "호두",
+    "ingredientId": null,
+    "title": "호두 100g 프리미엄 선별",
+    "description": "고소하고 신선한 호두. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 2280,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "산패 방지를 위해 밀폐해 냉장·냉동 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2280
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 6280
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 10020
+      }
+    ]
+  },
+  {
+    "producerId": 104,
+    "ingredientName": "사과",
+    "ingredientId": null,
+    "title": "사과 10개 산지직송",
+    "description": "달콤하고 신선한 제철 사과. 산지에서 바로 보내 생과로 즐기기 좋아요.",
+    "category": "과일",
+    "price": 27210,
+    "unit": "개",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "한 알씩 종이에 싸 비닐에 담아 냉장(에틸렌 주의)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 27210
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 75110
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 119740
+      }
+    ]
+  },
+  {
+    "producerId": 105,
+    "ingredientName": "사과",
+    "ingredientId": null,
+    "title": "사과 10개 알뜰 실속",
+    "description": "달콤하고 신선한 제철 사과. 산지에서 바로 보내 생과로 즐기기 좋아요.",
+    "category": "과일",
+    "price": 25040,
+    "unit": "개",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "한 알씩 종이에 싸 비닐에 담아 냉장(에틸렌 주의)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 25040
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 69100
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 110160
+      }
+    ]
+  },
+  {
+    "producerId": 103,
+    "ingredientName": "사과",
+    "ingredientId": null,
+    "title": "사과 10개 프리미엄 선별",
+    "description": "달콤하고 신선한 제철 사과. 산지에서 바로 보내 생과로 즐기기 좋아요.",
+    "category": "과일",
+    "price": 30480,
+    "unit": "개",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "한 알씩 종이에 싸 비닐에 담아 냉장(에틸렌 주의)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 30480
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 84120
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 134110
+      }
+    ]
+  },
+  {
+    "producerId": 107,
+    "ingredientName": "배",
+    "ingredientId": null,
+    "title": "배 10개 산지직송",
+    "description": "달콤하고 신선한 제철 배. 산지에서 바로 보내 생과로 즐기기 좋아요.",
+    "category": "과일",
+    "price": 38680,
+    "unit": "개",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "한 알씩 종이에 싸 비닐에 담아 냉장",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 38680
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 106740
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 170170
+      }
+    ]
+  },
+  {
+    "producerId": 105,
+    "ingredientName": "배",
+    "ingredientId": null,
+    "title": "배 10개 알뜰 실속",
+    "description": "달콤하고 신선한 제철 배. 산지에서 바로 보내 생과로 즐기기 좋아요.",
+    "category": "과일",
+    "price": 35580,
+    "unit": "개",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "한 알씩 종이에 싸 비닐에 담아 냉장",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 35580
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 98200
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 156560
+      }
+    ]
+  },
+  {
+    "producerId": 116,
+    "ingredientName": "배",
+    "ingredientId": null,
+    "title": "배 10개 프리미엄 선별",
+    "description": "달콤하고 신선한 제철 배. 산지에서 바로 보내 생과로 즐기기 좋아요.",
+    "category": "과일",
+    "price": 43320,
+    "unit": "개",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "한 알씩 종이에 싸 비닐에 담아 냉장",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 43320
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 119550
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 190590
+      }
+    ]
+  },
+  {
+    "producerId": 109,
+    "ingredientName": "참다래",
+    "ingredientId": null,
+    "title": "참다래 10개 산지직송",
+    "description": "달콤하고 신선한 제철 참다래. 산지에서 바로 보내 생과로 즐기기 좋아요.",
+    "category": "과일",
+    "price": 11550,
+    "unit": "개",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "덜 익으면 실온 후숙",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 11550
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 31890
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 50830
+      }
+    ]
+  },
+  {
+    "producerId": 113,
+    "ingredientName": "참다래",
+    "ingredientId": null,
+    "title": "참다래 10개 알뜰 실속",
+    "description": "달콤하고 신선한 제철 참다래. 산지에서 바로 보내 생과로 즐기기 좋아요.",
+    "category": "과일",
+    "price": 10630,
+    "unit": "개",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "덜 익으면 실온 후숙",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 10630
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 29340
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 46770
+      }
+    ]
+  },
+  {
+    "producerId": 103,
+    "ingredientName": "참다래",
+    "ingredientId": null,
+    "title": "참다래 10개 프리미엄 선별",
+    "description": "달콤하고 신선한 제철 참다래. 산지에서 바로 보내 생과로 즐기기 좋아요.",
+    "category": "과일",
+    "price": 12940,
+    "unit": "개",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "실온 보관",
+    "storageNote": "덜 익으면 실온 후숙",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확",
+      "안심패킹"
+    ],
+    "options": [
+      {
+        "quantity": 10,
+        "unit": "개",
+        "price": 12940
+      },
+      {
+        "quantity": 30,
+        "unit": "개",
+        "price": 35710
+      },
+      {
+        "quantity": 50,
+        "unit": "개",
+        "price": 56930
+      }
+    ]
+  },
+  {
+    "producerId": 104,
+    "ingredientName": "청양고추",
+    "ingredientId": null,
+    "title": "청양고추 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 청양고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2000,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2000
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 5520
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 8800
+      }
+    ]
+  },
+  {
+    "producerId": 114,
+    "ingredientName": "청양고추",
+    "ingredientId": null,
+    "title": "청양고추 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 청양고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1840,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1840
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 5080
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 8100
+      }
+    ]
+  },
+  {
+    "producerId": 117,
+    "ingredientName": "청양고추",
+    "ingredientId": null,
+    "title": "청양고추 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 청양고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2240,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2240
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 6180
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 9860
+      }
+    ]
+  },
+  {
+    "producerId": 115,
+    "ingredientName": "콩나물",
+    "ingredientId": null,
+    "title": "콩나물 300g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 콩나물입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1300,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "찬물에 담가 밀폐용기에 보관(물 갈아주기)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 1300
+      },
+      {
+        "quantity": 900,
+        "unit": "g",
+        "price": 3590
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 5720
+      }
+    ]
+  },
+  {
+    "producerId": 101,
+    "ingredientName": "콩나물",
+    "ingredientId": null,
+    "title": "콩나물 300g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 콩나물입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1200,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "찬물에 담가 밀폐용기에 보관(물 갈아주기)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 1200
+      },
+      {
+        "quantity": 900,
+        "unit": "g",
+        "price": 3300
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 5260
+      }
+    ]
+  },
+  {
+    "producerId": 118,
+    "ingredientName": "콩나물",
+    "ingredientId": null,
+    "title": "콩나물 300g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 콩나물입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1460,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "찬물에 담가 밀폐용기에 보관(물 갈아주기)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 1460
+      },
+      {
+        "quantity": 900,
+        "unit": "g",
+        "price": 4020
+      },
+      {
+        "quantity": 1500,
+        "unit": "g",
+        "price": 6410
+      }
+    ]
+  },
+  {
+    "producerId": 102,
+    "ingredientName": "부추",
+    "ingredientId": null,
+    "title": "부추 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 부추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2000,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2000
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 5520
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 8800
+      }
+    ]
+  },
+  {
+    "producerId": 101,
+    "ingredientName": "부추",
+    "ingredientId": null,
+    "title": "부추 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 부추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1840,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1840
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 5080
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 8100
+      }
+    ]
+  },
+  {
+    "producerId": 103,
+    "ingredientName": "부추",
+    "ingredientId": null,
+    "title": "부추 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 부추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2240,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2240
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 6180
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 9860
+      }
+    ]
+  },
+  {
+    "producerId": 112,
+    "ingredientName": "가지",
+    "ingredientId": null,
+    "title": "가지 1개 산지직송",
+    "description": "산지에서 바로 보내는 신선한 가지입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1200,
+    "unit": "개",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 비닐에 담아 보관(저온 약하니 빨리 사용)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 1200
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 3310
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 5280
+      }
+    ]
+  },
+  {
+    "producerId": 113,
+    "ingredientName": "가지",
+    "ingredientId": null,
+    "title": "가지 1개 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 가지입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1100,
+    "unit": "개",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 비닐에 담아 보관(저온 약하니 빨리 사용)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 1100
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 3050
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 4860
+      }
+    ]
+  },
+  {
+    "producerId": 106,
+    "ingredientName": "가지",
+    "ingredientId": null,
+    "title": "가지 1개 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 가지입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1340,
+    "unit": "개",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "물기를 닦고 비닐에 담아 보관(저온 약하니 빨리 사용)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "개",
+        "price": 1340
+      },
+      {
+        "quantity": 3,
+        "unit": "개",
+        "price": 3710
+      },
+      {
+        "quantity": 5,
+        "unit": "개",
+        "price": 5910
+      }
+    ]
+  },
+  {
+    "producerId": 107,
+    "ingredientName": "꽈리고추",
+    "ingredientId": null,
+    "title": "꽈리고추 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 꽈리고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2000,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2000
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 5520
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 8800
+      }
+    ]
+  },
+  {
+    "producerId": 105,
+    "ingredientName": "꽈리고추",
+    "ingredientId": null,
+    "title": "꽈리고추 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 꽈리고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1840,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1840
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 5080
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 8100
+      }
+    ]
+  },
+  {
+    "producerId": 116,
+    "ingredientName": "꽈리고추",
+    "ingredientId": null,
+    "title": "꽈리고추 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 꽈리고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2240,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2240
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 6180
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 9860
+      }
+    ]
+  },
+  {
+    "producerId": 107,
+    "ingredientName": "냉이",
+    "ingredientId": null,
+    "title": "냉이 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 냉이입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3500,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 3500
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 9660
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 15400
+      }
+    ]
+  },
+  {
+    "producerId": 101,
+    "ingredientName": "냉이",
+    "ingredientId": null,
+    "title": "냉이 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 냉이입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3220,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 3220
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 8890
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 14170
+      }
+    ]
+  },
+  {
+    "producerId": 117,
+    "ingredientName": "냉이",
+    "ingredientId": null,
+    "title": "냉이 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 냉이입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3920,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 3920
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 10820
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 17250
+      }
+    ]
+  },
+  {
+    "producerId": 109,
+    "ingredientName": "청경채",
+    "ingredientId": null,
+    "title": "청경채 200g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 청경채입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2200,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 비닐봉지에 세워 보관, 3~5일",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 2200
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 6070
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 9680
+      }
+    ]
+  },
+  {
+    "producerId": 110,
+    "ingredientName": "청경채",
+    "ingredientId": null,
+    "title": "청경채 200g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 청경채입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2020,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 비닐봉지에 세워 보관, 3~5일",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 2020
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 5590
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 8910
+      }
+    ]
+  },
+  {
+    "producerId": 106,
+    "ingredientName": "청경채",
+    "ingredientId": null,
+    "title": "청경채 200g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 청경채입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2460,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 비닐봉지에 세워 보관, 3~5일",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 2460
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 6800
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 10840
+      }
+    ]
+  },
+  {
+    "producerId": 115,
+    "ingredientName": "봄동",
+    "ingredientId": null,
+    "title": "봄동 1봉 산지직송",
+    "description": "산지에서 바로 보내는 신선한 봄동입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 4500,
+    "unit": "봉",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "봉",
+        "price": 4500
+      },
+      {
+        "quantity": 3,
+        "unit": "봉",
+        "price": 12420
+      },
+      {
+        "quantity": 5,
+        "unit": "봉",
+        "price": 19800
+      }
+    ]
+  },
+  {
+    "producerId": 105,
+    "ingredientName": "봄동",
+    "ingredientId": null,
+    "title": "봄동 1봉 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 봄동입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 4140,
+    "unit": "봉",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "봉",
+        "price": 4140
+      },
+      {
+        "quantity": 3,
+        "unit": "봉",
+        "price": 11430
+      },
+      {
+        "quantity": 5,
+        "unit": "봉",
+        "price": 18220
+      }
+    ]
+  },
+  {
+    "producerId": 118,
+    "ingredientName": "봄동",
+    "ingredientId": null,
+    "title": "봄동 1봉 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 봄동입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 5040,
+    "unit": "봉",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "봉",
+        "price": 5040
+      },
+      {
+        "quantity": 3,
+        "unit": "봉",
+        "price": 13910
+      },
+      {
+        "quantity": 5,
+        "unit": "봉",
+        "price": 22180
+      }
+    ]
+  },
+  {
+    "producerId": 102,
+    "ingredientName": "고수",
+    "ingredientId": null,
+    "title": "고수 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 고수입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2800,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "뿌리를 물에 담그거나 젖은 키친타월에 싸 냉장(빨리 사용)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2800
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 7730
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 12320
+      }
+    ]
+  },
+  {
+    "producerId": 108,
+    "ingredientName": "고수",
+    "ingredientId": null,
+    "title": "고수 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 고수입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2580,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "뿌리를 물에 담그거나 젖은 키친타월에 싸 냉장(빨리 사용)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2580
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 7110
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 11330
+      }
+    ]
+  },
+  {
+    "producerId": 106,
+    "ingredientName": "고수",
+    "ingredientId": null,
+    "title": "고수 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 고수입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3140,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "뿌리를 물에 담그거나 젖은 키친타월에 싸 냉장(빨리 사용)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 3140
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 8660
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 13800
+      }
+    ]
+  },
+  {
+    "producerId": 107,
+    "ingredientName": "달래",
+    "ingredientId": null,
+    "title": "달래 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 달래입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 4000,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 밀폐용기에 보관(빨리 사용)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 4000
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 11040
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 17600
+      }
+    ]
+  },
+  {
+    "producerId": 110,
+    "ingredientName": "달래",
+    "ingredientId": null,
+    "title": "달래 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 달래입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3680,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 밀폐용기에 보관(빨리 사용)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 3680
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 10160
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 16190
+      }
+    ]
+  },
+  {
+    "producerId": 116,
+    "ingredientName": "달래",
+    "ingredientId": null,
+    "title": "달래 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 달래입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 4480,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 밀폐용기에 보관(빨리 사용)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 4480
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 12360
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 19710
+      }
+    ]
+  },
+  {
+    "producerId": 109,
+    "ingredientName": "들깨",
+    "ingredientId": null,
+    "title": "들깨 200g 산지직송",
+    "description": "고소하고 신선한 들깨. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 5000,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉동 보관",
+    "storageNote": "밀폐용기에 담아 냉동 보관(산패 방지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 5000
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 13800
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 22000
+      }
+    ]
+  },
+  {
+    "producerId": 110,
+    "ingredientName": "들깨",
+    "ingredientId": null,
+    "title": "들깨 200g 알뜰 실속",
+    "description": "고소하고 신선한 들깨. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 4600,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉동 보관",
+    "storageNote": "밀폐용기에 담아 냉동 보관(산패 방지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 4600
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 12700
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 20240
+      }
+    ]
+  },
+  {
+    "producerId": 117,
+    "ingredientName": "들깨",
+    "ingredientId": null,
+    "title": "들깨 200g 프리미엄 선별",
+    "description": "고소하고 신선한 들깨. 다양한 요리의 풍미를 더해줍니다.",
+    "category": "기타",
+    "price": 5600,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉동 보관",
+    "storageNote": "밀폐용기에 담아 냉동 보관(산패 방지)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 5600
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 15460
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 24640
+      }
+    ]
+  },
+  {
+    "producerId": 112,
+    "ingredientName": "오이고추",
+    "ingredientId": null,
+    "title": "오이고추 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 오이고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1800,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1800
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 4970
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 7920
+      }
+    ]
+  },
+  {
+    "producerId": 114,
+    "ingredientName": "오이고추",
+    "ingredientId": null,
+    "title": "오이고추 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 오이고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 1660,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 1660
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 4570
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 7290
+      }
+    ]
+  },
+  {
+    "producerId": 103,
+    "ingredientName": "오이고추",
+    "ingredientId": null,
+    "title": "오이고추 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 오이고추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2020,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월·비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2020
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 5560
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 8870
+      }
+    ]
+  },
+  {
+    "producerId": 115,
+    "ingredientName": "유채",
+    "ingredientId": null,
+    "title": "유채 200g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 유채입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2800,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 2800
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 7730
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 12320
+      }
+    ]
+  },
+  {
+    "producerId": 105,
+    "ingredientName": "유채",
+    "ingredientId": null,
+    "title": "유채 200g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 유채입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2580,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 2580
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 7110
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 11330
+      }
+    ]
+  },
+  {
+    "producerId": 118,
+    "ingredientName": "유채",
+    "ingredientId": null,
+    "title": "유채 200g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 유채입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3140,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "젖은 키친타월에 싸 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 3140
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 8660
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 13800
+      }
+    ]
+  },
+  {
+    "producerId": 102,
+    "ingredientName": "양상추",
+    "ingredientId": null,
+    "title": "양상추 1통 산지직송",
+    "description": "산지에서 바로 보내는 신선한 양상추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3000,
+    "unit": "통",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "밑동에 젖은 키친타월을 대고 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "통",
+        "price": 3000
+      },
+      {
+        "quantity": 3,
+        "unit": "통",
+        "price": 8280
+      },
+      {
+        "quantity": 5,
+        "unit": "통",
+        "price": 13200
+      }
+    ]
+  },
+  {
+    "producerId": 113,
+    "ingredientName": "양상추",
+    "ingredientId": null,
+    "title": "양상추 1통 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 양상추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2760,
+    "unit": "통",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "밑동에 젖은 키친타월을 대고 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일배송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "통",
+        "price": 2760
+      },
+      {
+        "quantity": 3,
+        "unit": "통",
+        "price": 7620
+      },
+      {
+        "quantity": 5,
+        "unit": "통",
+        "price": 12140
+      }
+    ]
+  },
+  {
+    "producerId": 111,
+    "ingredientName": "양상추",
+    "ingredientId": null,
+    "title": "양상추 1통 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 양상추입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3360,
+    "unit": "통",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "밑동에 젖은 키친타월을 대고 비닐에 담아 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 1,
+        "unit": "통",
+        "price": 3360
+      },
+      {
+        "quantity": 3,
+        "unit": "통",
+        "price": 9270
+      },
+      {
+        "quantity": 5,
+        "unit": "통",
+        "price": 14780
+      }
+    ]
+  },
+  {
+    "producerId": 109,
+    "ingredientName": "시래기",
+    "ingredientId": null,
+    "title": "시래기 200g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 시래기입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3500,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "삶은 것은 물에 담가 냉장(물 갈기)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 3500
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 9660
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 15400
+      }
+    ]
+  },
+  {
+    "producerId": 114,
+    "ingredientName": "시래기",
+    "ingredientId": null,
+    "title": "시래기 200g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 시래기입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3220,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "삶은 것은 물에 담가 냉장(물 갈기)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 3220
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 8890
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 14170
+      }
+    ]
+  },
+  {
+    "producerId": 116,
+    "ingredientName": "시래기",
+    "ingredientId": null,
+    "title": "시래기 200g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 시래기입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 3920,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "삶은 것은 물에 담가 냉장(물 갈기)",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 200,
+        "unit": "g",
+        "price": 3920
+      },
+      {
+        "quantity": 600,
+        "unit": "g",
+        "price": 10820
+      },
+      {
+        "quantity": 1000,
+        "unit": "g",
+        "price": 17250
+      }
+    ]
+  },
+  {
+    "producerId": 112,
+    "ingredientName": "표고버섯",
+    "ingredientId": null,
+    "title": "표고버섯 100g 산지직송",
+    "description": "산지에서 바로 보내는 신선한 표고버섯입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2500,
+    "unit": "g",
+    "freshnessLabel": "산지직송",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "산지직송",
+      "소분포장"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2500
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 6900
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 11000
+      }
+    ]
+  },
+  {
+    "producerId": 113,
+    "ingredientName": "표고버섯",
+    "ingredientId": null,
+    "title": "표고버섯 100g 알뜰 실속",
+    "description": "산지에서 바로 보내는 신선한 표고버섯입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2300,
+    "unit": "g",
+    "freshnessLabel": "당일수확",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "당일수확"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2300
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 6350
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 10120
+      }
+    ]
+  },
+  {
+    "producerId": 117,
+    "ingredientName": "표고버섯",
+    "ingredientId": null,
+    "title": "표고버섯 100g 프리미엄 선별",
+    "description": "산지에서 바로 보내는 신선한 표고버섯입니다. 다양한 요리에 활용하세요.",
+    "category": "채소",
+    "price": 2800,
+    "unit": "g",
+    "freshnessLabel": "수확 1일 이내",
+    "stockQuantity": 100,
+    "storageMethod": "냉장 보관",
+    "storageNote": "키친타월에 싸 밀폐용기에 보관",
+    "status": "ACTIVE",
+    "photoUrls": [],
+    "tags": [
+      "유기농",
+      "산지직송"
+    ],
+    "options": [
+      {
+        "quantity": 100,
+        "unit": "g",
+        "price": 2800
+      },
+      {
+        "quantity": 300,
+        "unit": "g",
+        "price": 7730
+      },
+      {
+        "quantity": 500,
+        "unit": "g",
+        "price": 12320
+      }
+    ]
+  }
+]
