@@ -51,6 +51,7 @@ export const endpoints = {
   getIngredientStoreOffers: (id) => withFallback(() => api.get(`/ingredients/${id}/offers`), () => mock.ingredientStoreOffers(id)),
   getIngredientRecipes: (id) => withFallback(() => api.get(`/ingredients/${id}/recipes`), () => mock.recipesForIngredient(id)),
   getIngredientProducers: (id) => withFallback(() => api.get(`/ingredients/${id}/producers`), () => mock.ingredientProducers(id)),
+  getIngredientProducts: (id) => withFallback(() => api.get(`/ingredients/${id}/products`), () => mock.ingredientProducts(id)),
 
   // ── Recipes ────────────────────────────────────────────
   listRecipes: (params) => withFallback(() => api.get('/recipes', { params }), () => ({ items: mock.listRecipes() })),

@@ -5,9 +5,8 @@ import { useRouter } from 'next/navigation';
 import { ChevronRight, Truck } from 'lucide-react';
 import {
   useIngredient,
-  useIngredientPrices,
   useIngredientSubstitutes,
-  useIngredientStoreOffers,
+  useIngredientProducts,
   useIngredientRecipes,
 } from '@/lib/queries';
 import { AppHeader, BottomBar } from '@/components/layout';
@@ -18,9 +17,10 @@ import { TrendBadge } from '@/components/ui/Misc';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/States';
 import { VegImage } from '@/components/domain/VegImage';
-import { PriceBars } from '@/components/domain/PriceBars';
+import { ProductCard } from '@/components/domain/ProductCard';
+import { FavoriteHeart } from '@/components/domain/FavoriteHeart';
 import { RecipeCard } from '@/components/domain/RecipeCard';
-import { won, wonLabel } from '@/lib/format';
+import { wonLabel } from '@/lib/format';
 import { cn } from '@/lib/cn';
 
 // 구매 적기 신호 → 칩 톤/문구
@@ -35,21 +35,16 @@ export default function IngredientDetailPage({ params }) {
   const router = useRouter();
 
   const { data: ingredient, isLoading, error, refetch } = useIngredient(id);
-  const { data: prices = [] } = useIngredientPrices(id);
   const { data: substitutes = [] } = useIngredientSubstitutes(id);
-  const { data: storeOffers = [] } = useIngredientStoreOffers(id);
+  const { data: products = [] } = useIngredientProducts(id);
   const { data: recipes = [] } = useIngredientRecipes(id);
 
   if (isLoading) return <LoadingScreen />;
   if (error || !ingredient) return <ErrorState onRetry={refetch} />;
 
   const signal = BUYING_SIGNAL[ingredient.buyingSignal] || null;
-  const nutrition = ingredient.nutrition || [];
   const careTips = ingredient.careTips || [];
   const storageTips = ingredient.storageTips || [];
-
-  // 리테일 시세 — 가격 오름차순 정렬
-  const sortedOffers = [...storeOffers].sort((a, b) => a.price - b.price);
 
   return (
     <>
@@ -66,6 +61,14 @@ export default function IngredientDetailPage({ params }) {
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-white" />
         </div>
+        <FavoriteHeart
+          targetType="INGREDIENT"
+          targetId={ingredient.id}
+          nextHref={`/ingredients/${id}`}
+          stop={false}
+          className="absolute right-3 top-2.5 z-20 grid h-11 w-11 place-items-center rounded-full border border-white/25 bg-white/15 backdrop-blur-md"
+          iconClassName="text-white"
+        />
       </div>
 
       <div className="animate-fade-up -mt-6 pb-6">
@@ -104,30 +107,18 @@ export default function IngredientDetailPage({ params }) {
           </Card>
         </div>
 
-        {/* (2) 가격 추이 */}
-        {prices.length > 0 && (
-          <Section title="가격 추이">
-            <Card className="mx-4 p-4">
-              <PriceBars data={prices} unit={ingredient.unit} />
-            </Card>
-          </Section>
-        )}
-
-        {/* (3) 영양 정보 */}
-        {nutrition.length > 0 && (
-          <Section title="영양 정보">
-            <div className="grid grid-cols-2 gap-2.5 px-4">
-              {nutrition.map((n) => (
-                <Card key={n.label} className="flex items-center justify-between px-4 py-3">
-                  <span className="text-[12.5px] text-ink-mid">{n.label}</span>
-                  <span className="text-[14px] font-bold text-ink tabular">{n.value}</span>
-                </Card>
+        {/* (2) 상품 리스트 — 이 식재료의 농가 직거래 상품 (2열 그리드) */}
+        {products.length > 0 && (
+          <Section title="상품 리스트">
+            <div className="grid grid-cols-2 gap-3 px-4">
+              {products.map((p) => (
+                <ProductCard key={p.id} product={p} />
               ))}
             </div>
           </Section>
         )}
 
-        {/* (4) 손질 · 보관 팁 */}
+        {/* (3) 손질 · 보관 팁 */}
         {(careTips.length > 0 || storageTips.length > 0) && (
           <Section title="손질·보관 팁">
             <Card className="mx-4 p-[18px]">
@@ -165,7 +156,7 @@ export default function IngredientDetailPage({ params }) {
           </Section>
         )}
 
-        {/* (5) 대체 식재료 */}
+        {/* (4) 대체 식재료 */}
         {substitutes.length > 0 && (
           <Section title="대체 식재료">
             <div className="flex gap-3 overflow-x-auto phone-scroll px-4 pb-1">
@@ -186,46 +177,7 @@ export default function IngredientDetailPage({ params }) {
           </Section>
         )}
 
-        {/* (6) 리테일 시세 비교 */}
-        {sortedOffers.length > 0 && (
-          <Section title="리테일 시세 비교">
-            <Card className="mx-4 overflow-hidden p-0">
-              {sortedOffers.map((o, i) => (
-                <div
-                  key={o.id}
-                  className={cn(
-                    'flex items-center gap-3 px-4 py-3.5',
-                    i < sortedOffers.length - 1 && 'border-b border-line-soft',
-                  )}
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="truncate text-[14px] font-bold text-ink">{o.store}</span>
-                      {(o.tag || i === 0) && <Chip tone="brand">{o.tag || '최저가'}</Chip>}
-                    </div>
-                    {o.delivery && <p className="mt-1 text-[11.5px] text-ink-soft">{o.delivery}</p>}
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-baseline justify-end gap-1">
-                      <span className="text-[15px] font-extrabold text-ink tabular">{won(o.price)}</span>
-                      <span className="text-[11px] text-ink-mid">원</span>
-                    </div>
-                    {o.discountPct ? (
-                      <p className="mt-0.5 text-[11px] font-bold text-hot tabular">{o.discountPct}% 할인</p>
-                    ) : o.originalPrice && o.originalPrice > o.price ? (
-                      <p className="mt-0.5 text-[11px] text-ink-soft line-through tabular">{won(o.originalPrice)}원</p>
-                    ) : null}
-                  </div>
-                </div>
-              ))}
-            </Card>
-            <p className="mt-2.5 px-4 text-[11.5px] leading-relaxed text-ink-soft">
-              가격은 동일 단위로 환산했어요. 배송비·수확일은 각 판매처에서 확인하세요.
-            </p>
-          </Section>
-        )}
-
-        {/* (7) 관련 레시피 */}
+        {/* (5) 관련 레시피 */}
         {recipes.length > 0 && (
           <Section
             title="관련 레시피"

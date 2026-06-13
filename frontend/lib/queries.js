@@ -16,6 +16,7 @@ export const qk = {
   ingredientStoreOffers: (id) => ['ingredient', String(id), 'offers'],
   ingredientRecipes: (id) => ['ingredient', String(id), 'recipes'],
   ingredientProducers: (id) => ['ingredient', String(id), 'producers'],
+  ingredientProducts: (id) => ['ingredient', String(id), 'products'],
   recipes: (params) => ['recipes', params || {}],
   recipe: (id) => ['recipe', String(id)],
   recipeSteps: (id) => ['recipe', String(id), 'steps'],
@@ -60,6 +61,8 @@ export const useIngredientRecipes = (id) =>
   useQuery({ queryKey: qk.ingredientRecipes(id), queryFn: () => endpoints.getIngredientRecipes(id), enabled: !!id, select: unwrapList });
 export const useIngredientProducers = (id) =>
   useQuery({ queryKey: qk.ingredientProducers(id), queryFn: () => endpoints.getIngredientProducers(id), enabled: !!id });
+export const useIngredientProducts = (id) =>
+  useQuery({ queryKey: qk.ingredientProducts(id), queryFn: () => endpoints.getIngredientProducts(id), enabled: !!id, select: unwrapList });
 
 // ── Recipes ────────────────────────────────────────────────
 export const useRecipes = (params) =>
