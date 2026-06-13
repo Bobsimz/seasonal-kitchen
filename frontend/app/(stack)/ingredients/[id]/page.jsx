@@ -85,7 +85,7 @@ export default function IngredientDetailPage({ params }) {
       <Section title={hasProducts ? '대체 식재료' : '대체 식재료 · 지금 살 수 있어요'}>
         <div className="flex gap-3 overflow-x-auto phone-scroll px-4 pb-1">
           {substitutes.map((s) => (
-            <Link key={s.id} href={`/ingredients/${s.id}`} className="tap w-[150px] shrink-0">
+            <Link key={s.ingredientId} href={`/ingredients/${s.ingredientId}`} className="tap w-[150px] shrink-0">
               <Card className="h-full p-3">
                 <VegImage name={s.name} src={s.imageUrl} size={48} />
                 <p className="mt-2.5 text-[13.5px] font-bold text-ink">{s.name}</p>

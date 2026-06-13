@@ -152,7 +152,7 @@ export function ingredientSubstitutes(id) {
   const name = ingredientName(id);
   const map = { 봄동: ['배추', '시금치'], 무: ['콜라비', '배추'], 배추: ['봄동', '양배추'] };
   return (map[name] || ['배추', '시금치']).map((n) => ({
-    id: ingredientIdByName(n),
+    ingredientId: ingredientIdByName(n),
     name: n,
     imageUrl: vegImg(n),
     reason: '식감과 조리법이 비슷해요',
