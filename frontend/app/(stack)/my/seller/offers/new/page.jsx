@@ -305,9 +305,13 @@ export default function SellerOfferNewPage() {
 
         const fontSize = Math.max(10, Math.round(img.width * 0.028));
         ctx.font = `${fontSize}px sans-serif`;
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = 'white';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'bottom';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+        ctx.shadowBlur = Math.round(fontSize * 0.6);
+        ctx.shadowOffsetX = 1;
+        ctx.shadowOffsetY = 1;
         const pad = Math.round(fontSize * 0.55);
         ctx.fillText('AI로 생성된 이미지입니다.', img.width - pad, img.height - pad);
 
