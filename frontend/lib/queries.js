@@ -70,6 +70,17 @@ export const useCuration = (id) =>
 export const useSearch = (q, type = 'ALL', enabled = true) =>
   useQuery({ queryKey: qk.search(q, type), queryFn: () => endpoints.search(q, type), enabled });
 export const useTrending = () => useQuery({ queryKey: qk.trending, queryFn: endpoints.getTrending });
+// 확정 검색만 인기/최근 검색어로 기록하고, 성공 시 검색어 목록을 갱신.
+export function useRecordSearch() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (q) => endpoints.recordSearch(q),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: qk.trending });
+      qc.invalidateQueries({ queryKey: qk.recentSearches });
+    },
+  });
+}
 // 최근 검색 — 로그인 사용자 전용(/users/me/recent-searches). 비로그인 시 비활성 → 빈 배열.
 // 백엔드는 [{keyword,searchCount}], 데모 mock 은 ['봄동',...] 를 주므로 키워드 문자열 배열로 통일한다.
 export const useRecentSearches = () => {

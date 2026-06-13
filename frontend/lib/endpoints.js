@@ -18,6 +18,8 @@ export const endpoints = {
   // ── Home / Search ──────────────────────────────────────
   getHome: () => api.get('/home'),
   search: (q, type = 'ALL') => api.get('/search', { params: { q, type } }),
+  // 확정 검색(엔터/칩 클릭) 시에만 인기·최근 검색어로 기록.
+  recordSearch: (q) => api.get('/search', { params: { q, type: 'ALL', record: true } }),
   getTrending: () => api.get('/search/trending'),
 
   // ── Curations ──────────────────────────────────────────

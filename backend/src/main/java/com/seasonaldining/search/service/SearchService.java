@@ -13,8 +13,11 @@ public class SearchService {
  private final ProductService productService;
  private final IngredientService ingredientService; private final RecipeService recipeService;
  public SearchService(IngredientRepository ingredients,RecipeRepository recipes,SearchKeywordRepository keywords,RecentSearchRepository recentSearches,ProductService productService,IngredientService ingredientService,RecipeService recipeService){this.ingredients=ingredients;this.recipes=recipes;this.keywords=keywords;this.recentSearches=recentSearches;this.productService=productService;this.ingredientService=ingredientService;this.recipeService=recipeService;}
- @Transactional public SearchResponse search(String query,String type,Long userId){
-  SearchKeyword keyword=keywords.findByKeyword(query).orElseGet(()->new SearchKeyword(query)); keyword.increment(); keywords.save(keyword); if(userId!=null)recentSearches.save(new RecentSearch(userId,query));
+ @Transactional public SearchResponse search(String query,String type,Long userId,boolean record){
+  // 인기/최근 검색어 기록은 "확정 검색"(record=true)일 때만. 타이핑 중 부분입력은 record=false 로 들어와 기록되지 않아
+  // 인기 검색어에 한 글자/부분 키워드가 끼는 것을 방지한다.
+  String kw=query==null?"":query.trim();
+  if(record && !kw.isEmpty()){ SearchKeyword keyword=keywords.findByKeyword(kw).orElseGet(()->new SearchKeyword(kw)); keyword.increment(); keywords.save(keyword); if(userId!=null)recentSearches.save(new RecentSearch(userId,kw)); }
   List<IngredientCardResponse> ingredientCards=List.of(); List<RecipeCardResponse> recipeCards=List.of();
   List<SearchItemResponse> ingredientItems=List.of(),recipeItems=List.of(),reelItems=List.of(),productItems=List.of();
   if("ALL".equals(type)||"INGREDIENT".equals(type)){

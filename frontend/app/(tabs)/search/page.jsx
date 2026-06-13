@@ -4,7 +4,7 @@ import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
-import { useSearch, useTrending, useRecentSearches } from '@/lib/queries';
+import { useSearch, useTrending, useRecentSearches, useRecordSearch } from '@/lib/queries';
 import { AppHeader } from '@/components/layout';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { Chip } from '@/components/ui/Chip';
@@ -54,6 +54,14 @@ function SearchInner() {
   const enabled = q.length > 0;
 
   const { data, isLoading, error, refetch } = useSearch(q, 'ALL', enabled);
+  const recordSearch = useRecordSearch();
+
+  // 확정 검색(엔터/칩·최근 클릭)일 때만 입력 반영 + 인기/최근 검색어 기록.
+  const commit = (kw) => {
+    const v = (kw ?? '').trim();
+    setInput(v);
+    if (v) recordSearch.mutate(v);
+  };
 
   return (
     <>
@@ -63,13 +71,13 @@ function SearchInner() {
         <SearchBar
           value={input}
           onChange={setInput}
-          onSubmit={(v) => setInput(v ?? '')}
+          onSubmit={commit}
           autoFocus
           placeholder="재료, 레시피, 키워드를 검색해보세요"
         />
       </div>
 
-      {!enabled && <EmptyQueryView onPick={setInput} />}
+      {!enabled && <EmptyQueryView onPick={commit} />}
 
       {enabled && (
         <div className="pb-6">

@@ -70,6 +70,29 @@ public record CreateOfferRequest(
         @Schema(description = "소구 문장(AI 생성 시, description에 저장)", example = "해남 황토밭에서 자란 아삭한 봄동이에요.", nullable = true)
         @Size(max = 1000) String appealSentence
 ) {
+    public CreateOfferRequest(Long ingredientId,
+                              String itemName,
+                              BigDecimal price,
+                              String thumbnailUrl,
+                              String originLabel,
+                              String freshnessNote,
+                              String description,
+                              String recipeTip,
+                              List<String> imageUrls,
+                              List<String> detailImageUrls,
+                              List<OptionInput> options,
+                              List<String> tags,
+                              Integer stock,
+                              String unitName,
+                              String displayUnit,
+                              Boolean useAi,
+                              List<String> appealKeywords,
+                              List<String> detailSections) {
+        this(ingredientId, itemName, price, thumbnailUrl, originLabel, freshnessNote, description, recipeTip,
+                imageUrls, detailImageUrls, options, tags, stock, unitName, displayUnit, useAi, appealKeywords,
+                detailSections, null);
+    }
+
     @Schema(description = "상품 옵션 입력 — 라벨을 강제하지 않고 수량+단위(자유)+가격으로 받음")
     public record OptionInput(
             @Schema(description = "수량(선택)", example = "1.5", nullable = true)
