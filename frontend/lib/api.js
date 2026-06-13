@@ -9,11 +9,6 @@ export class ApiError extends Error {
     this.fieldErrors = fieldErrors || [];
     this.status = status;
   }
-
-  // 백엔드가 안 떠 있거나 5xx 등 "연결/서버" 문제인지 (→ 데모 폴백 대상)
-  get isConnectivity() {
-    return this.code === 'NETWORK_ERROR' || (this.status != null && this.status >= 500);
-  }
 }
 
 // ── 토큰 저장소 (클라이언트 전용) ───────────────────────────────

@@ -1,172 +1,112 @@
-// 도메인별 API 호출 함수. 각 함수는 실제 백엔드를 먼저 호출하고,
-// 데모 폴백이 켜져 있고(기본) 연결/서버 오류면 mock 데이터를 반환합니다.
-// 화면(컴포넌트)은 이 파일의 함수만 쓰면 되고, 백엔드 유무를 몰라도 됩니다.
+// 도메인별 API 호출 함수. 실 백엔드를 직접 호출합니다.
+// 화면(컴포넌트)은 이 파일의 함수만 쓰면 됩니다. 실패 시 ApiError 를 던집니다.
 
-import { api, ApiError } from './api';
-import { DEMO_FALLBACK } from './config';
-import * as mock from './mock/data';
-import { demoStore } from './mock/store';
-
-async function withFallback(real, mockFn) {
-  if (DEMO_FALLBACK === 'off') return real();
-  try {
-    return await real();
-  } catch (e) {
-    // 백엔드가 의도적으로 돌려준 4xx(검증/인증 실패 등)는 그대로 노출
-    if (e instanceof ApiError && !e.isConnectivity) throw e;
-    return mockFn();
-  }
-}
+import { api } from './api';
 
 export const endpoints = {
   // ── Auth ───────────────────────────────────────────────
-  signup: (body) =>
-    withFallback(
-      () => api.post('/auth/signup', body),
-      () => ({ accessToken: 'demo-token', tokenType: 'Bearer', userId: 1, nickname: body.nickname || '제철러버' }),
-    ),
-  login: (body) =>
-    withFallback(
-      () => api.post('/auth/login', body),
-      () => ({ accessToken: 'demo-token', tokenType: 'Bearer', userId: 1, nickname: '제철러버' }),
-    ),
+  signup: (body) => api.post('/auth/signup', body),
+  login: (body) => api.post('/auth/login', body),
 
   // ── User / MyPage ──────────────────────────────────────
-  getMe: () => withFallback(() => api.get('/users/me', { auth: true }), () => mock.demoUser),
-  updateMe: (body) => withFallback(() => api.patch('/users/me', body, { auth: true }), () => ({ ...mock.demoUser, ...body })),
-  getMySummary: () => withFallback(() => api.get('/users/me/summary', { auth: true }), () => mock.userSummary()),
-  savePreferences: (body) => withFallback(() => api.put('/users/me/preferences', body, { auth: true }), () => body),
-  getRecentSearches: () => withFallback(() => api.get('/users/me/recent-searches', { auth: true }), () => mock.recentSearches()),
+  getMe: () => api.get('/users/me', { auth: true }),
+  updateMe: (body) => api.patch('/users/me', body, { auth: true }),
+  getMySummary: () => api.get('/users/me/summary', { auth: true }),
+  savePreferences: (body) => api.put('/users/me/preferences', body, { auth: true }),
+  getRecentSearches: () => api.get('/users/me/recent-searches', { auth: true }),
 
   // ── Home / Search ──────────────────────────────────────
-  getHome: () => withFallback(() => api.get('/home'), () => mock.home()),
-  search: (q, type = 'ALL') => withFallback(() => api.get('/search', { params: { q, type } }), () => mock.search(q, type)),
-  getTrending: () => withFallback(() => api.get('/search/trending'), () => mock.trending()),
+  getHome: () => api.get('/home'),
+  search: (q, type = 'ALL') => api.get('/search', { params: { q, type } }),
+  getTrending: () => api.get('/search/trending'),
 
   // ── Curations ──────────────────────────────────────────
-  getCuration: (id) => withFallback(() => api.get(`/curations/${id}`), () => mock.curation(id)),
+  getCuration: (id) => api.get(`/curations/${id}`),
 
   // ── Ingredients ────────────────────────────────────────
-  listIngredients: (params) => withFallback(() => api.get('/ingredients', { params }), () => ({ items: mock.listIngredients() })),
-  listIngredientCategories: () => withFallback(() => api.get('/ingredients/categories'), () => []),
-  getIngredient: (id) => withFallback(() => api.get(`/ingredients/${id}`), () => mock.getIngredient(id)),
-  getIngredientPrices: (id) => withFallback(() => api.get(`/ingredients/${id}/prices`), () => mock.ingredientPrices(id)),
-  getIngredientSubstitutes: (id) => withFallback(() => api.get(`/ingredients/${id}/substitutes`), () => mock.ingredientSubstitutes(id)),
-  getIngredientStoreOffers: (id) => withFallback(() => api.get(`/ingredients/${id}/offers`), () => mock.ingredientStoreOffers(id)),
-  getIngredientRecipes: (id) => withFallback(() => api.get(`/ingredients/${id}/recipes`), () => mock.recipesForIngredient(id)),
-  getIngredientProducers: (id) => withFallback(() => api.get(`/ingredients/${id}/producers`), () => mock.ingredientProducers(id)),
-  getIngredientProducts: (id) => withFallback(() => api.get(`/ingredients/${id}/products`), () => mock.ingredientProducts(id)),
+  listIngredients: (params) => api.get('/ingredients', { params }),
+  listIngredientCategories: () => api.get('/ingredients/categories'),
+  getIngredient: (id) => api.get(`/ingredients/${id}`),
+  getIngredientPrices: (id) => api.get(`/ingredients/${id}/prices`),
+  getIngredientSubstitutes: (id) => api.get(`/ingredients/${id}/substitutes`),
+  getIngredientStoreOffers: (id) => api.get(`/ingredients/${id}/offers`),
+  getIngredientRecipes: (id) => api.get(`/ingredients/${id}/recipes`),
+  getIngredientProducers: (id) => api.get(`/ingredients/${id}/producers`),
+  getIngredientProducts: (id) => api.get(`/ingredients/${id}/products`),
 
   // ── Recipes ────────────────────────────────────────────
-  listRecipes: (params) => withFallback(() => api.get('/recipes', { params }), () => ({ items: mock.listRecipes() })),
-  listRecipeTags: () => withFallback(() => api.get('/recipes/tags'), () => []),
-  getRecipe: (id) => withFallback(() => api.get(`/recipes/${id}`), () => mock.getRecipe(id)),
-  getRecipeSteps: (id) => withFallback(() => api.get(`/recipes/${id}/steps`), () => mock.recipeSteps(id)),
+  listRecipes: (params) => api.get('/recipes', { params }),
+  listRecipeTags: () => api.get('/recipes/tags'),
+  getRecipe: (id) => api.get(`/recipes/${id}`),
+  getRecipeSteps: (id) => api.get(`/recipes/${id}/steps`),
 
   // ── Reels ──────────────────────────────────────────────
-  listReels: () => withFallback(() => api.get('/reels'), () => ({ items: mock.reels })),
-  getReel: (id) => withFallback(() => api.get(`/reels/${id}`), () => mock.getReel(id)),
-  getReelComments: (id) => withFallback(() => api.get(`/reels/${id}/comments`), () => mock.reelComments(id)),
-  likeReel: (id) => withFallback(() => api.post(`/reels/${id}/likes`, {}, { auth: true }), () => ({ liked: true })),
-  unlikeReel: (id) => withFallback(() => api.del(`/reels/${id}/likes`, { auth: true }), () => ({ liked: false })),
-  saveReel: (id) => withFallback(() => api.post(`/reels/${id}/saves`, {}, { auth: true }), () => ({ saved: true })),
-  unsaveReel: (id) => withFallback(() => api.del(`/reels/${id}/saves`, { auth: true }), () => ({ saved: false })),
-  commentReel: (id, body) => withFallback(
-    () => api.post(`/reels/${id}/comments`, body, { auth: true }),
-    () => ({
-      id: Date.now(),
-      reelId: Number(id),
-      userId: mock.demoUser.id,
-      nickname: mock.demoUser.nickname,
-      profileImageUrl: mock.demoUser.photoUrl,
-      content: body.content,
-      createdAt: new Date().toISOString(),
-    }),
-  ),
+  listReels: () => api.get('/reels'),
+  getReel: (id) => api.get(`/reels/${id}`),
+  getReelComments: (id) => api.get(`/reels/${id}/comments`),
+  likeReel: (id) => api.post(`/reels/${id}/likes`, {}, { auth: true }),
+  unlikeReel: (id) => api.del(`/reels/${id}/likes`, { auth: true }),
+  saveReel: (id) => api.post(`/reels/${id}/saves`, {}, { auth: true }),
+  unsaveReel: (id) => api.del(`/reels/${id}/saves`, { auth: true }),
+  commentReel: (id, body) => api.post(`/reels/${id}/comments`, body, { auth: true }),
 
   // ── Products ───────────────────────────────────────────
-  listProducts: (params) => withFallback(() => api.get('/products', { params }), () => mock.products(params)),
-  getProduct: (id) => withFallback(() => api.get(`/products/${id}`), () => mock.productDetail(id)),
+  listProducts: (params) => api.get('/products', { params }),
+  getProduct: (id) => api.get(`/products/${id}`),
 
   // ── Producers ──────────────────────────────────────────
-  listProducers: (params) => withFallback(() => api.get('/producers', { params }), () => ({ items: mock.producers, page: 0, size: 20, totalElements: mock.producers.length, hasNext: false })),
-  listProducerRegions: () => withFallback(() => api.get('/producers/regions'), () => []),
-  getProducer: (id) => withFallback(() => api.get(`/producers/${id}`), () => mock.getProducer(id)),
-  getProducerOffers: (id) => withFallback(() => api.get(`/producers/${id}/offers`), () => mock.producerOffers(id)),
-  getProducerReviews: (id) => withFallback(() => api.get(`/producers/${id}/reviews`), () => mock.producerReviews(id)),
-  getProducerNews: (id) => withFallback(() => api.get(`/producers/${id}/news`), () => mock.producerNews(id)),
-  createReview: (producerId, body) => withFallback(() => api.post(`/producers/${producerId}/reviews`, body, { auth: true }), () => ({ id: Date.now(), author: '나', ...body, createdAt: new Date().toISOString() })),
+  listProducers: (params) => api.get('/producers', { params }),
+  listProducerRegions: () => api.get('/producers/regions'),
+  getProducer: (id) => api.get(`/producers/${id}`),
+  getProducerOffers: (id) => api.get(`/producers/${id}/offers`),
+  getProducerReviews: (id) => api.get(`/producers/${id}/reviews`),
+  getProducerNews: (id) => api.get(`/producers/${id}/news`),
+  createReview: (producerId, body) =>
+    api.post(`/producers/${producerId}/reviews`, body, { auth: true }),
 
   // 내 농가 (자가등록)
-  getMyProducer: () => withFallback(() => api.get('/producers/me', { auth: true }), () => demoStore.getMyProducer()),
-  registerProducer: (body) => withFallback(() => api.post('/producers/me', body, { auth: true }), () => demoStore.registerProducer(body)),
-  addMyOffer: (body) => withFallback(() => api.post('/producers/me/offers', body, { auth: true }), () => demoStore.addMyOffer(body)),
-  listMyOffers: () => withFallback(() => Promise.reject(new ApiError({ code: 'NETWORK_ERROR', status: 0 })), () => demoStore.listMyOffers()),
+  getMyProducer: () => api.get('/producers/me', { auth: true }),
+  registerProducer: (body) => api.post('/producers/me', body, { auth: true }),
+  addMyOffer: (body) => api.post('/producers/me/offers', body, { auth: true }),
+  listMyOffers: () => api.get('/producers/me/offers', { auth: true }),
 
   // AI 상품 생성
   analyzeOfferPhoto: (formData) =>
-    withFallback(
-      () => api.post('/producers/me/offers/analyze-photo', formData, { auth: true }),
-      () => ({
-        ingredientName: '봄동',
-        productName: '해남 햇 봄동 1.5kg',
-        category: '잎채소',
-        storageMethod: '냉장 보관',
-        storageTip: '신문지에 싸서 냉장 보관하면 2주까지 신선해요.',
-        checkpoints: [
-          { keyword: '산지직송', sentence: '산지에서 직접 배송합니다.' },
-          { keyword: '당일수확', sentence: '당일 수확한 신선한 제품입니다.' },
-        ],
-      }),
-    ),
+    api.post('/producers/me/offers/analyze-photo', formData, { auth: true }),
   generateDescription: (body) =>
-    withFallback(
-      () => api.post('/producers/me/offers/generate-description', body, { auth: true }),
-      () => ({ description: '제철 재료를 산지에서 직접 보내드려요. 신선함이 다릅니다.' }),
-    ),
+    api.post('/producers/me/offers/generate-description', body, { auth: true }),
   generateImage: (body) => api.post('/producers/me/offers/generate-image', body, { auth: true }),
 
   // ── Uploads ────────────────────────────────────────────
-  uploadImage: (formData) =>
-    withFallback(
-      () => api.post('/uploads', formData, { auth: true }),
-      () => ({ url: 'https://placehold.co/400x400?text=Demo' }),
-    ),
-  uploadImages: (formData) =>
-    withFallback(
-      () => api.post('/uploads/batch', formData, { auth: true }),
-      () => [{ url: 'https://placehold.co/400x400?text=Demo' }],
-    ),
+  uploadImage: (formData) => api.post('/uploads', formData, { auth: true }),
+  uploadImages: (formData) => api.post('/uploads/batch', formData, { auth: true }),
 
   // ── Cart / Orders ──────────────────────────────────────
-  getCart: () => withFallback(() => api.get('/cart', { auth: true }), () => demoStore.getCart()),
-  // 실 백엔드 계약은 { offerId, qty, offerOptionId? }. 선택 옵션의 id 만 보낸다(없으면 null).
-  // 데모 폴백에는 옵션 단가/라벨 스냅샷용으로 option 객체 전체를 넘긴다.
-  addCartItem: ({ offerId, qty, option }) => withFallback(
-    () => api.post('/cart/items', { offerId, qty, offerOptionId: option?.id ?? null }, { auth: true }),
-    () => demoStore.addCartItem(offerId, qty, option),
-  ),
-  updateCartItem: (id, body) => withFallback(() => api.patch(`/cart/items/${id}`, body, { auth: true }), () => demoStore.updateCartItem(id, body.qty)),
-  removeCartItem: (id) => withFallback(() => api.del(`/cart/items/${id}`, { auth: true }), () => demoStore.removeCartItem(id)),
-  createOrder: () => withFallback(() => api.post('/orders', {}, { auth: true }), () => demoStore.createOrder()),
-  listOrders: () => withFallback(() => api.get('/orders', { auth: true }), () => demoStore.listOrders()),
-  getOrder: (id) => withFallback(() => api.get(`/orders/${id}`, { auth: true }), () => demoStore.getOrder(id)),
+  getCart: () => api.get('/cart', { auth: true }),
+  // 백엔드 계약: { offerId, qty, offerOptionId? }. 선택 옵션의 id 만 보낸다(없으면 null).
+  addCartItem: ({ offerId, qty, option }) =>
+    api.post('/cart/items', { offerId, qty, offerOptionId: option?.id ?? null }, { auth: true }),
+  updateCartItem: (id, body) => api.patch(`/cart/items/${id}`, body, { auth: true }),
+  removeCartItem: (id) => api.del(`/cart/items/${id}`, { auth: true }),
+  createOrder: () => api.post('/orders', {}, { auth: true }),
+  listOrders: () => api.get('/orders', { auth: true }),
+  getOrder: (id) => api.get(`/orders/${id}`, { auth: true }),
 
   // ── Favorites ──────────────────────────────────────────
-  listFavorites: () => withFallback(() => api.get('/favorites', { auth: true }), () => demoStore.listFavorites()),
-  addFavorite: (body) => withFallback(() => api.post('/favorites', body, { auth: true }), () => demoStore.addFavorite(body.targetType, body.targetId)),
-  removeFavorite: (id) => withFallback(() => api.del(`/favorites/${id}`, { auth: true }), () => demoStore.removeFavorite(id)),
+  listFavorites: () => api.get('/favorites', { auth: true }),
+  addFavorite: (body) => api.post('/favorites', body, { auth: true }),
+  removeFavorite: (id) => api.del(`/favorites/${id}`, { auth: true }),
 
   // ── Notifications ──────────────────────────────────────
-  listNotifications: () => withFallback(() => api.get('/notifications', { auth: true }), () => mock.notifications()),
-  readNotification: (id) => withFallback(() => api.patch(`/notifications/${id}/read`, {}, { auth: true }), () => ({ id })),
-  readAllNotifications: () => withFallback(() => api.patch('/notifications/read-all', {}, { auth: true }), () => ({ ok: true })),
+  listNotifications: () => api.get('/notifications', { auth: true }),
+  readNotification: (id) => api.patch(`/notifications/${id}/read`, {}, { auth: true }),
+  readAllNotifications: () => api.patch('/notifications/read-all', {}, { auth: true }),
 
   // ── Price alerts ───────────────────────────────────────
-  listPriceAlerts: () => withFallback(() => api.get('/price-alerts', { auth: true }), () => mock.priceAlerts()),
-  createPriceAlert: (body) => withFallback(() => api.post('/price-alerts', body, { auth: true }), () => ({ id: Date.now(), ...body, active: true })),
-  updatePriceAlert: (id, body) => withFallback(() => api.patch(`/price-alerts/${id}`, body, { auth: true }), () => ({ id, ...body })),
-  deletePriceAlert: (id) => withFallback(() => api.del(`/price-alerts/${id}`, { auth: true }), () => ({ ok: true })),
+  listPriceAlerts: () => api.get('/price-alerts', { auth: true }),
+  createPriceAlert: (body) => api.post('/price-alerts', body, { auth: true }),
+  updatePriceAlert: (id, body) => api.patch(`/price-alerts/${id}`, body, { auth: true }),
+  deletePriceAlert: (id) => api.del(`/price-alerts/${id}`, { auth: true }),
 
   // ── Analytics (fire-and-forget) ────────────────────────
   // background: 401 이어도 로그인 모달을 띄우지 않는다(공개 화면에서 백그라운드 전송).
