@@ -14,7 +14,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 # frontend가 호출할 백엔드 공개 주소. lib/config.js 가 여기에 API_PREFIX(/api/v1)를 붙인다.
 # 같은 도메인이라 nginx가 /api/ 를 backend로 라우팅하고 CORS도 발생하지 않는다.
-ARG NEXT_PUBLIC_API_BASE_URL=http://h14k011.p.ssafy.io
+ARG NEXT_PUBLIC_API_BASE_URL=https://h14k011.p.ssafy.io
 ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
 RUN npm run build
 

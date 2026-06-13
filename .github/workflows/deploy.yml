@@ -76,7 +76,7 @@ jobs:
           context: ./frontend
           push: true
           build-args: |
-            NEXT_PUBLIC_API_BASE_URL=http://h14k011.p.ssafy.io
+            NEXT_PUBLIC_API_BASE_URL=https://h14k011.p.ssafy.io
           tags: |
             ${{ env.IMAGE_FRONTEND }}:latest
             ${{ env.IMAGE_FRONTEND }}:${{ github.sha }}
@@ -128,3 +128,12 @@ jobs:
             docker compose -f docker-compose.prod.yml up -d
             docker image prune -f
             docker logout ghcr.io
+            # 배포 후 헬스체크 (최대 60초 대기). 실패하면 배포 job 도 실패 처리.
+            echo "헬스체크 대기..."
+            for i in $(seq 1 12); do
+              if curl -fsSLk https://localhost/api/v1/health >/dev/null 2>&1; then
+                echo "헬스체크 통과 (${i}회차)"; exit 0
+              fi
+              sleep 5
+            done
+            echo "헬스체크 실패: /api/v1/health 가 60초 내 응답하지 않음"; exit 1
