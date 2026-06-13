@@ -449,9 +449,9 @@ export function home() {
     unreadNotificationCount: 2,
     hero,
     heroes,
-    seasonalIngredients,
-    trendingRecipes: recipes.slice(0, 6),
-    trendingReels: reels,
+    ingredients: seasonalIngredients,
+    recipes: recipes.slice(0, 6),
+    reels,
     trendingKeywords: ['봄동', '무생채', '배추전', '시금치 페스토', '깍두기'],
   };
 }
