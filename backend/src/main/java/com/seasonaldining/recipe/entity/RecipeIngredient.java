@@ -20,8 +20,11 @@ public class RecipeIngredient {
     @Column(name = "recipe_id", nullable = false)
     private Long recipeId;
 
-    @Column(name = "ingredient_id", nullable = false)
+    @Column(name = "ingredient_id")
     private Long ingredientId;
+
+    @Column(length = 150)
+    private String name;
 
     @Column(precision = 12, scale = 2)
     private BigDecimal quantity;
@@ -36,8 +39,13 @@ public class RecipeIngredient {
     }
 
     public RecipeIngredient(Long recipeId, Long ingredientId, BigDecimal quantity, String unit, boolean optional) {
+        this(recipeId, ingredientId, null, quantity, unit, optional);
+    }
+
+    public RecipeIngredient(Long recipeId, Long ingredientId, String name, BigDecimal quantity, String unit, boolean optional) {
         this.recipeId = recipeId;
         this.ingredientId = ingredientId;
+        this.name = name;
         this.quantity = quantity;
         this.unit = unit;
         this.optional = optional;
@@ -53,6 +61,10 @@ public class RecipeIngredient {
 
     public Long getIngredientId() {
         return ingredientId;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public BigDecimal getQuantity() {
