@@ -3,6 +3,7 @@ package com.seasonaldining.product.service;
 import com.seasonaldining.common.exception.BusinessException;
 import com.seasonaldining.common.exception.ErrorCode;
 import com.seasonaldining.common.response.ListResponse;
+import com.seasonaldining.ingredient.repository.IngredientRepository;
 import com.seasonaldining.producer.entity.OfferCertification;
 import com.seasonaldining.producer.entity.OfferDetailSection;
 import com.seasonaldining.producer.entity.OfferOption;
@@ -47,6 +48,7 @@ public class ProductService {
     private final OfferCertificationRepository offerCertificationRepository;
     private final OfferDetailSectionRepository offerDetailSectionRepository;
     private final RecipeIngredientRepository recipeIngredientRepository;
+    private final IngredientRepository ingredientRepository;
 
     public ProductService(ProducerOfferRepository offerRepository,
                           ProducerRepository producerRepository,
@@ -55,7 +57,8 @@ public class ProductService {
                           OfferOptionRepository offerOptionRepository,
                           OfferCertificationRepository offerCertificationRepository,
                           OfferDetailSectionRepository offerDetailSectionRepository,
-                          RecipeIngredientRepository recipeIngredientRepository) {
+                          RecipeIngredientRepository recipeIngredientRepository,
+                          IngredientRepository ingredientRepository) {
         this.offerRepository = offerRepository;
         this.producerRepository = producerRepository;
         this.offerPhotoRepository = offerPhotoRepository;
@@ -64,6 +67,7 @@ public class ProductService {
         this.offerCertificationRepository = offerCertificationRepository;
         this.offerDetailSectionRepository = offerDetailSectionRepository;
         this.recipeIngredientRepository = recipeIngredientRepository;
+        this.ingredientRepository = ingredientRepository;
     }
 
     /** 상품 목록/검색 (페이지네이션 + q/category/region/style 필터). */
@@ -75,6 +79,24 @@ public class ProductService {
         List<ProductCardResponse> cards = toCards(pageResult.getContent());
         return new ListResponse<>(cards, pageResult.getNumber(), pageResult.getSize(),
                 pageResult.getTotalElements(), pageResult.hasNext());
+    }
+
+    /**
+     * 식재료별 판매 상품 — 해당 식재료를 파는 ACTIVE producer_offers를 가격 오름차순 카드로.
+     * 농가 비교(ProducerService.getOffersForIngredient)와 동일한 선택 전략을 써서 같은 offer 집합을 보장한다.
+     */
+    public List<ProductCardResponse> getProductsByIngredient(Long ingredientId) {
+        // 1) ingredient_id로 링크된 경우 그대로 사용
+        List<ProducerOffer> byId = offerRepository.findByIngredientIdAndStatusOrderByPriceAsc(
+                ingredientId, ProducerOffer.STATUS_ACTIVE);
+        if (!byId.isEmpty()) {
+            return toCards(byId);
+        }
+        // 2) 폴백: 아직 ingredient_id 백필 전이면 식재료명으로 매칭 (없는 식재료면 빈 목록)
+        return ingredientRepository.findById(ingredientId)
+                .map(ing -> toCards(offerRepository.findByIngredientNameAndStatusOrderByPriceAsc(
+                        ing.getName(), ProducerOffer.STATUS_ACTIVE)))
+                .orElseGet(List::of);
     }
 
     /** 검색(type=PRODUCT)용 — 상위 limit개 카드. */

@@ -130,11 +130,6 @@ export default function RecipeDetailPage({ params }) {
               )}
             </span>
           }
-          action={
-            recipe.estimatedCost != null ? (
-              <span className="text-[13px] font-extrabold text-brand">예상 비용 {won(recipe.estimatedCost)}원</span>
-            ) : null
-          }
         >
           <div className="mx-4 overflow-hidden rounded-2xl border border-line-soft">
             {(recipe.ingredients ?? []).map((it, i, arr) => (

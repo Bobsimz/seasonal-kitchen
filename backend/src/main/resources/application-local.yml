@@ -24,3 +24,7 @@ spring:
 app:
   demo-seed:
     enabled: ${DEMO_SEED_ENABLED:true}
+  # 로컬에서도 미디어(요리사진 dishes/*, 쇼츠 썸네일 thumbnails/* 등)를 운영 CDN에서 불러온다.
+  # 비워두면 MediaUrlResolver가 루트 상대경로(/dishes/x.jpg)를 반환 → 프론트(localhost:3000)에 그 경로가 없어 404.
+  uploads:
+    public-base-url: ${UPLOADS_PUBLIC_BASE_URL:https://d1lcjrcsx3pn64.cloudfront.net}
