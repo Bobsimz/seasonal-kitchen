@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Bell, Search, ShoppingCart, ChevronDown } from 'lucide-react';
+import { Bell, Search, ShoppingCart, ChevronDown, Check } from 'lucide-react';
 import {
   useInfiniteIngredients,
   useInfiniteRecipes,
@@ -15,6 +15,7 @@ import {
 } from '@/lib/queries';
 import { AppHeader, HeaderIconButton } from '@/components/layout';
 import { SegmentedToggle, ChipTabs } from '@/components/ui/SegmentedToggle';
+import { Sheet } from '@/components/ui/Sheet';
 import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState, EmptyState } from '@/components/ui/States';
 import { IngredientRow } from '@/components/domain/IngredientCard';
@@ -102,65 +103,56 @@ function InfiniteSentinel({ hasMore, loading, onLoadMore }) {
   );
 }
 
-// 정렬 행 — "N개의 ..." + 정렬 드롭다운. options: [{ value, label, cmp }].
-function SortRow({ count, label, options, value, onChange }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+// 정렬 행 — "N개의 ..." + 정렬 버튼(탭하면 onOpen). 시트는 animate-fade-up(transform) 바깥에서
+// 렌더해야 fixed 가 프레임 기준으로 떠서 상품 탭과 동일하게 동작한다.
+function SortRow({ count, label, options, value, onOpen }) {
   const current = options.find((o) => o.value === value) || options[0];
-
-  // 바깥 클릭 시 닫기.
-  useEffect(() => {
-    if (!open) return;
-    const onDoc = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-    };
-    document.addEventListener('mousedown', onDoc);
-    return () => document.removeEventListener('mousedown', onDoc);
-  }, [open]);
-
   return (
     <div className="flex items-center justify-between px-4 pb-2 pt-3">
       <span className="text-[12.5px] text-ink-mid">
         <b className="text-ink">{count}</b>
         {label}
       </span>
-      <div className="relative" ref={ref}>
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-haspopup="listbox"
-          aria-expanded={open}
-          className="tap flex items-center gap-1 text-[12.5px] font-bold text-ink"
-        >
-          {current.label}
-          <ChevronDown size={13} className={cn('text-ink-soft transition-transform', open && 'rotate-180')} />
-        </button>
-        {open && (
-          <ul
-            role="listbox"
-            className="absolute right-0 z-30 mt-1.5 min-w-[128px] overflow-hidden rounded-xl border border-line-soft bg-white py-1 shadow-lg"
-          >
-            {options.map((o) => (
-              <li key={o.value} role="option" aria-selected={o.value === value}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    onChange(o.value);
-                    setOpen(false);
-                  }}
-                  className={cn(
-                    'tap block w-full px-3.5 py-2 text-left text-[12.5px]',
-                    o.value === value ? 'font-bold text-brand' : 'text-ink-mid',
-                  )}
-                >
-                  {o.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-haspopup="dialog"
+        aria-label="정렬 기준 선택"
+        className="tap flex items-center gap-0.5 text-[12.5px] font-bold text-ink-mid"
+      >
+        {current.label}
+        <ChevronDown size={14} />
+      </button>
     </div>
+  );
+}
+
+// 정렬 바텀시트 — 상품 탭과 동일. animate-fade-up 바깥(탭 루트)에 둔다.
+function SortSheet({ open, onClose, options, value, onChange }) {
+  return (
+    <Sheet open={open} onClose={onClose} title="정렬">
+      <div className="flex flex-col">
+        {options.map((o) => {
+          const active = o.value === value;
+          return (
+            <button
+              key={o.value}
+              onClick={() => {
+                onChange(o.value);
+                onClose();
+              }}
+              className={cn(
+                'tap flex items-center justify-between py-3 text-[14.5px]',
+                active ? 'font-extrabold text-brand-dark' : 'font-semibold text-ink',
+              )}
+            >
+              {o.label}
+              {active && <Check size={18} strokeWidth={2.6} />}
+            </button>
+          );
+        })}
+      </div>
+    </Sheet>
   );
 }
 
@@ -174,6 +166,7 @@ const INGREDIENT_SORTS = [
 function IngredientTab() {
   const [cat, setCat] = useState('전체');
   const [sort, setSort] = useState(INGREDIENT_SORTS[0].value);
+  const [sortOpen, setSortOpen] = useState(false);
   const { data: catList = [] } = useIngredientCategories();
   const cats = ['전체', ...catList];
 
@@ -187,7 +180,7 @@ function IngredientTab() {
     <>
       <ChipTabs options={cats} value={cat} onChange={setCat} sticky className="sticky top-28" />
       <div className="animate-fade-up pb-6">
-        <SortRow count={`${items.length}개${hasNextPage ? '+' : ''}`} label="의 제철 식재료" options={INGREDIENT_SORTS} value={sort} onChange={setSort} />
+        <SortRow count={`${items.length}개${hasNextPage ? '+' : ''}`} label="의 제철 식재료" options={INGREDIENT_SORTS} value={sort} onOpen={() => setSortOpen(true)} />
         {items.length === 0 ? (
           <EmptyState title="식재료가 없어요" description="다른 카테고리를 선택해 보세요." />
         ) : (
@@ -199,6 +192,7 @@ function IngredientTab() {
         )}
         <InfiniteSentinel hasMore={hasNextPage} loading={isFetchingNextPage} onLoadMore={fetchNextPage} />
       </div>
+      <SortSheet open={sortOpen} onClose={() => setSortOpen(false)} options={INGREDIENT_SORTS} value={sort} onChange={setSort} />
     </>
   );
 }
@@ -213,6 +207,7 @@ const RECIPE_SORTS = [
 function RecipeTab() {
   const [tag, setTag] = useState('전체');
   const [sort, setSort] = useState(RECIPE_SORTS[0].value);
+  const [sortOpen, setSortOpen] = useState(false);
   const { data: tagList = [] } = useRecipeTags();
   const tags = ['전체', ...tagList];
 
@@ -226,7 +221,7 @@ function RecipeTab() {
     <>
       <ChipTabs options={tags} value={tag} onChange={setTag} sticky className="sticky top-28" />
       <div className="animate-fade-up pb-6">
-        <SortRow count={`${items.length}개${hasNextPage ? '+' : ''}`} label="의 레시피" options={RECIPE_SORTS} value={sort} onChange={setSort} />
+        <SortRow count={`${items.length}개${hasNextPage ? '+' : ''}`} label="의 레시피" options={RECIPE_SORTS} value={sort} onOpen={() => setSortOpen(true)} />
         {items.length === 0 ? (
           <EmptyState title="레시피가 없어요" description="다른 태그를 선택해 보세요." />
         ) : (
@@ -238,6 +233,7 @@ function RecipeTab() {
         )}
         <InfiniteSentinel hasMore={hasNextPage} loading={isFetchingNextPage} onLoadMore={fetchNextPage} />
       </div>
+      <SortSheet open={sortOpen} onClose={() => setSortOpen(false)} options={RECIPE_SORTS} value={sort} onChange={setSort} />
     </>
   );
 }
@@ -252,6 +248,7 @@ const PRODUCER_SORTS = [
 function ProducerTab() {
   const [region, setRegion] = useState('전체');
   const [sort, setSort] = useState(PRODUCER_SORTS[0].value);
+  const [sortOpen, setSortOpen] = useState(false);
   const { data: regionList = [] } = useProducerRegions();
   const regions = ['전체', ...regionList];
 
@@ -265,7 +262,7 @@ function ProducerTab() {
     <>
       <ChipTabs options={regions} value={region} onChange={setRegion} sticky className="sticky top-28" />
       <div className="animate-fade-up pb-6">
-        <SortRow count={`${items.length}곳${hasNextPage ? '+' : ''}`} label="의 추천 농가" options={PRODUCER_SORTS} value={sort} onChange={setSort} />
+        <SortRow count={`${items.length}곳${hasNextPage ? '+' : ''}`} label="의 추천 농가" options={PRODUCER_SORTS} value={sort} onOpen={() => setSortOpen(true)} />
         {items.length === 0 ? (
           <EmptyState title="농가가 없어요" description="다른 지역을 선택해 보세요." />
         ) : (
@@ -277,6 +274,7 @@ function ProducerTab() {
         )}
         <InfiniteSentinel hasMore={hasNextPage} loading={isFetchingNextPage} onLoadMore={fetchNextPage} />
       </div>
+      <SortSheet open={sortOpen} onClose={() => setSortOpen(false)} options={PRODUCER_SORTS} value={sort} onChange={setSort} />
     </>
   );
 }
