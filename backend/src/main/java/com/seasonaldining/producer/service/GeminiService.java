@@ -7,7 +7,6 @@ import com.seasonaldining.common.exception.ErrorCode;
 import com.seasonaldining.producer.config.GeminiProperties;
 import com.seasonaldining.producer.config.GeminiPromptsProperties;
 import com.seasonaldining.producer.dto.request.GenerateDescriptionRequest;
-import com.seasonaldining.producer.dto.request.OfferImageGenerationRequest;
 import com.seasonaldining.producer.dto.response.GenerateDescriptionResponse;
 import com.seasonaldining.producer.dto.response.OfferImageGenerationResponse;
 import com.seasonaldining.producer.dto.response.OfferPhotoAnalysisResponse;
@@ -80,7 +79,7 @@ public class GeminiService {
         }
     }
 
-    public OfferImageGenerationResponse generateOfferImageFromPhoto(MultipartFile image, String farmPhotoUrl) {
+    public OfferImageGenerationResponse generateOfferImageFromPhoto(MultipartFile image) {
         if (!StringUtils.hasText(properties.key())) {
             throw new BusinessException(ErrorCode.GEMINI_API_NOT_CONFIGURED);
         }
@@ -94,25 +93,13 @@ public class GeminiService {
             String base64 = Base64.getEncoder().encodeToString(compressed);
             String aspectDesc = (origW > 0 && origH > 0) ? describeAspectRatio(origW, origH) : "1:1";
 
-            byte[] farmImageBytes = loadFarmImage(farmPhotoUrl);
-            boolean hasFarmImage = farmImageBytes != null;
-
-            String prompt = buildImagePrompt(aspectDesc, hasFarmImage);
+            String prompt = prompts.offerImageGeneration().withoutFarmTemplate().replace("{aspectRatio}", aspectDesc);
 
             Map<String, Object> textPart = Map.of("text", prompt);
             Map<String, Object> productImageData = Map.of("mimeType", "image/jpeg", "data", base64);
             Map<String, Object> productImagePart = Map.of("inlineData", productImageData);
 
-            java.util.List<Map<String, Object>> parts = new java.util.ArrayList<>();
-            parts.add(textPart);
-            parts.add(productImagePart);
-            if (hasFarmImage) {
-                String farmBase64 = Base64.getEncoder().encodeToString(farmImageBytes);
-                Map<String, Object> farmImageData = Map.of("mimeType", "image/jpeg", "data", farmBase64);
-                parts.add(Map.of("inlineData", farmImageData));
-            }
-
-            Map<String, Object> content = Map.of("parts", parts);
+            Map<String, Object> content = Map.of("parts", List.of(textPart, productImagePart));
             Map<String, Object> generationConfig = Map.of("responseModalities", List.of("IMAGE"));
             Map<String, Object> requestBody = Map.of(
                     "contents", List.of(content),
@@ -138,30 +125,6 @@ public class GeminiService {
         } catch (Exception e) {
             log.error("[GeminiService] generateOfferImageFromPhoto 오류: {}", e.getMessage(), e);
             throw new BusinessException(ErrorCode.GEMINI_API_ERROR);
-        }
-    }
-
-    private String buildImagePrompt(String aspectDesc, boolean hasFarmImage) {
-        String template = hasFarmImage
-                ? prompts.offerImageGeneration().withFarmTemplate()
-                : prompts.offerImageGeneration().withoutFarmTemplate();
-        return template.replace("{aspectRatio}", aspectDesc);
-    }
-
-    private byte[] loadFarmImage(String farmPhotoUrl) {
-        if (!StringUtils.hasText(farmPhotoUrl)) return null;
-        try {
-            java.net.URL url = new java.net.URL(farmPhotoUrl);
-            byte[] rawBytes;
-            try (java.io.InputStream is = url.openStream()) {
-                rawBytes = is.readAllBytes();
-            }
-            BufferedImage buf = ImageIO.read(new java.io.ByteArrayInputStream(rawBytes));
-            if (buf == null) return null;
-            return compressForGeneration(rawBytes, buf);
-        } catch (Exception e) {
-            log.warn("[GeminiService] 농가 이미지 로드 실패, 농가 이미지 없이 생성: {}", e.getMessage());
-            return null;
         }
     }
 
