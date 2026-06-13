@@ -12,6 +12,7 @@ import { LoadingScreen } from '@/components/ui/Spinner';
 import { ErrorState } from '@/components/ui/States';
 import { VegImage } from '@/components/domain/VegImage';
 import { ReelThumb } from '@/components/domain/ReelThumb';
+import { FavoriteHeart } from '@/components/domain/FavoriteHeart';
 import { won, compact } from '@/lib/format';
 
 export default function RecipeDetailPage({ params }) {
@@ -39,8 +40,22 @@ export default function RecipeDetailPage({ params }) {
 
   return (
     <>
-      {/* 투명 헤더 — 히어로 이미지 위 (흰 텍스트) */}
-      <AppHeader title={recipe.title} back transparent />
+      {/* 투명 헤더 — 히어로 이미지 위 (흰 텍스트) + 찜 토글 */}
+      <AppHeader
+        title={recipe.title}
+        back
+        transparent
+        right={
+          <FavoriteHeart
+            targetType="RECIPE"
+            targetId={recipe.id}
+            size={22}
+            className="grid h-10 w-10 place-items-center"
+            iconClassName="text-white drop-shadow"
+            nextHref={`/recipes/${id}`}
+          />
+        }
+      />
 
       <div className="animate-fade-up pb-6">
         {/* 히어로 — 헤더 뒤로 끌어올림 */}

@@ -71,7 +71,8 @@ public class AuthService {
         return new BusinessException(ErrorCode.AUTH_EMAIL_DUPLICATE);
     }
 
-    @Transactional(readOnly = true)
+    // refresh token 발급(INSERT)을 포함하므로 readOnly 면 안 된다(읽기 전용 트랜잭션에 합류해 INSERT 거부됨).
+    @Transactional
     public AuthTokenResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(ErrorCode.AUTH_INVALID_CREDENTIALS));
