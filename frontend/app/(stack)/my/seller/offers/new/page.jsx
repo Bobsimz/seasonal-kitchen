@@ -165,7 +165,7 @@ export default function SellerOfferNewPage() {
       setAnalysis(result);
       if (result.ingredientName) setIngredientName(result.ingredientName);
       if (result.productName) setTitle(result.productName);
-      if (result.category) setCategory(result.category);
+      if (result.category) setCategory(CATEGORIES.includes(result.category) ? result.category : '');
       if (result.storageTip) setStorageNote(result.storageTip);
       toast.show('AI 분석 완료! 아래 필드를 확인해주세요.', { type: 'success' });
     } catch {
