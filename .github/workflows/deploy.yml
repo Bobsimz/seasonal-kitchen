@@ -29,6 +29,28 @@ jobs:
             frontend:
               - 'frontend/**'
 
+  # 알림) 배포 시작 — 실제 배포가 트리거될 때만 전송
+  notify-start:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Discord 시작 알림
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          MSG: ${{ github.event.head_commit.message }}
+          ACTOR: ${{ github.actor }}
+          REF: ${{ github.ref_name }}
+          BE: ${{ needs.changes.outputs.backend }}
+          FE: ${{ needs.changes.outputs.frontend }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          [ -z "$WEBHOOK" ] && { echo "DISCORD_WEBHOOK 미설정 — 스킵"; exit 0; }
+          content=$(jq -n --arg msg "$MSG" --arg actor "$ACTOR" --arg ref "$REF" \
+            --arg be "$BE" --arg fe "$FE" --arg url "$RUN_URL" \
+            '{content: ("🚀 **배포 시작** · 브랜치 `\($ref)` · \($actor)\n> " + (($msg | split("\n"))[0]) + "\n대상 — 백엔드: \($be) / 프론트: \($fe)\n[실행 로그](\($url))")}')
+          curl -s -H "Content-Type: application/json" -d "$content" "$WEBHOOK" -o /dev/null -w "discord %{http_code}\n" || echo "알림 전송 실패(무시)"
+
   # 2-a) backend 가 바뀌었을 때만 빌드 → GHCR push
   build-backend:
     needs: changes
@@ -137,3 +159,33 @@ jobs:
               sleep 5
             done
             echo "헬스체크 실패: /api/v1/health 가 60초 내 응답하지 않음"; exit 1
+
+  # 알림) 결과 — 성공/실패 (배포 job 끝난 뒤 항상 실행)
+  notify-done:
+    needs: [changes, build-backend, build-frontend, deploy]
+    if: always() && (needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Discord 결과 알림
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          BE_BUILD: ${{ needs.build-backend.result }}
+          FE_BUILD: ${{ needs.build-frontend.result }}
+          DEPLOY_RESULT: ${{ needs.deploy.result }}
+          BE: ${{ needs.changes.outputs.backend }}
+          FE: ${{ needs.changes.outputs.frontend }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          [ -z "$WEBHOOK" ] && { echo "DISCORD_WEBHOOK 미설정 — 스킵"; exit 0; }
+          if [ "$BE_BUILD" = "failure" ] || [ "$FE_BUILD" = "failure" ]; then
+            emoji="❌"; head="빌드 실패"
+          elif [ "$DEPLOY_RESULT" = "success" ]; then
+            emoji="✅"; head="배포 완료"
+          elif [ "$DEPLOY_RESULT" = "failure" ]; then
+            emoji="❌"; head="배포 실패"
+          else
+            emoji="⚠️"; head="배포 중단 ($DEPLOY_RESULT)"
+          fi
+          content=$(jq -n --arg emoji "$emoji" --arg head "$head" --arg be "$BE" --arg fe "$FE" --arg url "$RUN_URL" \
+            '{content: ("\($emoji) **\($head)** · 백엔드: \($be) / 프론트: \($fe)\n앱: https://h14k011.p.ssafy.io\n[실행 로그](\($url))")}')
+          curl -s -H "Content-Type: application/json" -d "$content" "$WEBHOOK" -o /dev/null -w "discord %{http_code}\n" || echo "알림 전송 실패(무시)"
