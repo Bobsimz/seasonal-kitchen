@@ -36,6 +36,17 @@ export default function SellerDashboardPage() {
       )}
 
       {!isLoading && !error && producer && <Dashboard producer={producer} />}
+
+      {!isLoading && !error && producer && (
+        <Link
+          href="/my/seller/offers/new"
+          aria-label="상품 등록"
+          className="tap fixed bottom-6 right-4 z-30 flex h-[52px] items-center gap-1.5 rounded-full bg-gradient-to-br from-brand to-brand-dark pl-4 pr-5 text-white shadow-[0_8px_20px_rgba(22,193,114,0.4)]"
+        >
+          <Plus size={20} strokeWidth={2.4} />
+          <span className="text-[14.5px] font-extrabold tracking-tight">상품 등록</span>
+        </Link>
+      )}
     </>
   );
 }
@@ -130,17 +141,7 @@ function Dashboard({ producer }) {
       </Section>
 
       {/* 내 판매 상품 (실데이터) */}
-      <Section
-        title="내 판매 상품"
-        action={
-          <Link
-            href="/my/seller/offers/new"
-            className="tap flex items-center text-[12.5px] font-semibold text-brand"
-          >
-            <Plus size={14} className="mr-0.5" /> 추가
-          </Link>
-        }
-      >
+      <Section title="내 판매 상품">
         <div className="px-4">
           {offers.length > 0 ? (
             <Card className="overflow-hidden">
@@ -180,14 +181,6 @@ function Dashboard({ producer }) {
         </div>
       </Section>
 
-      {/* 상품 등록 CTA */}
-      <div className="mt-6 px-4">
-        <Link href="/my/seller/offers/new" className="block">
-          <Button block size="lg">
-            <Plus size={18} className="mr-1" /> 상품 등록
-          </Button>
-        </Link>
-      </div>
     </div>
   );
 }
