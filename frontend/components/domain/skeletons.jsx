@@ -71,11 +71,10 @@ export function DetailSectionsSkeleton() {
   return (
     <div className="px-4 pt-6" aria-busy="true">
       <Skeleton className="mb-3 h-5 w-28" />
-      <div className="rounded-2xl border border-line-soft bg-white p-4">
-        <Skeleton className="aspect-[16/10] w-full" rounded="rounded-xl" />
-        <Skeleton className="mt-3 h-3 w-full" />
-        <Skeleton className="mt-2 h-3 w-5/6" />
-        <Skeleton className="mt-2 h-3 w-2/3" />
+      <div className="rounded-2xl border border-line-soft bg-white px-4 py-4">
+        {/* 소제목(상품 정보) + 한 줄 본문 — 실제 렌더와 동일한 높이 */}
+        <Skeleton className="h-3.5 w-20" />
+        <Skeleton className="mt-2.5 h-3 w-5/6" />
       </div>
     </div>
   );
@@ -125,14 +124,12 @@ export function ProductDetailSkeleton() {
         </div>
       </div>
 
-      {/* 상품 상세정보 */}
+      {/* 상품 상세정보 — 소제목 + 한 줄 본문 */}
       <div className="px-4 pt-6">
         <Skeleton className="mb-3 h-5 w-28" />
-        <div className="rounded-2xl border border-line-soft bg-white p-4">
-          <Skeleton className="aspect-[16/10] w-full" rounded="rounded-xl" />
-          <Skeleton className="mt-3 h-3 w-full" />
-          <Skeleton className="mt-2 h-3 w-5/6" />
-          <Skeleton className="mt-2 h-3 w-2/3" />
+        <div className="rounded-2xl border border-line-soft bg-white px-4 py-4">
+          <Skeleton className="h-3.5 w-20" />
+          <Skeleton className="mt-2.5 h-3 w-5/6" />
         </div>
       </div>
     </div>
