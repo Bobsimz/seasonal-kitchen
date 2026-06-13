@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.OffsetDateTime;
@@ -29,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@TestPropertySource(properties = "app.uploads.public-base-url=https://cdn.test")
 class ReelControllerTest {
     @Autowired MockMvc mvc; @Autowired JwtTokenProvider jwt; @Autowired JdbcTemplate jdbc;
     @Autowired UserRepository users; @Autowired RecipeRepository recipes; @Autowired RecipeStepRepository steps; @Autowired RecipeIngredientRepository recipeIngredients; @Autowired CreatorRepository creators; @Autowired ReelRepository reels;
@@ -73,6 +75,15 @@ class ReelControllerTest {
         Reel reel = fixtureReel();
         mvc.perform(post("/api/v1/reels/{id}/likes", reel.getId())).andExpect(status().isUnauthorized());
         mvc.perform(get("/api/v1/reels/{id}", 999999)).andExpect(status().isNotFound()).andExpect(jsonPath("$.error.code").value("REEL_NOT_FOUND"));
+    }
+
+    @Test void resolvesRelativeMediaKeysToPublicBaseUrl() throws Exception {
+        Creator creator = creators.save(new Creator(null, "오메추", null, "ACTIVE"));
+        Reel reel = reels.save(new Reel(null, creator.getId(), "무조림", "밥도둑", "reels/abc.mp4", "thumbnails/abc.webp", "무", 48, "PUBLISHED", OffsetDateTime.now()));
+        mvc.perform(get("/api/v1/reels/{id}", reel.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.videoUrl").value("https://cdn.test/reels/abc.mp4"))
+                .andExpect(jsonPath("$.data.thumbnailUrl").value("https://cdn.test/thumbnails/abc.webp"));
     }
 
     private Reel fixtureReel() {
