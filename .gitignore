@@ -66,3 +66,6 @@ __pycache__/
 
 # Gradle 공유 캐시 (호스트↔샌드박스 테스트용, 커밋 금지)
 .gradle-shared/
+
+# superpowers visual brainstorm
+.superpowers/
