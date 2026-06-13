@@ -25,7 +25,9 @@ public record CartResponse(
             @Schema(description = "장바구니 항목 ID") Long cartItemId,
             @Schema(description = "식재료명") String ingredientName,
             @Schema(description = "수량") int qty,
-            @Schema(description = "단가") BigDecimal unitPrice,
-            @Schema(description = "단위") String unit
+            @Schema(description = "단가(옵션 선택 시 옵션 단가)") BigDecimal unitPrice,
+            @Schema(description = "단위") String unit,
+            @Schema(description = "선택 옵션 ID(없으면 null)", nullable = true) Long offerOptionId,
+            @Schema(description = "옵션 라벨(예: 3kg, 없으면 null)", example = "3kg", nullable = true) String optionLabel
     ) {}
 }

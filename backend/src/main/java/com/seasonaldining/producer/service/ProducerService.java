@@ -425,7 +425,12 @@ public class ProducerService {
                     tagsByOffer.getOrDefault(o.getId(), List.of()),
                     optionsByOffer.getOrDefault(o.getId(), List.of()),
                     certsByOffer.getOrDefault(o.getId(), List.of()),
-                    o.getStockQuantity(), o.getStorageMethod(), o.getStorageNote());
+                    o.getStockQuantity(), o.getStorageMethod(), o.getStorageNote(),
+                    p != null ? p.getPhotoUrl() : null,
+                    p != null ? p.getRating() : null,
+                    p != null ? p.getReviewCount() : 0,
+                    p != null && p.isHonorary(),
+                    p != null ? p.getStyle() : null);
         }).toList();
     }
 
@@ -448,7 +453,12 @@ public class ProducerService {
                 o.getPrice(), o.getUnit(), o.getFreshnessLabel(),
                 o.getTitle(), o.getDescription(), o.getCategory(),
                 photoUrls, tags, options,
-                certifications, o.getStockQuantity(), o.getStorageMethod(), o.getStorageNote());
+                certifications, o.getStockQuantity(), o.getStorageMethod(), o.getStorageNote(),
+                p != null ? p.getPhotoUrl() : null,
+                p != null ? p.getRating() : null,
+                p != null ? p.getReviewCount() : 0,
+                p != null && p.isHonorary(),
+                p != null ? p.getStyle() : null);
     }
 
     private ProducerReviewResponse toReview(ProducerReview r) {

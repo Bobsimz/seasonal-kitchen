@@ -12,5 +12,11 @@ import jakarta.validation.constraints.NotNull;
 @Schema(description = "장바구니 담기 요청")
 public record AddCartItemRequest(
         @Schema(description = "농가 판매 상품(오퍼) ID", example = "10") @NotNull Long offerId,
-        @Schema(description = "수량", example = "2") @Min(1) int qty
-) {}
+        @Schema(description = "수량", example = "2") @Min(1) int qty,
+        @Schema(description = "선택 옵션(규격) ID. 없으면 기본가로 담김. 같은 offer라도 옵션 다르면 별도 라인", example = "100", nullable = true) Long offerOptionId
+) {
+    /** 옵션 없이 담기(기존 호출 호환). */
+    public AddCartItemRequest(Long offerId, int qty) {
+        this(offerId, qty, null);
+    }
+}

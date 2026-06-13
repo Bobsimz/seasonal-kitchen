@@ -25,13 +25,16 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final ProducerRepository producerRepository;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                       JwtTokenProvider jwtTokenProvider, ProducerRepository producerRepository) {
+                       JwtTokenProvider jwtTokenProvider, ProducerRepository producerRepository,
+                       RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
         this.producerRepository = producerRepository;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Transactional
@@ -79,12 +82,31 @@ public class AuthService {
         return issue(user);
     }
 
+    /** 토큰 갱신 — refresh token을 회전(기존 폐기 + 신규 발급)하고 새 access/refresh를 반환. */
+    @Transactional
+    public AuthTokenResponse refresh(String refreshToken) {
+        RefreshTokenService.Rotated rotated = refreshTokenService.rotate(refreshToken);
+        User user = userRepository.findById(rotated.userId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.AUTH_INVALID_REFRESH_TOKEN));
+        return issue(user, rotated.rawToken());
+    }
+
+    /** 로그아웃 — 전달된 refresh token을 폐기(멱등). */
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenService.revoke(refreshToken);
+    }
+
     private AuthTokenResponse issue(User user) {
+        return issue(user, refreshTokenService.issue(user.getId()));
+    }
+
+    private AuthTokenResponse issue(User user, String refreshToken) {
         // 농가 여부 = 이 사용자로 등록된 producer 행 존재 여부(한 사용자당 농가 1개). 화면 분기용.
         Long producerId = producerRepository.findByUserId(user.getId())
                 .map(Producer::getId).orElse(null);
         return new AuthTokenResponse(
-                jwtTokenProvider.createAccessToken(user.getId()), "Bearer", user.getId(), user.getNickname(),
-                producerId != null, producerId);
+                jwtTokenProvider.createAccessToken(user.getId()), refreshToken, "Bearer",
+                user.getId(), user.getNickname(), producerId != null, producerId);
     }
 }

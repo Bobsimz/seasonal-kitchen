@@ -24,7 +24,12 @@ public record ProducerOfferResponse(
         @Schema(description = "인증마크 목록", example = "[\"무농약\",\"유기농(유기농산물)\"]") List<String> certifications,
         @Schema(description = "재고 수량(미설정 시 null)", example = "120", nullable = true) Integer stockQuantity,
         @Schema(description = "보관방법", example = "냉장 보관", nullable = true) String storageMethod,
-        @Schema(description = "보관 안내 설명", nullable = true) String storageNote
+        @Schema(description = "보관 안내 설명", nullable = true) String storageNote,
+        @Schema(description = "농가 대표 사진 URL(농가 직거래/비교 화면 아바타)", nullable = true) String producerPhotoUrl,
+        @Schema(description = "농가 평점(0~5)", example = "4.8", nullable = true) BigDecimal rating,
+        @Schema(description = "농가 리뷰 수", example = "128") int reviewCount,
+        @Schema(description = "명예농가 여부", example = "true") boolean honorary,
+        @Schema(description = "농가 스타일 VALUE(실속)|ORGANIC(유기농)|PREMIUM(프리미엄)", example = "ORGANIC", nullable = true) String style
 ) {
     @Schema(description = "상품 옵션")
     public record OptionResponse(

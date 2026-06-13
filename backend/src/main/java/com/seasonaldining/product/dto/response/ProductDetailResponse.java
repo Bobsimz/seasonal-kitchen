@@ -32,7 +32,8 @@ public record ProductDetailResponse(
         @Schema(description = "보관 안내 설명", nullable = true) String storageNote,
         @Schema(description = "상품 옵션(규격/variant) 목록") List<OptionResponse> options,
         @Schema(description = "상품 태그 목록") List<String> tags,
-        @Schema(description = "관련 레시피 ID 목록(ingredientId 있을 때, 없으면 빈 배열)") List<Long> relatedRecipeIds
+        @Schema(description = "관련 레시피 ID 목록(ingredientId 있을 때, 없으면 빈 배열)") List<Long> relatedRecipeIds,
+        @Schema(description = "상세정보 섹션(접기/펼치기). 없으면 빈 배열 — 프론트는 description 단일 섹션으로 폴백") List<DetailSectionResponse> detailSections
 ) {
     @Schema(description = "상품 옵션")
     public record OptionResponse(
@@ -40,5 +41,11 @@ public record ProductDetailResponse(
             @Schema(description = "수량", example = "1.5", nullable = true) BigDecimal quantity,
             @Schema(description = "단위", example = "kg", nullable = true) String unit,
             @Schema(description = "옵션 가격", example = "6900") BigDecimal price
+    ) {}
+
+    @Schema(description = "상품 상세정보 섹션")
+    public record DetailSectionResponse(
+            @Schema(description = "섹션 제목", example = "재배 환경") String heading,
+            @Schema(description = "섹션 본문", example = "해남 황토밭에서 무농약으로 재배했습니다.") String body
     ) {}
 }

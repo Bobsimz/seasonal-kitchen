@@ -47,6 +47,9 @@ class AuthServiceTest {
                 EMAIL, OTHER_EMAIL, NOPW_EMAIL);
         jdbc.update("DELETE FROM producers WHERE user_id IN (SELECT id FROM users WHERE email IN (?, ?, ?))",
                 EMAIL, OTHER_EMAIL, NOPW_EMAIL);
+        // refresh_tokens도 users를 FK 참조 → users 삭제 전에 정리
+        jdbc.update("DELETE FROM refresh_tokens WHERE user_id IN (SELECT id FROM users WHERE email IN (?, ?, ?))",
+                EMAIL, OTHER_EMAIL, NOPW_EMAIL);
         jdbc.update("DELETE FROM users WHERE email IN (?, ?, ?) OR nickname = ?",
                 EMAIL, OTHER_EMAIL, NOPW_EMAIL, NICK);
     }
@@ -115,6 +118,48 @@ class AuthServiceTest {
 
         assertThat(json).contains("\"isProducer\"");
         assertThat(json).contains("\"producerId\"");
+    }
+
+    @Test
+    void signUpAndLogin_issueRefreshToken() {
+        AuthTokenResponse res = authService.signUp(new SignUpRequest(EMAIL, PW, NICK));
+        assertThat(res.refreshToken()).isNotBlank();
+    }
+
+    @Test
+    void refresh_returnsNewTokens_andRotatesOldOne() {
+        String oldRefresh = authService.signUp(new SignUpRequest(EMAIL, PW, NICK)).refreshToken();
+
+        AuthTokenResponse refreshed = authService.refresh(oldRefresh);
+        assertThat(refreshed.accessToken()).isNotBlank();
+        assertThat(refreshed.refreshToken()).isNotBlank().isNotEqualTo(oldRefresh);
+        assertThat(refreshed.nickname()).isEqualTo(NICK);
+
+        // 회전됐으므로 기존 refresh는 더 이상 사용 불가
+        assertThatThrownBy(() -> authService.refresh(oldRefresh))
+                .isInstanceOf(BusinessException.class)
+                .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
+                        .isEqualTo(ErrorCode.AUTH_INVALID_REFRESH_TOKEN));
+    }
+
+    @Test
+    void logout_revokesRefreshToken() {
+        String refresh = authService.signUp(new SignUpRequest(EMAIL, PW, NICK)).refreshToken();
+
+        authService.logout(refresh);
+
+        assertThatThrownBy(() -> authService.refresh(refresh))
+                .isInstanceOf(BusinessException.class)
+                .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
+                        .isEqualTo(ErrorCode.AUTH_INVALID_REFRESH_TOKEN));
+    }
+
+    @Test
+    void refresh_unknownToken_throws() {
+        assertThatThrownBy(() -> authService.refresh("not-a-real-token"))
+                .isInstanceOf(BusinessException.class)
+                .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
+                        .isEqualTo(ErrorCode.AUTH_INVALID_REFRESH_TOKEN));
     }
 
     @Test

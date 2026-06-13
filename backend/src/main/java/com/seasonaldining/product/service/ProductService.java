@@ -4,12 +4,14 @@ import com.seasonaldining.common.exception.BusinessException;
 import com.seasonaldining.common.exception.ErrorCode;
 import com.seasonaldining.common.response.ListResponse;
 import com.seasonaldining.producer.entity.OfferCertification;
+import com.seasonaldining.producer.entity.OfferDetailSection;
 import com.seasonaldining.producer.entity.OfferOption;
 import com.seasonaldining.producer.entity.OfferPhoto;
 import com.seasonaldining.producer.entity.OfferTag;
 import com.seasonaldining.producer.entity.Producer;
 import com.seasonaldining.producer.entity.ProducerOffer;
 import com.seasonaldining.producer.repository.OfferCertificationRepository;
+import com.seasonaldining.producer.repository.OfferDetailSectionRepository;
 import com.seasonaldining.producer.repository.OfferOptionRepository;
 import com.seasonaldining.producer.repository.OfferPhotoRepository;
 import com.seasonaldining.producer.repository.OfferTagRepository;
@@ -43,6 +45,7 @@ public class ProductService {
     private final OfferTagRepository offerTagRepository;
     private final OfferOptionRepository offerOptionRepository;
     private final OfferCertificationRepository offerCertificationRepository;
+    private final OfferDetailSectionRepository offerDetailSectionRepository;
     private final RecipeIngredientRepository recipeIngredientRepository;
 
     public ProductService(ProducerOfferRepository offerRepository,
@@ -51,6 +54,7 @@ public class ProductService {
                           OfferTagRepository offerTagRepository,
                           OfferOptionRepository offerOptionRepository,
                           OfferCertificationRepository offerCertificationRepository,
+                          OfferDetailSectionRepository offerDetailSectionRepository,
                           RecipeIngredientRepository recipeIngredientRepository) {
         this.offerRepository = offerRepository;
         this.producerRepository = producerRepository;
@@ -58,6 +62,7 @@ public class ProductService {
         this.offerTagRepository = offerTagRepository;
         this.offerOptionRepository = offerOptionRepository;
         this.offerCertificationRepository = offerCertificationRepository;
+        this.offerDetailSectionRepository = offerDetailSectionRepository;
         this.recipeIngredientRepository = recipeIngredientRepository;
     }
 
@@ -98,6 +103,10 @@ public class ProductService {
         List<Long> relatedRecipeIds = o.getIngredientId() == null ? List.of()
                 : recipeIngredientRepository.findByIngredientIdOrderByIdAsc(o.getIngredientId())
                         .stream().map(RecipeIngredient::getRecipeId).distinct().toList();
+        List<ProductDetailResponse.DetailSectionResponse> detailSections =
+                offerDetailSectionRepository.findByOfferIdOrderBySortOrderAsc(id).stream()
+                        .map(s -> new ProductDetailResponse.DetailSectionResponse(s.getHeading(), s.getBody()))
+                        .toList();
 
         return new ProductDetailResponse(
                 o.getId(), nameOf(o), o.getIngredientId(), o.getIngredientName(),
@@ -105,7 +114,8 @@ public class ProductService {
                 o.getPrice(), o.getUnit(), images.isEmpty() ? null : images.get(0),
                 StockStatus.from(o.getStockQuantity()), o.getCategory(),
                 images, o.getDescription(), o.getFreshnessLabel(), o.getStockQuantity(),
-                certifications, o.getStorageMethod(), o.getStorageNote(), options, tags, relatedRecipeIds);
+                certifications, o.getStorageMethod(), o.getStorageNote(), options, tags, relatedRecipeIds,
+                detailSections);
     }
 
     // ── 목록 배치 매핑 (N+1 회피) ──────────────────────────────

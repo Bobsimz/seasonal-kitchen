@@ -65,6 +65,7 @@ class ProductControllerTest {
         jdbc.update("DELETE FROM offer_tags WHERE offer_id IN (" + mine + ")");
         jdbc.update("DELETE FROM offer_options WHERE offer_id IN (" + mine + ")");
         jdbc.update("DELETE FROM offer_certifications WHERE offer_id IN (" + mine + ")");
+        jdbc.update("DELETE FROM offer_detail_sections WHERE offer_id IN (" + mine + ")");
         jdbc.update("DELETE FROM producer_offers WHERE producer_id = ?", PRODUCER_ID);
         jdbc.update("DELETE FROM producers WHERE id = ?", PRODUCER_ID);
         // 검색 키워드 오염 방지 — PRODUCT 검색에서 기록된 TOKEN 키워드 정리
@@ -118,7 +119,23 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.data.imageUrl").value("https://img/p1.png"))
                 .andExpect(jsonPath("$.data.certifications[0]").value("무농약"))
                 .andExpect(jsonPath("$.data.storageMethod").value("냉장 보관"))
-                .andExpect(jsonPath("$.data.relatedRecipeIds").isArray());
+                .andExpect(jsonPath("$.data.relatedRecipeIds").isArray())
+                // 상세 섹션 없으면 빈 배열(프론트는 description 폴백)
+                .andExpect(jsonPath("$.data.detailSections").isArray())
+                .andExpect(jsonPath("$.data.detailSections.length()").value(0));
+    }
+
+    @Test
+    void getProduct_includesDetailSections_orderedBySortOrder() throws Exception {
+        jdbc.update("INSERT INTO offer_detail_sections (offer_id, heading, body, sort_order) VALUES (?, '보관법', '냉장 5일', 1)", OFFER_IN_STOCK);
+        jdbc.update("INSERT INTO offer_detail_sections (offer_id, heading, body, sort_order) VALUES (?, '재배 환경', '해남 황토밭 무농약', 0)", OFFER_IN_STOCK);
+
+        mvc.perform(get("/api/v1/products/" + OFFER_IN_STOCK)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.detailSections.length()").value(2))
+                // sort_order asc → 재배 환경(0)이 먼저
+                .andExpect(jsonPath("$.data.detailSections[0].heading").value("재배 환경"))
+                .andExpect(jsonPath("$.data.detailSections[0].body").value("해남 황토밭 무농약"))
+                .andExpect(jsonPath("$.data.detailSections[1].heading").value("보관법"));
     }
 
     @Test

@@ -126,6 +126,11 @@ class ProducerOfferProductTest {
             assertThat(o.certifications()).containsExactly("친환경");
             assertThat(o.stockQuantity()).isEqualTo(30);
             assertThat(o.storageMethod()).isEqualTo("냉장 보관");
+            // #9 농가 필드 보강 — 자가등록 농가 기본값(style=VALUE, rating 0, 리뷰 0, 명예 false)
+            assertThat(o.style()).isEqualTo("VALUE");
+            assertThat(o.honorary()).isFalse();
+            assertThat(o.reviewCount()).isEqualTo(0);
+            assertThat(o.rating()).isEqualByComparingTo("0");
         });
     }
 }

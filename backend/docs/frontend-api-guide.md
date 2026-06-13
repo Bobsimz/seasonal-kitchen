@@ -119,6 +119,7 @@ Response:
   "success": true,
   "data": {
     "accessToken": "eyJhbGciOiJ...",
+    "refreshToken": "x9Qd...base64url...",
     "tokenType": "Bearer",
     "userId": 1,
     "nickname": "제철러버",
@@ -153,13 +154,37 @@ Request:
 }
 ```
 
-Response는 signup과 동일합니다.
+Response는 signup과 동일합니다(`accessToken` + `refreshToken` 포함).
 
 주요 오류:
 
 | code | status | 의미 |
 | --- | --- | --- |
 | `AUTH_INVALID_CREDENTIALS` | 401 | 이메일 또는 비밀번호 불일치 |
+
+### POST `/api/v1/auth/refresh`
+
+access token 만료 시 `refreshToken`으로 새 토큰을 발급합니다. **기존 refresh는 회전(폐기)되고 새 refresh가 내려오므로**, 응답의 `refreshToken`으로 교체 저장하세요.
+
+```json
+// 요청
+{ "refreshToken": "x9Qd...base64url..." }
+// 응답 data: 로그인과 동일(accessToken/refreshToken 새 값)
+```
+
+| code | status | 의미 |
+| --- | --- | --- |
+| `AUTH_INVALID_REFRESH_TOKEN` | 401 | refresh token 무효/만료/이미 폐기 → 재로그인 필요 |
+
+### POST `/api/v1/auth/logout`
+
+로그아웃 시 보유한 refresh token을 폐기합니다(멱등 — 이미 폐기/없어도 200). access token은 만료까지 유효하니 클라이언트에서도 폐기하세요.
+
+```json
+// 요청
+{ "refreshToken": "x9Qd...base64url..." }
+// 응답 data: null
+```
 
 ## 5. Producers and Offers
 

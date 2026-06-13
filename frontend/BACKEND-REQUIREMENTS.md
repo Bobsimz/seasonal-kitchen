@@ -68,26 +68,28 @@
 | ✅ | 주문 상태 | 상태 흐름 `PAID→PREPARING→SHIPPED→DELIVERED`(+배송 전 `CANCELLED`) + 운송장/추적 구현됨 (2026-06-13, V30). 판매자: `GET /api/v1/producers/me/orders`, `PATCH /api/v1/producers/me/orders/{orderId}/status`. 구매자 `OrderResponse`에 `carrier/trackingNumber/shippedAt/deliveredAt` 추가. 상세 `frontend-api-guide.md` §6·§11 | 농가별 분리배송 상태(현재 주문 단위) — 후속 |
 | ⬜ | 주문 항목 이미지 | 없음 | `OrderItem.imageUrl` 있으면 주문/완료 화면 품질↑ — P2 |
 
-## 5. 리뷰 — P1 — 🟡 일부 구현
+## 5. 리뷰 — P1 — ✅ 구현됨
 
 | 상태 | 메서드 | 경로 | 설명 |
 | --- | --- | --- | --- |
-| 🟡 | GET | `/api/v1/users/me/reviews?status=writable\|written` | `written` 구현됨. `writable`은 배송완료 주문 기반이라 현재 빈 배열 |
+| ✅ | GET | `/api/v1/users/me/reviews?status=writable\|written` | `written`·`writable` 모두 구현됨 (2026-06-13). `writable`=배송완료(`DELIVERED`) 주문의 농가 중 아직 리뷰 안 쓴 농가(농가 단위, `reviewId/rating/body=null`, `date`=배송완료시각). 이미 작성한 농가는 제외 |
 | ✅ | (정책) | `POST /producers/{id}/reviews` | MVP 자유 작성 구현됨. 배송완료 주문 검증은 후속 |
 
-- 임시 대응: 내 리뷰 화면은 written 샘플/빈 상태로 처리.
+- 더 이상 mock 불필요: writable은 배송완료 주문이 있으면 실제 목록을 반환합니다(없으면 빈 배열).
 
-## 6. 인증 고도화 — P1 — ⬜ 미구현
+## 6. 인증 고도화 — P1 — 🟡 일부 구현
 
 UI에 카카오/Apple/구글 버튼이 있으나 비활성(준비 중)입니다.
 
 | 상태 | 메서드 | 경로 | 설명 |
 | --- | --- | --- | --- |
-| ⬜ | POST | `/api/v1/auth/oauth/{provider}` | 소셜 로그인 |
-| ⬜ | POST | `/api/v1/auth/refresh` | 토큰 갱신 |
-| ⬜ | POST | `/api/v1/auth/logout` | 로그아웃 |
+| ⬜ | POST | `/api/v1/auth/oauth/{provider}` | 소셜 로그인 (외부 provider 설정 필요 — 후속) |
+| ✅ | POST | `/api/v1/auth/refresh` | **구현됨 (2026-06-13)**: `{refreshToken}` → 새 access/refresh(회전·기존 폐기). 무효/만료 시 `AUTH_INVALID_REFRESH_TOKEN`(401) |
+| ✅ | POST | `/api/v1/auth/logout` | **구현됨 (2026-06-13)**: `{refreshToken}` 폐기(멱등). access는 만료까지 유효 |
 
-- 현재: email/password + access token만. 만료 시 재로그인.
+- 로그인/가입 응답(`AuthTokenResponse`)에 `refreshToken` 추가됨. access 만료 시 `/auth/refresh`로 재발급, 로그아웃 시 `/auth/logout`으로 refresh 폐기.
+- refresh token은 서버에 SHA-256 해시로만 저장(원문 미저장), 기본 만료 14일(`JWT_REFRESH_TOKEN_EXPIRATION_SECONDS`).
+- OAuth 소셜로그인만 후속(provider client id/secret·redirect 설정 필요).
 
 ## 7. 이미지 업로드 — P1 — ✅ 구현됨 (2026-06-12)
 
@@ -102,8 +104,8 @@ UI에 카카오/Apple/구글 버튼이 있으나 비활성(준비 중)입니다.
 
 ## 8. 응답 보강 (있으면 좋음) — P2 — ⬜ 미구현
 
-- ⬜ `GET /home`: 명예 농가 캐러셀 데이터 포함(현재 `/producers` 별도 호출), `weeklySeason`(절기/주차 라벨), hero CTA 구조화.
-  - ⬜ `heroes[]`: 홈 상단 히어로 캐러셀(여러 제철 카드 스와이프)용 배열. 각 원소는 기존 `hero`와 동일 구조 `{ ingredientId, title, subtitle, imageUrl, priceLabel, trendLabel }`. 현재 프론트는 mock에서 `hero` + 제철 식재료 4종으로 구성(폴백). 미제공 시 단일 `hero`로 자동 폴백. 카드 탭 → 제철 큐레이션(`/curation`).
+- 🟡 `GET /home`: hero CTA 구조화·`heroes[]`는 구현됨(아래). **명예 농가 캐러셀 데이터**(현재 `/producers` 별도 호출), `weeklySeason`(절기/주차 라벨)은 아직 미제공.
+  - ✅ `heroes[]` 구현됨 (2026-06-13): 홈 상단 히어로 캐러셀용 배열. 각 원소 `{ title, subtitle, imageUrl, ingredientId, primaryTargetType, primaryTargetId, priceLabel, trendLabel }`. `hero`(단일, heroes[0]과 동일)도 하위호환 유지, 식재료 0개면 `heroes=[]`·`hero=null`. 상위 식재료 최대 5개로 구성. 상세 `frontend-api-guide.md` 홈 섹션. 프론트는 `data.heroes ?? [data.hero]` 그대로 동작.
 - ⬜ `GET /ingredients`, `/ingredients/{id}`: `trendDirection`(UP/DOWN/FLAT), `priceChangeLabel`, `seasonMonths`, `buyingSignal`을 실제 계산값으로.
 - ⬜ `GET /ingredients/{id}/substitutes`: `reason`(대체 이유) 필드.
 - 🟡 `GET /search/trending` & `GET /users/me/recent-searches`: API는 존재. 프론트는 비로그인 최근검색을 클라이언트 보관해도 됨.
@@ -119,7 +121,7 @@ UI에 카카오/Apple/구글 버튼이 있으나 비활성(준비 중)입니다.
 
 | 상태 | 우선 | 대상 | 설명 |
 | --- | --- | --- | --- |
-| ⬜ 보강 | **P1** | `GET /ingredients/{id}/producers` → `ProducerOfferResponse` | 현재 DTO에 **`rating`, `reviewCount`, `honorary`(명예농가), `style`(유기농/프리미엄/실속 enum)** 가 없음. 식재료 상세 "농가 직거래"(★평점·명예·스타일 배지 + 베스트 선정) **와 기존 농가 비교 페이지**(이미 이 필드들을 렌더) 둘 다 필요. 대표 이미지는 프론트가 `photoUrls[0]` 사용(또는 `photoUrl` 단일 추가). 정렬 가격 오름차순 유지. |
+| ✅ 보강 | **P1** | `GET /ingredients/{id}/producers` → `ProducerOfferResponse` | **구현됨 (2026-06-13)**: `ProducerOfferResponse`에 `rating`, `reviewCount`, `honorary`(명예농가), `style`(VALUE/ORGANIC/PREMIUM), `producerPhotoUrl`(농가 대표사진) 추가. 농가 비교 페이지·식재료 상세 "농가 직거래" 둘 다 사용. 정렬 가격 오름차순 유지. 자가등록 농가는 기본값(style=VALUE·rating 0·리뷰 0·명예 false). |
 | ⬜ 선택 | P2 | `GET /ingredients/{id}/products` (`ProductCardResponse[]`) | **식재료 상세에선 미사용으로 전환**(위 `/producers` 사용). `/products` 탭이 식재료별 필터를 원하면 `GET /products?ingredientId={id}`(가격 오름차순·`status=ACTIVE`)로 살릴 수 있음. 상세 화면 차단요소 아님. |
 | ⬜ 보강 | P2 | `ProductCardResponse` | 상품 탭 정렬(추천순 = rating desc→reviewCount desc, 리뷰많은순)을 위해 `rating`, `reviewCount` 추가. 현재 프론트는 mock에만 두고 클라이언트 정렬로 임시 대응. 필요 시 `GET /products`에 `sort` 파라미터도. |
 | ⬜ 선택 | P2 | `IngredientDetailResponse` | `favorited`(로그인 사용자 찜 여부), `favoriteCount`(누적 찜 수) 추가 시 하트 초기 상태를 `GET /favorites` 전체 조회 없이 표기. 없으면 현행(favorites 목록 매칭)대로 동작. |
@@ -138,8 +140,8 @@ UI에 카카오/Apple/구글 버튼이 있으나 비활성(준비 중)입니다.
 | 상태 | 우선 | 대상 | 설명 |
 | --- | --- | --- | --- |
 | ✅ 기구현 | — | `GET /products/{id}` `options[]` | 옵션(규격/variant)은 `offer_options` 테이블 + `ProductDetailResponse.options(OptionResponse{id,quantity,unit,price})`로 **이미 구현됨**. 프론트는 그대로 소비(라벨=`${quantity}${unit}`). 옵션 없는 상품은 `options=[]` → 프론트가 기준가 단일 옵션으로 폴백. |
-| ⬜ 신규 | P1 | `GET /products/{id}` `detailSections[]` | "상품 상세정보(접기/펼치기)"용 **제목+본문 섹션 리스트**. `ProductDetailResponse`에 `List<DetailSectionResponse{heading, body}> detailSections` 추가. 새 테이블 `offer_detail_sections(offer_id, heading, body, sort_order)`. 비면 `[]`. 프론트는 없으면 `description` 단일 섹션으로 폴백. 상세는 백엔드 문서 §2 참조. |
-| ⬜ 보강 | P1 | `POST /cart/items` `offerOptionId` | 선택 옵션을 장바구니에 반영. 요청 `{offerId, qty, offerOptionId?}`. 서버는 `offerOptionId` 있으면 해당 옵션 단가/라벨로 라인 생성, 같은 offer라도 옵션 다르면 별도 라인. 응답 라인에 `optionLabel`(또는 `offerOptionId`+`quantity/unit`) 포함 권장. 현재 데모는 클라이언트가 옵션 단가/라벨을 스냅샷. |
+| ✅ 신규 | P1 | `GET /products/{id}` `detailSections[]` | **구현됨 (2026-06-13)**: `ProductDetailResponse.detailSections`(`{heading, body}`, sort_order asc). 새 테이블 `offer_detail_sections(offer_id, heading, body, sort_order)` (V31). 데이터 없으면 `[]` → 프론트 `description` 폴백. ※ 판매자 작성(offer 등록/수정 시 섹션 입력)은 후속 — 현재는 읽기 계약 + 테이블만(시드/DB로 주입 가능). |
+| ✅ 보강 | P1 | `POST /cart/items` `offerOptionId` | **구현됨 (2026-06-13)**: 요청 `{offerId, qty, offerOptionId?}`. `offerOptionId` 있으면 해당 옵션 단가/단위/라벨(`수량+단위`, 예 `3kg`)로 라인 생성, 같은 offer라도 옵션 다르면 별도 라인(병합 키 `cart_id+offer_id+offer_option_id`, V32). 응답 `CartResponse.Item`에 `offerOptionId`·`optionLabel` 추가. 옵션이 그 offer 소속 아니면 `OFFER_OPTION_NOT_FOUND`. |
 | ⬜ 선택 | P2 | `favorites` `targetType=PRODUCT` | 상품(=offer) 찜. 현재 데모 스토어로 동작(§3의 PRODUCT·OFFER "추후"와 연결). 실제 구현 시 `targetType=PRODUCT, targetId=offerId` 저장 + 요약(상품명/첫사진/가격·단위) 반환. |
 
 - 프론트 임시 대응: `endpoints.getProduct(id)` → 연결/오류 시 `mock.productDetail(id)` 폴백(옵션 3종 + detailSections 3종 생성). 장바구니는 `addCartItem(offerId, qty, option)`로 옵션 단가/라벨을 데모 스토어 라인에 스냅샷.
