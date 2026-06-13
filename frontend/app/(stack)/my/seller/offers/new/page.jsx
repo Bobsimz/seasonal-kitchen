@@ -69,9 +69,8 @@ export default function SellerOfferNewPage() {
   const [mode, setMode] = useState('ai');
 
   // AI 전용 상태
-  const fileRef = useRef(null);
-  const [preview, setPreview] = useState(null);
-  const [aiFile, setAiFile] = useState(null);
+  const aiPhotoInputRef = useRef(null);
+  const [aiPhotos, setAiPhotos] = useState([]); // { id, preview, file, url, uploading }
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState(null);
   const [generating, setGenerating] = useState(false);
@@ -79,6 +78,7 @@ export default function SellerOfferNewPage() {
   // 직접 입력 모드 - 사진
   const photoInputRef = useRef(null);
   const [photos, setPhotos] = useState([]); // { id, preview, url, uploading }
+  const [generatingAiImage, setGeneratingAiImage] = useState(false);
 
   // 공유 폼 상태
   const [ingredientName, setIngredientName] = useState('');
@@ -104,14 +104,56 @@ export default function SellerOfferNewPage() {
 
   const canSubmit = ingredientName.trim().length > 0 && Number(price) > 0;
 
-  // ── AI 사진 분석 ─────────────────────────────────────────────
-  const onFileChange = (e) => {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    setAiFile(f);
-    setPreview(URL.createObjectURL(f));
+  // ── AI 사진 업로드 + 분석 ───────────────────────────────────
+  const onAiPhotosChange = async (e) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    const toUpload = files.slice(0, 10 - aiPhotos.length);
+    if (toUpload.length === 0) return;
+
+    const isFirstBatch = aiPhotos.length === 0;
+    const placeholders = toUpload.map((f) => ({
+      id: Math.random().toString(36).slice(2),
+      preview: URL.createObjectURL(f),
+      file: f,
+      url: null,
+      uploading: true,
+    }));
+    setAiPhotos((prev) => [...prev, ...placeholders]);
     setAnalysis(null);
-    analyze(f);
+
+    // 첫 번째 사진이 새로 추가됐으면 분석 시작
+    if (isFirstBatch) analyze(placeholders[0].file);
+
+    // S3 업로드
+    try {
+      const fd = new FormData();
+      toUpload.forEach((f) => fd.append('files', f));
+      const results = await endpoints.uploadImages(fd);
+      setAiPhotos((prev) => {
+        const updated = [...prev];
+        placeholders.forEach((pl, i) => {
+          const idx = updated.findIndex((p) => p.id === pl.id);
+          if (idx !== -1) updated[idx] = { ...updated[idx], url: results[i]?.url ?? null, uploading: false };
+        });
+        return updated;
+      });
+    } catch {
+      setAiPhotos((prev) => prev.map((p) =>
+        placeholders.some((pl) => pl.id === p.id) ? { ...p, uploading: false } : p,
+      ));
+      toast.show('사진 업로드에 실패했어요', { type: 'error' });
+    }
+  };
+
+  const removeAiPhoto = (id) => {
+    const wasFirst = aiPhotos[0]?.id === id;
+    const next = aiPhotos.filter((p) => p.id !== id);
+    setAiPhotos(next);
+    if (wasFirst) {
+      setAnalysis(null);
+      if (next.length > 0) analyze(next[0].file);
+    }
   };
 
   const analyze = async (f) => {
@@ -183,7 +225,42 @@ export default function SellerOfferNewPage() {
     }
   };
 
-  // ── 태그 ─────────────────────────────────────────────────────
+  // ── AI 이미지 생성 (직접 입력 모드) ──────────────────────────
+  const generateAiImage = async () => {
+    const refFile = mode === 'ai' ? aiPhotos[0]?.file : null;
+    if (!refFile) {
+      toast.show('먼저 대표 사진을 업로드해주세요', { type: 'error' });
+      return;
+    }
+    const placeholder = { id: Math.random().toString(36).slice(2), preview: null, url: null, uploading: true };
+    setPhotos((prev) => [...prev, placeholder]);
+    setGeneratingAiImage(true);
+    try {
+      const genFd = new FormData();
+      genFd.append('image', refFile);
+      const result = await endpoints.generateImage(genFd);
+      // base64 → Blob → File
+      const byteChars = atob(result.imageData);
+      const byteArray = new Uint8Array(byteChars.length);
+      for (let i = 0; i < byteChars.length; i++) byteArray[i] = byteChars.charCodeAt(i);
+      const blob = new Blob([byteArray], { type: result.mimeType });
+      const previewUrl = URL.createObjectURL(blob);
+      setPhotos((prev) => prev.map((p) => p.id === placeholder.id ? { ...p, preview: previewUrl } : p));
+      // S3 업로드
+      const uploadFd = new FormData();
+      uploadFd.append('files', new File([blob], 'ai-image.png', { type: result.mimeType }));
+      const [uploaded] = await endpoints.uploadImages(uploadFd);
+      setPhotos((prev) =>
+        prev.map((p) => p.id === placeholder.id ? { ...p, url: uploaded.url, uploading: false } : p),
+      );
+    } catch {
+      setPhotos((prev) => prev.filter((p) => p.id !== placeholder.id));
+      toast.show('AI 이미지 생성에 실패했어요', { type: 'error' });
+    } finally {
+      setGeneratingAiImage(false);
+    }
+  };
+
   // ── 인증마크 ──────────────────────────────────────────────────
   const toggleCert = (cert) =>
     setCertifications(
@@ -205,21 +282,15 @@ export default function SellerOfferNewPage() {
       toast.show('사진 업로드 중이에요, 잠시 기다려주세요', { type: 'error' });
       return;
     }
+    if (mode === 'ai' && aiPhotos.some((p) => p.uploading)) {
+      toast.show('사진 업로드 중이에요, 잠시 기다려주세요', { type: 'error' });
+      return;
+    }
     try {
       const isAi = mode === 'ai' && !!analysis;
-
-      // AI 모드: 분석에 쓴 사진을 S3에 업로드
-      let photoUrls = mode === 'manual' ? photos.map((p) => p.url).filter(Boolean) : [];
-      if (mode === 'ai' && aiFile) {
-        try {
-          const fd = new FormData();
-          fd.append('file', aiFile);
-          const result = await endpoints.uploadImage(fd);
-          photoUrls = [result.url];
-        } catch {
-          // 업로드 실패해도 등록 진행
-        }
-      }
+      const photoUrls = mode === 'manual'
+        ? photos.map((p) => p.url).filter(Boolean)
+        : [...aiPhotos.map((p) => p.url).filter(Boolean), ...photos.map((p) => p.url).filter(Boolean)];
 
       await addOffer.mutateAsync({
         ingredientName: ingredientName.trim(),
@@ -302,46 +373,115 @@ export default function SellerOfferNewPage() {
             {/* ── AI 사진 업로드 (AI 모드 전용) ── */}
             {mode === 'ai' && (
               <div className="mb-2">
-                <FieldLabel label="상품 사진" hint="AI가 사진을 분석해 아래 필드를 자동으로 채워줘요" required />
-                <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onFileChange} />
+                <FieldLabel label="상품 사진" hint="첫 번째(대표) 사진으로 AI가 자동 분석해요 · 최대 10장" required />
+                <input
+                  ref={aiPhotoInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={onAiPhotosChange}
+                />
 
-                {!preview ? (
-                  <button
-                    type="button"
-                    onClick={() => fileRef.current?.click()}
-                    className="tap flex h-36 w-full flex-col items-center justify-center gap-2 rounded-2xl border-[2px] border-dashed border-brand bg-brand-bg text-brand-dark"
-                  >
-                    <Camera size={32} />
-                    <span className="text-[13px] font-bold">사진 선택하기</span>
-                  </button>
-                ) : (
-                  <div className="relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={preview} alt="선택된 상품 사진" className="h-52 w-full rounded-2xl object-cover" />
+                <div className="flex gap-2 overflow-x-auto pb-1 phone-scroll">
+                  {aiPhotos.map((photo, idx) => (
+                    <div key={photo.id} className="relative shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={photo.preview} alt="" className="h-[84px] w-[84px] rounded-2xl object-cover" />
+                      {photo.uploading ? (
+                        <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/20">
+                          <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => removeAiPhoto(photo.id)}
+                          className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-white shadow"
+                        >
+                          <X size={10} />
+                        </button>
+                      )}
+                      {idx === 0 && (
+                        <span className="absolute bottom-1 left-1 rounded-md bg-black/60 px-1.5 py-0.5 text-[9px] font-bold text-white">
+                          대표
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                  {aiPhotos.length < 10 && (
                     <button
                       type="button"
-                      onClick={() => fileRef.current?.click()}
-                      className="tap absolute bottom-2 right-2 rounded-xl bg-black/50 px-3 py-1.5 text-[12px] font-bold text-white"
+                      onClick={() => aiPhotoInputRef.current?.click()}
+                      className={cn(
+                        'tap flex h-[84px] w-[84px] shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-[1.5px] border-dashed text-brand-dark',
+                        aiPhotos.length === 0
+                          ? 'border-brand bg-brand-bg'
+                          : 'border-line bg-surface-soft text-ink-soft',
+                      )}
                     >
-                      사진 변경
+                      <Camera size={aiPhotos.length === 0 ? 28 : 22} />
+                      <span className="text-[10.5px] font-bold">
+                        {aiPhotos.length === 0 ? '사진 선택' : `${aiPhotos.length}/10`}
+                      </span>
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {analyzing && (
                   <div className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-brand-bg py-3 text-[13px] font-bold text-brand-dark">
                     <Sparkles size={14} className="animate-pulse" />
-                    AI가 분석 중이에요...
+                    AI가 대표 사진을 분석 중이에요...
                   </div>
                 )}
 
-                {analysis && (
+                {analysis && !analyzing && (
                   <Card className="mt-3 flex items-center gap-2 border border-brand-soft px-4 py-2.5">
                     <Sparkles size={14} className="shrink-0 text-brand" />
                     <p className="text-[12px] text-ink-mid">
                       AI 분석 완료 — 아래 필드에 자동으로 입력됐어요. 수정 후 등록하세요.
                     </p>
                   </Card>
+                )}
+
+                {aiPhotos.length > 0 && photos.length > 0 && (
+                  <div className="mt-3 flex gap-2 overflow-x-auto pb-1 phone-scroll">
+                    {photos.map((photo) => (
+                      <div key={photo.id} className="relative shrink-0">
+                        {photo.preview ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={photo.preview} alt="" className="h-[84px] w-[84px] rounded-2xl object-cover" />
+                        ) : (
+                          <div className="flex h-[84px] w-[84px] items-center justify-center rounded-2xl bg-brand-bg">
+                            <Sparkles size={22} className="animate-pulse text-brand" />
+                          </div>
+                        )}
+                        {photo.uploading ? (
+                          <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/20">
+                            <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setPhotos((prev) => prev.filter((p) => p.id !== photo.id))}
+                            className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-white shadow"
+                          >
+                            <X size={10} />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {analysis && !analyzing && photos.length < 10 && (
+                  <button
+                    type="button"
+                    onClick={generateAiImage}
+                    disabled={generatingAiImage}
+                    className="tap mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-brand py-2.5 text-[12.5px] font-bold text-brand-dark disabled:opacity-50"
+                  >
+                    <Sparkles size={13} />
+                    {generatingAiImage ? 'AI 이미지 생성 중...' : 'AI로 이미지 생성하기'}
+                  </button>
                 )}
               </div>
             )}
@@ -361,10 +501,16 @@ export default function SellerOfferNewPage() {
                 <div className="flex gap-2 overflow-x-auto pb-1 phone-scroll">
                   {photos.map((photo, idx) => (
                     <div key={photo.id} className="relative shrink-0">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={photo.preview} alt="" className="h-[84px] w-[84px] rounded-2xl object-cover" />
+                      {photo.preview ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={photo.preview} alt="" className="h-[84px] w-[84px] rounded-2xl object-cover" />
+                      ) : (
+                        <div className="flex h-[84px] w-[84px] items-center justify-center rounded-2xl bg-brand-bg">
+                          <Sparkles size={22} className="animate-pulse text-brand" />
+                        </div>
+                      )}
                       {photo.uploading ? (
-                        <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/30">
+                        <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/20">
                           <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
                         </div>
                       ) : (
@@ -376,7 +522,7 @@ export default function SellerOfferNewPage() {
                           <X size={10} />
                         </button>
                       )}
-                      {idx === 0 && (
+                      {idx === 0 && photo.preview && (
                         <span className="absolute bottom-1 left-1 rounded-md bg-black/60 px-1.5 py-0.5 text-[9px] font-bold text-white">
                           대표
                         </span>

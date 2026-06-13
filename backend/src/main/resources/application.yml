@@ -37,7 +37,7 @@ app:
   uploads:
     storage: ${UPLOADS_STORAGE:local}
     dir: ${UPLOADS_DIR:uploads}
-    public-base-url: ${UPLOADS_PUBLIC_BASE_URL:}
+    public-base-url: ${UPLOADS_PUBLIC_BASE_URL:https://${S3_BUCKET:}.s3.${AWS_REGION:}.amazonaws.com}
     max-bytes: ${UPLOADS_MAX_BYTES:5242880}
     s3:                                  # storage=s3 일 때만 사용 (LocalFileStorage 경로에선 무시됨)
       bucket: ${S3_BUCKET:}

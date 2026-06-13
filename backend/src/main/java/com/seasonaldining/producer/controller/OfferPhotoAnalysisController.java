@@ -2,7 +2,6 @@ package com.seasonaldining.producer.controller;
 
 import com.seasonaldining.common.response.ApiResponse;
 import com.seasonaldining.producer.dto.request.GenerateDescriptionRequest;
-import com.seasonaldining.producer.dto.request.OfferImageGenerationRequest;
 import com.seasonaldining.producer.dto.response.GenerateDescriptionResponse;
 import com.seasonaldining.producer.dto.response.OfferImageGenerationResponse;
 import com.seasonaldining.producer.dto.response.OfferPhotoAnalysisResponse;
@@ -38,14 +37,15 @@ public class OfferPhotoAnalysisController {
         return ApiResponse.success(geminiService.analyzeOfferPhoto(image), null);
     }
 
-    @PostMapping("/generate-image")
+    @PostMapping(value = "/generate-image", consumes = "multipart/form-data")
     @Operation(
             summary = "추가 상품 이미지 AI 생성",
-            description = "분석된 상품 정보를 기반으로 Gemini AI가 추가 상품 이미지를 생성합니다. 인증 필요."
+            description = "참고 사진을 기반으로 Gemini AI가 추가 상품 이미지를 생성합니다. " +
+                    "입력 사진과 동일한 비율로 생성되며, 텍스트·워터마크가 없는 깔끔한 상품 사진을 반환합니다. 인증 필요."
     )
     public ApiResponse<OfferImageGenerationResponse> generateImage(
-            @RequestBody OfferImageGenerationRequest request) {
-        return ApiResponse.success(geminiService.generateOfferImage(request), null);
+            @RequestParam("image") MultipartFile image) {
+        return ApiResponse.success(geminiService.generateOfferImageFromPhoto(image), null);
     }
 
     @PostMapping("/generate-description")

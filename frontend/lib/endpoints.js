@@ -104,12 +104,39 @@ export const endpoints = {
   listMyOffers: () => withFallback(() => Promise.reject(new ApiError({ code: 'NETWORK_ERROR', status: 0 })), () => demoStore.listMyOffers()),
 
   // AI 상품 생성
-  analyzeOfferPhoto: (formData) => api.post('/producers/me/offers/analyze-photo', formData, { auth: true }),
-  generateDescription: (body) => api.post('/producers/me/offers/generate-description', body, { auth: true }),
+  analyzeOfferPhoto: (formData) =>
+    withFallback(
+      () => api.post('/producers/me/offers/analyze-photo', formData, { auth: true }),
+      () => ({
+        ingredientName: '봄동',
+        productName: '해남 햇 봄동 1.5kg',
+        category: '잎채소',
+        storageMethod: '냉장 보관',
+        storageTip: '신문지에 싸서 냉장 보관하면 2주까지 신선해요.',
+        checkpoints: [
+          { keyword: '산지직송', sentence: '산지에서 직접 배송합니다.' },
+          { keyword: '당일수확', sentence: '당일 수확한 신선한 제품입니다.' },
+        ],
+      }),
+    ),
+  generateDescription: (body) =>
+    withFallback(
+      () => api.post('/producers/me/offers/generate-description', body, { auth: true }),
+      () => ({ description: '제철 재료를 산지에서 직접 보내드려요. 신선함이 다릅니다.' }),
+    ),
+  generateImage: (body) => api.post('/producers/me/offers/generate-image', body, { auth: true }),
 
   // ── Uploads ────────────────────────────────────────────
-  uploadImage: (formData) => api.post('/uploads', formData, { auth: true }),
-  uploadImages: (formData) => api.post('/uploads/batch', formData, { auth: true }),
+  uploadImage: (formData) =>
+    withFallback(
+      () => api.post('/uploads', formData, { auth: true }),
+      () => ({ url: 'https://placehold.co/400x400?text=Demo' }),
+    ),
+  uploadImages: (formData) =>
+    withFallback(
+      () => api.post('/uploads/batch', formData, { auth: true }),
+      () => [{ url: 'https://placehold.co/400x400?text=Demo' }],
+    ),
 
   // ── Cart / Orders ──────────────────────────────────────
   getCart: () => withFallback(() => api.get('/cart', { auth: true }), () => demoStore.getCart()),

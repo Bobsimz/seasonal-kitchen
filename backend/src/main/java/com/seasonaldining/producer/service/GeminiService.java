@@ -80,13 +80,38 @@ public class GeminiService {
         }
     }
 
-    public OfferImageGenerationResponse generateOfferImage(OfferImageGenerationRequest request) {
+    public OfferImageGenerationResponse generateOfferImageFromPhoto(MultipartFile image) {
         if (!StringUtils.hasText(properties.key())) {
             throw new BusinessException(ErrorCode.GEMINI_API_NOT_CONFIGURED);
         }
         try {
-            String prompt = buildImagePrompt(request);
-            Map<String, Object> requestBody = buildImageGenerationRequest(prompt);
+            byte[] originalBytes = image.getBytes();
+            BufferedImage originalBuf = ImageIO.read(new java.io.ByteArrayInputStream(originalBytes));
+            int origW = originalBuf != null ? originalBuf.getWidth() : 0;
+            int origH = originalBuf != null ? originalBuf.getHeight() : 0;
+
+            byte[] compressed = compressForGeneration(originalBytes, originalBuf);
+            String base64 = Base64.getEncoder().encodeToString(compressed);
+            String aspectDesc = (origW > 0 && origH > 0) ? describeAspectRatio(origW, origH) : "1:1";
+
+            String prompt = "이 상품 사진을 참고하여 새로운 상품 홍보 사진을 생성해주세요.\n" +
+                    "규칙:\n" +
+                    "- 글씨, 텍스트, 라벨, 워터마크, 숫자가 절대 포함되면 안 됩니다\n" +
+                    "- 신선하고 자연스러운 식재료 사진이어야 합니다\n" +
+                    "- 배경은 깔끔하게 유지해주세요\n" +
+                    "- 참고 사진과 유사한 구도와 스타일로 생성해주세요\n" +
+                    "- 이미지 비율은 " + aspectDesc + " 이어야 합니다";
+
+            Map<String, Object> textPart = Map.of("text", prompt);
+            Map<String, Object> imageData = Map.of("mimeType", "image/jpeg", "data", base64);
+            Map<String, Object> imagePart = Map.of("inlineData", imageData);
+            Map<String, Object> content = Map.of("parts", List.of(textPart, imagePart));
+            Map<String, Object> generationConfig = Map.of("responseModalities", List.of("IMAGE"));
+            Map<String, Object> requestBody = Map.of(
+                    "contents", List.of(content),
+                    "generationConfig", generationConfig
+            );
+
             String url = "/gmsapi/generativelanguage.googleapis.com/v1beta/models/" + properties.imageModel() + ":generateContent";
 
             String responseBody = restClient.post()
@@ -96,31 +121,95 @@ public class GeminiService {
                     .retrieve()
                     .body(String.class);
 
-            return parseImageResponse(responseBody);
+            OfferImageGenerationResponse response = parseImageResponse(responseBody);
+            if (origW > 0 && origH > 0) {
+                response = cropToAspectRatio(response, origW, origH);
+            }
+            return response;
         } catch (BusinessException e) {
             throw e;
         } catch (Exception e) {
+            log.error("[GeminiService] generateOfferImageFromPhoto 오류: {}", e.getMessage(), e);
             throw new BusinessException(ErrorCode.GEMINI_API_ERROR);
         }
     }
 
-    private String buildImagePrompt(OfferImageGenerationRequest request) {
-        StringBuilder sb = new StringBuilder(prompts.offerImageGeneration().userTemplate());
-        String name = StringUtils.hasText(request.productName()) ? request.productName() : request.ingredientName();
-        sb.append("\n상품명: ").append(name);
-        if (StringUtils.hasText(request.category())) {
-            sb.append("\n카테고리: ").append(request.category());
+    private OfferImageGenerationResponse cropToAspectRatio(OfferImageGenerationResponse response, int origW, int origH) {
+        try {
+            byte[] imageBytes = Base64.getDecoder().decode(response.imageData());
+            BufferedImage generated = ImageIO.read(new java.io.ByteArrayInputStream(imageBytes));
+            if (generated == null) return response;
+
+            int gw = generated.getWidth();
+            int gh = generated.getHeight();
+            double targetRatio = (double) origW / origH;
+            double currentRatio = (double) gw / gh;
+            if (Math.abs(targetRatio - currentRatio) < 0.02) return response;
+
+            int cropW, cropH, cropX = 0, cropY = 0;
+            if (targetRatio > currentRatio) {
+                cropW = gw;
+                cropH = Math.max(1, (int) (gw / targetRatio));
+                cropY = (gh - cropH) / 2;
+            } else {
+                cropH = gh;
+                cropW = Math.max(1, (int) (gh * targetRatio));
+                cropX = (gw - cropW) / 2;
+            }
+            cropW = Math.min(cropW, gw - cropX);
+            cropH = Math.min(cropH, gh - cropY);
+
+            BufferedImage cropped = generated.getSubimage(cropX, cropY, cropW, cropH);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(cropped, "jpeg", baos);
+            return new OfferImageGenerationResponse("image/jpeg", Base64.getEncoder().encodeToString(baos.toByteArray()));
+        } catch (Exception e) {
+            log.warn("[GeminiService] cropToAspectRatio 실패, 원본 반환: {}", e.getMessage());
+            return response;
         }
-        if (request.keywords() != null && !request.keywords().isEmpty()) {
-            sb.append("\n핵심 키워드: ").append(String.join(", ", request.keywords()));
-        }
-        return sb.toString();
     }
 
-    private Map<String, Object> buildImageGenerationRequest(String prompt) {
-        Map<String, Object> textPart = Map.of("text", prompt);
-        Map<String, Object> content = Map.of("parts", List.of(textPart));
-        return Map.of("contents", List.of(content));
+    private String describeAspectRatio(int w, int h) {
+        int g = gcd(w, h);
+        return (w / g) + ":" + (h / g);
+    }
+
+    private int gcd(int a, int b) {
+        return b == 0 ? a : gcd(b, a % b);
+    }
+
+    private byte[] compressForGeneration(byte[] originalBytes, BufferedImage original) throws Exception {
+        if (original == null) return originalBytes;
+        int maxDim = 512;
+        int w = original.getWidth();
+        int h = original.getHeight();
+        BufferedImage target = original;
+        if (w > maxDim || h > maxDim) {
+            double scale = Math.min((double) maxDim / w, (double) maxDim / h);
+            int nw = (int) (w * scale);
+            int nh = (int) (h * scale);
+            BufferedImage resized = new BufferedImage(nw, nh, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = resized.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g.drawImage(original, 0, 0, nw, nh, null);
+            g.dispose();
+            target = resized;
+        } else if (original.getType() != BufferedImage.TYPE_INT_RGB) {
+            BufferedImage rgb = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = rgb.createGraphics();
+            g.drawImage(original, 0, 0, null);
+            g.dispose();
+            target = rgb;
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+        ImageWriteParam params = writer.getDefaultWriteParam();
+        params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        params.setCompressionQuality(0.7f);
+        writer.setOutput(ImageIO.createImageOutputStream(baos));
+        writer.write(null, new IIOImage(target, null, null), params);
+        writer.dispose();
+        return baos.toByteArray();
     }
 
     private OfferImageGenerationResponse parseImageResponse(String responseBody) {
