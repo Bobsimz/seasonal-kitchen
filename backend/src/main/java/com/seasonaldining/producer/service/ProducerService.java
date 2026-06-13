@@ -3,6 +3,7 @@ package com.seasonaldining.producer.service;
 import com.seasonaldining.common.exception.BusinessException;
 import com.seasonaldining.common.exception.ErrorCode;
 import com.seasonaldining.common.response.ListResponse;
+import com.seasonaldining.common.storage.MediaUrlResolver;
 import com.seasonaldining.ingredient.repository.IngredientRepository;
 import com.seasonaldining.producer.dto.request.CreateOfferRequest;
 import com.seasonaldining.producer.dto.request.CreateProducerReviewRequest;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,6 +44,9 @@ public class ProducerService {
     private final OfferTagRepository offerTagRepository;
     private final OfferOptionRepository offerOptionRepository;
     private final OfferCertificationRepository offerCertificationRepository;
+    private final MediaUrlResolver mediaUrlResolver;
+
+    private static final DateTimeFormatter NEWS_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
     public ProducerService(ProducerRepository producerRepository,
                            ProducerSpecialtyRepository specialtyRepository,
@@ -53,7 +58,8 @@ public class ProducerService {
                            OfferPhotoRepository offerPhotoRepository,
                            OfferTagRepository offerTagRepository,
                            OfferOptionRepository offerOptionRepository,
-                           OfferCertificationRepository offerCertificationRepository) {
+                           OfferCertificationRepository offerCertificationRepository,
+                           MediaUrlResolver mediaUrlResolver) {
         this.producerRepository = producerRepository;
         this.specialtyRepository = specialtyRepository;
         this.badgeRepository = badgeRepository;
@@ -65,6 +71,7 @@ public class ProducerService {
         this.offerTagRepository = offerTagRepository;
         this.offerOptionRepository = offerOptionRepository;
         this.offerCertificationRepository = offerCertificationRepository;
+        this.mediaUrlResolver = mediaUrlResolver;
     }
 
     @Transactional(readOnly = true)
@@ -92,22 +99,31 @@ public class ProducerService {
             throw new BusinessException(ErrorCode.PRODUCER_ALREADY_REGISTERED);
         }
         Producer saved = producerRepository.save(Producer.register(
-                userId, req.name(), req.representativeName(), req.region(),
-                req.contact(), req.certificationImageUrl(), req.agreedToTerms()));
+                userId, req.name(), req.region(), req.tagline(),
+                req.style(), req.priceLevel(), req.freshnessLevel(),
+                req.representativeName(), req.contact(),
+                req.certificationImageUrl(), req.agreedToTerms()));
         if (req.specialties() != null) {
             req.specialties().stream().filter(s -> s != null && !s.isBlank()).distinct()
                     .forEach(s -> specialtyRepository.save(
                             ProducerSpecialty.of(saved.getId(), s.trim(), resolveIngredientId(s.trim()))));
         }
-        // 배지/스타일/가격대는 등록 화면(21e)에서 받지 않음 — 기본값 처리
+        if (req.badges() != null) {
+            req.badges().stream().filter(b -> b != null && !b.isBlank()).distinct()
+                    .forEach(b -> badgeRepository.save(ProducerBadge.of(saved.getId(), b.trim())));
+        }
         return toDetail(saved);
     }
 
+    /**
+     * 내 농가 조회. 미등록이면 404가 아니라 null을 반환한다 —
+     * 프론트 판매자 화면이 (!error && !producer)일 때만 "농가 등록" CTA를 노출하기 때문.
+     */
     @Transactional(readOnly = true)
     public ProducerDetailResponse getMyProducer(Long userId) {
-        Producer p = producerRepository.findByUserId(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCER_NOT_FOUND));
-        return toDetail(p);
+        return producerRepository.findByUserId(userId)
+                .map(this::toDetail)
+                .orElse(null);
     }
 
     @Transactional
@@ -147,7 +163,7 @@ public class ProducerService {
                 offerTagRepository.save(OfferTag.of(saved.getId(), label.trim()));
             }
         }
-        // 인증마크 저장 (필수 1개 이상 — 요청 검증 @NotEmpty)
+        // 인증마크 저장 (선택 — null/빈 목록이면 건너뜀)
         if (req.certifications() != null) {
             for (String label : req.certifications()) {
                 if (label == null || label.isBlank()) continue;
@@ -309,7 +325,23 @@ public class ProducerService {
         requireProducer(producerId);
         return newsRepository.findByProducerIdOrderByPostedAtDesc(producerId)
                 .stream().map(n -> new ProducerNewsResponse(
-                        n.getId(), n.getPostedAt(), n.getTitle(), n.getImageRef(), n.getBody())).toList();
+                        n.getId(), n.getPostedAt(),
+                        n.getPostedAt() == null ? null : n.getPostedAt().format(NEWS_DATE_FORMAT),
+                        n.getTitle(), resolveNewsImageUrl(n.getImageRef()), n.getBody())).toList();
+    }
+
+    /**
+     * 소식 imageRef를 표시용 이미지 URL로 해석한다.
+     * 실제 URL(절대 http/https) 또는 미디어 키(슬래시 포함/파일 확장자)만 해석하고,
+     * 시드의 '봄동'·'photo' 같은 키워드는 표시할 이미지가 없으므로 null을 반환한다.
+     */
+    private String resolveNewsImageUrl(String imageRef) {
+        if (imageRef == null || imageRef.isBlank()) return null;
+        String v = imageRef.trim();
+        boolean looksLikeUrlOrKey = v.startsWith("http://") || v.startsWith("https://")
+                || v.startsWith("/") || v.contains("/")
+                || v.matches("(?i).+\\.(png|jpe?g|gif|webp|avif|svg)$");
+        return looksLikeUrlOrKey ? mediaUrlResolver.resolve(v) : null;
     }
 
     @Transactional

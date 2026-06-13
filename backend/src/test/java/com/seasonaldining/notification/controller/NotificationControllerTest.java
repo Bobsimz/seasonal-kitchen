@@ -36,27 +36,27 @@ class NotificationControllerTest {
         mvc.perform(get("/api/v1/notifications").header("Authorization", token(user)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.items.length()").value(1))
-                .andExpect(jsonPath("$.data.items[0].type").value("PRICE_DROP"))
-                .andExpect(jsonPath("$.data.items[0].category").value("INGREDIENT"))
+                .andExpect(jsonPath("$.data.items[0].type").value("PRICE"))
+                .andExpect(jsonPath("$.data.items[0].rawType").value("PRICE_DROP"))
                 .andExpect(jsonPath("$.data.items[0].subtitle").value("무 가격이 내려갔습니다."))
-                .andExpect(jsonPath("$.data.items[0].icon").value("price-down"))
+                .andExpect(jsonPath("$.data.items[0].icon").value("price"))
                 .andExpect(jsonPath("$.data.items[0].severity").value("SUCCESS"))
+                .andExpect(jsonPath("$.data.items[0].read").value(false))
                 .andExpect(jsonPath("$.data.items[0].relativeTime").isNotEmpty())
-                .andExpect(jsonPath("$.data.items[0].actionTargetType").value("INGREDIENT"))
-                .andExpect(jsonPath("$.data.tabCounts.total").value(1))
-                .andExpect(jsonPath("$.data.tabCounts.ingredient").value(1));
+                .andExpect(jsonPath("$.data.tabCounts.ALL").value(1))
+                .andExpect(jsonPath("$.data.tabCounts.PRICE").value(1));
     }
 
-    @Test void tabCountsMatchNotificationCategories() throws Exception {
+    @Test void tabCountsMatchNotificationBuckets() throws Exception {
         User user = users.save(new User("tabs@example.com", "탭", null, "ACTIVE"));
         notifications.save(new Notification(user.getId(), "PRICE_DROP", "가격 하락", "내용"));
         notifications.save(new Notification(user.getId(), "SEASON_START", "제철 시작", "내용"));
         notifications.save(new Notification(user.getId(), "RECIPE_RECOMMENDATION", "레시피 추천", "내용"));
         mvc.perform(get("/api/v1/notifications").header("Authorization", token(user)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.tabCounts.total").value(3))
-                .andExpect(jsonPath("$.data.tabCounts.ingredient").value(2))
-                .andExpect(jsonPath("$.data.tabCounts.recipe").value(1));
+                .andExpect(jsonPath("$.data.tabCounts.ALL").value(3))
+                .andExpect(jsonPath("$.data.tabCounts.PRICE").value(2))
+                .andExpect(jsonPath("$.data.tabCounts.COMMUNITY").value(1));
     }
 
     @Test void marksOneAndAllNotificationsAsRead() throws Exception {

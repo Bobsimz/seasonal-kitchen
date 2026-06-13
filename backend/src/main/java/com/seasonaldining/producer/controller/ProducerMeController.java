@@ -54,7 +54,7 @@ public class ProducerMeController {
     }
 
     @GetMapping
-    @Operation(summary = "내 농가 조회", description = "내가 등록한 농가 프로필을 조회합니다. 미등록이면 PRODUCER_NOT_FOUND.")
+    @Operation(summary = "내 농가 조회", description = "내가 등록한 농가 프로필을 조회합니다. 미등록이면 200 + data:null(프론트 등록 CTA 분기용).")
     public ApiResponse<ProducerDetailResponse> getMine() {
         return ApiResponse.success(
                 producerService.getMyProducer(currentUserProvider.getCurrentUserId()), null);

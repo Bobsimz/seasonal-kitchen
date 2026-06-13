@@ -94,9 +94,13 @@ public class FavoriteService {
         if ("INGREDIENT".equals(type) && ingredientRepository.findByIdAndActiveTrue(id).isPresent()) return;
         if ("RECIPE".equals(type) && recipeRepository.findByIdAndStatus(id, "PUBLISHED").isPresent()) return;
         if ("PRODUCER".equals(type) && producerService.existsById(id)) return;
+        // PRODUCT/OFFER(상품 상세 찜): ACTIVE 상태인 오퍼만 찜 가능 (숨김/삭제 제외)
+        if (("PRODUCT".equals(type) || "OFFER".equals(type)) && offerRepository.findById(id)
+                .filter(o -> ProducerOffer.STATUS_ACTIVE.equals(o.getStatus())).isPresent()) return;
         throw new BusinessException(switch (type == null ? "" : type) {
             case "RECIPE" -> ErrorCode.RECIPE_NOT_FOUND;
             case "PRODUCER" -> ErrorCode.PRODUCER_NOT_FOUND;
+            case "PRODUCT", "OFFER" -> ErrorCode.PRODUCER_OFFER_NOT_FOUND;
             default -> ErrorCode.INGREDIENT_NOT_FOUND;
         });
     }

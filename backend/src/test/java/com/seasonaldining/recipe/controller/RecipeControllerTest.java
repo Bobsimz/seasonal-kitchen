@@ -79,7 +79,7 @@ class RecipeControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.items.length()").value(1))
                 .andExpect(jsonPath("$.data.items[0].title").value("무조림"))
-                .andExpect(jsonPath("$.data.items[0].likeCount").value(0))
+                .andExpect(jsonPath("$.data.items[0].likes").value(0))
                 .andExpect(jsonPath("$.data.items[0].tags[0]").value("EASY"));
     }
 
@@ -123,7 +123,7 @@ class RecipeControllerTest {
                 .andExpect(jsonPath("$.data.ingredients.length()").value(1))
                 .andExpect(jsonPath("$.data.ingredients[0].ingredientName").value("무"))
                 .andExpect(jsonPath("$.data.ingredients[0].estimatedPrice").value(1980))
-                .andExpect(jsonPath("$.data.estimatedTotal").value(1980))
+                .andExpect(jsonPath("$.data.estimatedCost").value(1980))
                 .andExpect(jsonPath("$.data.tags[0]").value("EASY"))
                 .andExpect(jsonPath("$.data.relatedReels.length()").value(1))
                 .andExpect(jsonPath("$.data.relatedReels[0].creatorName").value("쿠킹맘"));

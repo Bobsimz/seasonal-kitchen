@@ -15,7 +15,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** G8 — certifications(@NotEmpty)·storageMethod(@NotBlank) 필수 검증 (V26). */
+/** certifications·storageMethod 는 선택 항목 — 비어 있거나 비어 있는 문자열/널이어도 유효하다(프론트 오퍼 폼 미전송). */
 class CreateOfferRequestValidationTest {
 
     private static ValidatorFactory factory;
@@ -39,16 +39,20 @@ class CreateOfferRequestValidationTest {
     }
 
     @Test
-    void invalid_whenCertificationsEmpty() {
+    void valid_whenCertificationsEmpty() {
         Set<ConstraintViolation<CreateOfferRequest>> v =
                 validator.validate(base(List.of(), "냉장 보관"));
-        assertThat(v).anyMatch(c -> c.getPropertyPath().toString().equals("certifications"));
+        assertThat(v).noneMatch(c -> c.getPropertyPath().toString().equals("certifications"));
     }
 
     @Test
-    void invalid_whenStorageMethodBlank() {
-        Set<ConstraintViolation<CreateOfferRequest>> v =
+    void valid_whenStorageMethodBlankOrNull() {
+        Set<ConstraintViolation<CreateOfferRequest>> blank =
                 validator.validate(base(List.of("무농약"), "  "));
-        assertThat(v).anyMatch(c -> c.getPropertyPath().toString().equals("storageMethod"));
+        assertThat(blank).noneMatch(c -> c.getPropertyPath().toString().equals("storageMethod"));
+
+        Set<ConstraintViolation<CreateOfferRequest>> nullValue =
+                validator.validate(base(List.of("무농약"), null));
+        assertThat(nullValue).noneMatch(c -> c.getPropertyPath().toString().equals("storageMethod"));
     }
 }

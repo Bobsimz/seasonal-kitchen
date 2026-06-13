@@ -9,6 +9,7 @@ import com.seasonaldining.ingredient.dto.response.IngredientOfferResponse;
 import com.seasonaldining.ingredient.dto.response.IngredientPriceHistoryResponse;
 import com.seasonaldining.ingredient.dto.response.IngredientSubstituteResponse;
 import com.seasonaldining.ingredient.entity.Ingredient;
+import com.seasonaldining.ingredient.entity.IngredientStorageTip;
 import com.seasonaldining.ingredient.repository.IngredientRepository;
 import com.seasonaldining.ingredient.repository.IngredientCareTipRepository;
 import com.seasonaldining.ingredient.repository.IngredientNutritionRepository;
@@ -109,6 +110,18 @@ public class IngredientService {
 
     public IngredientDetailResponse getIngredientDetail(Long ingredientId) {
         Ingredient ingredient = getActiveIngredientOrThrow(ingredientId);
+        PriceInfo p = priceInfo(ingredientId);
+
+        // 영양 정보: 프론트는 {label,value} 배열을 읽는다. 칼로리/비타민/칼륨/엽산을 표시용 항목으로 평탄화.
+        List<IngredientDetailResponse.NutritionItemResponse> nutrition =
+                nutritionRepository.findByIngredientId(ingredientId)
+                        .map(n -> java.util.stream.Stream.of(
+                                        new IngredientDetailResponse.NutritionItemResponse("칼로리", n.getCalories() == null ? null : n.getCalories() + "kcal"),
+                                        new IngredientDetailResponse.NutritionItemResponse("비타민C", n.getVitaminC()),
+                                        new IngredientDetailResponse.NutritionItemResponse("칼륨", n.getPotassium()),
+                                        new IngredientDetailResponse.NutritionItemResponse("엽산", n.getFolate())
+                                ).filter(v -> v.value() != null).toList())
+                        .orElse(null);
 
         return new IngredientDetailResponse(
                 ingredient.getId(),
@@ -117,24 +130,22 @@ public class IngredientService {
                 ingredient.getImageUrl(),
                 ingredient.getBaseUnit(),
                 false,
+                p.hot,
                 null,
+                p.currentPrice,
+                p.unit,
+                p.priceChangePct,
+                p.trendDirection,
+                p.priceChangeLabel,
                 null,
-                null,
+                p.buyingSignal,
                 null,
                 List.of(),
-                nutritionRepository.findByIngredientId(ingredientId)
-                        .map(n -> new IngredientDetailResponse.NutritionResponse(
-                                n.getCalories(), n.getCarbohydrate(), n.getSugar(), n.getFiber(), n.getProtein(), n.getFat(),
-                                java.util.stream.Stream.of(
-                                        new IngredientDetailResponse.NutritionItemResponse("비타민C", n.getVitaminC()),
-                                        new IngredientDetailResponse.NutritionItemResponse("칼륨", n.getPotassium()),
-                                        new IngredientDetailResponse.NutritionItemResponse("엽산", n.getFolate())
-                                ).filter(v -> v.value() != null).toList()
-                        ))
-                        .orElse(null),
+                nutrition,
                 careTipRepository.findByIngredientIdOrderByTipOrderAsc(ingredientId).stream().map(t -> t.getContent()).toList(),
+                // 보관 팁: 프론트는 string[] 을 읽으므로 설명 문자열만 내려준다.
                 storageTipRepository.findByIngredientId(ingredientId).stream()
-                        .map(t -> new IngredientDetailResponse.StorageTipResponse(t.getStorageType(), t.getDescription(), t.getIcon()))
+                        .map(IngredientStorageTip::getDescription)
                         .toList(),
                 storeOfferRepository.countByIngredientId(ingredientId)
         );
@@ -157,7 +168,7 @@ public class IngredientService {
                 .filter(recipe -> "PUBLISHED".equals(recipe.getStatus()))
                 .collect(Collectors.toMap(Recipe::getId, Function.identity()));
         return recipeIds.stream().map(recipes::get).filter(Objects::nonNull)
-                .map(recipe -> new RecipeCardResponse(recipe.getId(), recipe.getTitle(), recipe.getDescription(), recipe.getImageUrl(), recipe.getDifficulty(), recipe.getMinutes(), recipe.getServings(), 0, 0, null, List.of(recipe.getDifficulty(), recipe.getMinutes() + "분"), false))
+                .map(recipe -> new RecipeCardResponse(recipe.getId(), recipe.getTitle(), recipe.getDescription(), recipe.getImageUrl(), recipe.getDifficulty(), recipe.getMinutes(), recipe.getServings(), 0, 0, null, List.of(recipe.getDifficulty(), recipe.getMinutes() + "분"), false, List.of()))
                 .toList();
     }
 
@@ -202,17 +213,95 @@ public class IngredientService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.INGREDIENT_NOT_FOUND));
     }
 
-    private IngredientCardResponse toCardResponse(Ingredient ingredient) {
+    public IngredientCardResponse toCardResponse(Ingredient ingredient) {
+        PriceInfo p = priceInfo(ingredient.getId());
         return new IngredientCardResponse(
                 ingredient.getId(),
                 ingredient.getName(),
                 ingredient.getImageUrl(),
                 ingredient.getCategory(),
-                null,
+                p.currentPrice,
+                p.unit,
+                p.priceChangePct,
+                p.trendDirection,
+                p.priceChangeLabel,
                 false,
+                p.hot,
+                List.of(),
                 null,
+                p.buyingSignal,
                 List.of()
         );
+    }
+
+    /**
+     * 식재료의 최신 가격 스냅샷과 직전(약 1주 전) 스냅샷을 비교해 표시용 가격 정보를 만든다.
+     * 스냅샷이 없으면 currentPrice 는 null(프론트가 허용). hot 은 큰 폭의 가격 하락을 신호로 본다.
+     */
+    private PriceInfo priceInfo(Long ingredientId) {
+        List<PriceSnapshot> snapshots = priceSnapshotRepository.findByIngredientIdOrderByObservedDateAsc(ingredientId);
+        if (snapshots.isEmpty()) {
+            return new PriceInfo(null, null, null, null, null, null, false);
+        }
+        PriceSnapshot latest = snapshots.get(snapshots.size() - 1);
+        java.math.BigDecimal currentPrice = latest.getPrice();
+        String unit = latest.getUnit();
+
+        // 직전 비교 기준: 1주(7일) 전 또는 그보다 이른 가장 가까운 스냅샷, 없으면 바로 직전 스냅샷.
+        PriceSnapshot prior = null;
+        LocalDate weekAgo = latest.getObservedDate().minusDays(7);
+        for (int i = snapshots.size() - 2; i >= 0; i--) {
+            PriceSnapshot s = snapshots.get(i);
+            prior = s; // 가장 최근 직전값(루프가 끝나면 가장 이른 값으로 갱신되므로 아래에서 보정)
+            if (!s.getObservedDate().isAfter(weekAgo)) {
+                break;
+            }
+        }
+        if (snapshots.size() >= 2 && prior == null) {
+            prior = snapshots.get(snapshots.size() - 2);
+        }
+
+        Integer priceChangePct = null;
+        String trendDirection = null;
+        String priceChangeLabel = null;
+        boolean hot = false;
+        if (prior != null && prior.getPrice().signum() != 0) {
+            java.math.BigDecimal change = currentPrice.subtract(prior.getPrice())
+                    .multiply(java.math.BigDecimal.valueOf(100))
+                    .divide(prior.getPrice(), 0, java.math.RoundingMode.HALF_UP);
+            int pct = change.intValue();
+            priceChangePct = pct;
+            trendDirection = pct > 1 ? "UP" : pct < -1 ? "DOWN" : "FLAT";
+            priceChangeLabel = pct == 0 ? "보합" : (pct > 0 ? "+" : "") + pct + "%";
+            hot = pct <= -10;
+        } else {
+            // 비교할 이전 시세가 없음(이력 1개) — 추정 %는 만들지 않되, 카드/히어로/상세의
+            // 추세 배지가 비지 않도록 중립(보합) 표기를 채운다. priceChangePct 는 null 유지.
+            trendDirection = "FLAT";
+            priceChangeLabel = "보합";
+        }
+
+        String buyingSignal;
+        if (priceChangePct != null) {
+            buyingSignal = priceChangePct <= -10 ? "GOOD" : priceChangePct >= 5 ? "HIGH" : "HOLD";
+        } else {
+            // 변동 데이터 없음 → 평년 수준(HOLD)으로 표기.
+            buyingSignal = "HOLD";
+        }
+
+        return new PriceInfo(currentPrice, unit, priceChangePct, trendDirection, priceChangeLabel, buyingSignal, hot);
+    }
+
+    /** 표시용 가격 정보 묶음(카드/상세 공용). */
+    private record PriceInfo(
+            java.math.BigDecimal currentPrice,
+            String unit,
+            Integer priceChangePct,
+            String trendDirection,
+            String priceChangeLabel,
+            String buyingSignal,
+            boolean hot
+    ) {
     }
 
     private IngredientSubstituteResponse toSubstituteResponse(IngredientSubstitute substitute, Ingredient ingredient) {

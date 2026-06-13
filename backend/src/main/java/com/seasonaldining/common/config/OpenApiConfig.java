@@ -109,12 +109,10 @@ public class OpenApiConfig {
                         {
                           "success": true,
                           "data": {
-                            "profile": {"id": 1, "nickname": "제철데모", "profileImageUrl": "https://example.com/demo-profile.png"},
-                            "stats": {"monthlySaving": 0, "favoriteCount": 1, "activeAlertCount": 1, "recentOrderCount": 0},
-                            "preferences": {"householdSize": 2, "spicyAvoid": true, "priority": "LOW_PRICE"},
-                            "allergyCodes": ["EGG", "MILK"],
-                            "personalizedIngredients": [{"id": 1, "name": "봄동", "tags": ["추천", "채소"]}],
-                            "menuRows": [{"key": "favorites", "label": "찜한 콘텐츠", "count": 1}]
+                            "user": {"id": 1, "nickname": "제철데모", "photoUrl": "https://example.com/demo-profile.png"},
+                            "stats": {"savedAmount": 0, "orderCount": 7, "reviewCount": 3},
+                            "counts": {"orders": 7, "favorites": 12, "priceAlerts": 4, "reviews": 3},
+                            "personalized": [{"id": 1, "name": "봄동", "category": "채소", "imageUrl": "https://example.com/bomdong.png", "currentPrice": 4500, "unit": "봉", "priceChangeLabel": null, "trendDirection": null}]
                           },
                           "error": null
                         }
@@ -123,8 +121,8 @@ public class OpenApiConfig {
                         {
                           "success": true,
                           "data": {
-                            "items": [{"id": 1, "type": "PRICE_DROP", "category": "INGREDIENT", "title": "무 가격 하락", "subtitle": "무 가격이 설정 가격에 가까워졌습니다.", "icon": "price-down", "severity": "SUCCESS", "relativeTime": "방금 전", "actionTargetType": "INGREDIENT"}],
-                            "tabCounts": {"total": 2, "recipe": 1, "ingredient": 1}
+                            "items": [{"id": 1, "type": "PRICE", "rawType": "PRICE_DROP", "title": "무 가격 하락", "body": "무 가격이 설정 가격에 가까워졌습니다.", "icon": "price", "read": false, "createdAt": "2026-06-12T08:30:00+09:00"}],
+                            "tabCounts": {"ALL": 2, "PRICE": 1, "ORDER": 0, "COMMUNITY": 1}
                           },
                           "error": null
                         }

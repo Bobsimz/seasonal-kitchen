@@ -10,9 +10,11 @@ import com.seasonaldining.cart.repository.CartRepository;
 import com.seasonaldining.common.exception.BusinessException;
 import com.seasonaldining.common.exception.ErrorCode;
 import com.seasonaldining.producer.entity.OfferOption;
+import com.seasonaldining.producer.entity.OfferPhoto;
 import com.seasonaldining.producer.entity.Producer;
 import com.seasonaldining.producer.entity.ProducerOffer;
 import com.seasonaldining.producer.repository.OfferOptionRepository;
+import com.seasonaldining.producer.repository.OfferPhotoRepository;
 import com.seasonaldining.producer.repository.ProducerOfferRepository;
 import com.seasonaldining.producer.repository.ProducerRepository;
 import org.springframework.stereotype.Service;
@@ -39,15 +41,17 @@ public class CartService {
     private final ProducerRepository producerRepository;
     private final ProducerOfferRepository offerRepository;
     private final OfferOptionRepository offerOptionRepository;
+    private final OfferPhotoRepository offerPhotoRepository;
 
     public CartService(CartRepository cartRepository, CartItemRepository cartItemRepository,
                        ProducerRepository producerRepository, ProducerOfferRepository offerRepository,
-                       OfferOptionRepository offerOptionRepository) {
+                       OfferOptionRepository offerOptionRepository, OfferPhotoRepository offerPhotoRepository) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.producerRepository = producerRepository;
         this.offerRepository = offerRepository;
         this.offerOptionRepository = offerOptionRepository;
+        this.offerPhotoRepository = offerPhotoRepository;
     }
 
     @Transactional(readOnly = true)
@@ -135,6 +139,15 @@ public class CartService {
     }
 
     private CartResponse buildResponse(List<CartItem> items) {
+        // offer 대표 이미지 = 해당 offer_photos 중 sort_order 가 가장 작은 행의 url.
+        // 한 번에 모아 조회 후 offerId→url 맵으로 캐시(이미 sort_order asc 정렬되어 첫 항목이 대표).
+        Map<Long, String> primaryPhotoByOffer = new HashMap<>();
+        List<Long> offerIds = items.stream().map(CartItem::getOfferId).distinct().toList();
+        if (!offerIds.isEmpty()) {
+            for (OfferPhoto photo : offerPhotoRepository.findByOfferIdInOrderBySortOrderAsc(offerIds)) {
+                primaryPhotoByOffer.putIfAbsent(photo.getOfferId(), photo.getUrl());
+            }
+        }
         Map<Long, List<CartItem>> byProducer = items.stream()
                 .collect(Collectors.groupingBy(CartItem::getProducerId, LinkedHashMap::new, Collectors.toList()));
         List<CartResponse.ProducerGroup> groups = new ArrayList<>();
@@ -146,8 +159,11 @@ public class CartService {
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             BigDecimal shipping = subtotal.compareTo(FREE_SHIPPING_THRESHOLD) >= 0 ? BigDecimal.ZERO : SHIPPING_FEE;
             Producer p = producerRepository.findById(e.getKey()).orElse(null);
+            String producerPhoto = p != null ? p.getPhotoUrl() : null;
             List<CartResponse.Item> itemDtos = e.getValue().stream()
-                    .map(i -> new CartResponse.Item(i.getId(), i.getIngredientName(), i.getQty(), i.getUnitPrice(),
+                    .map(i -> new CartResponse.Item(i.getId(), i.getIngredientName(),
+                            primaryPhotoByOffer.getOrDefault(i.getOfferId(), producerPhoto),
+                            i.getQty(), i.getUnitPrice(),
                             i.getUnit(), i.getOfferOptionId(), i.getOptionLabel()))
                     .toList();
             groups.add(new CartResponse.ProducerGroup(e.getKey(), p != null ? p.getName() : null, itemDtos, subtotal, shipping));

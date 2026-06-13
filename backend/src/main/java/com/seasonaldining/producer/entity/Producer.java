@@ -46,23 +46,27 @@ public class Producer {
     protected Producer() {}
 
     /**
-     * 마이페이지 자가등록용 팩토리. 화면(21e)에서 받는 값만 입력받고,
-     * style/priceLevel/freshnessLevel은 화면에 없으므로 기본값으로 채운다.
+     * 마이페이지 자가등록용 팩토리. 판매자 등록 화면에서 받는 값으로 채우고,
+     * 화면에서 안 받는 값(대표자/연락처/인증서류/약관동의)은 선택 입력이라 null 허용.
+     * style/priceLevel/freshnessLevel은 미입력 시 기본값(VALUE/3/4)으로 채운다.
      * rating/review_count=0, honorary=false.
      */
-    public static Producer register(Long userId, String name, String representativeName, String region,
-                                    String contact, String certificationImageUrl, boolean agreedToTerms) {
+    public static Producer register(Long userId, String name, String region, String tagline,
+                                    String style, Integer priceLevel, Integer freshnessLevel,
+                                    String representativeName, String contact,
+                                    String certificationImageUrl, Boolean agreedToTerms) {
         Producer p = new Producer();
         p.userId = userId;
         p.name = name;
-        p.representativeName = representativeName;
         p.region = region;
+        p.tagline = (tagline != null && !tagline.isBlank()) ? tagline.trim() : null;
+        p.style = (style != null && !style.isBlank()) ? style.trim().toUpperCase() : "VALUE";
+        p.priceLevel = priceLevel != null ? priceLevel : 3;
+        p.freshnessLevel = freshnessLevel != null ? freshnessLevel : 4;
+        p.representativeName = representativeName;
         p.contact = contact;
         p.certificationImageUrl = certificationImageUrl;
-        p.agreedToTerms = agreedToTerms;
-        p.style = "VALUE";       // 기본값(화면 미입력)
-        p.priceLevel = 3;
-        p.freshnessLevel = 4;
+        p.agreedToTerms = agreedToTerms != null && agreedToTerms;
         p.rating = BigDecimal.ZERO;
         p.reviewCount = 0;
         p.honorary = false;

@@ -12,6 +12,8 @@ public interface ProducerReviewRepository extends JpaRepository<ProducerReview, 
 
     long countByProducerId(Long producerId);
 
+    long countByUserId(Long userId);
+
     @Query("select avg(r.rating) from ProducerReview r where r.producerId = :producerId")
     Double avgRatingByProducerId(@Param("producerId") Long producerId);
 }

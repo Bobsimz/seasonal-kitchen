@@ -7,49 +7,47 @@ import java.util.List;
 
 @Schema(description = "마이페이지 화면 요약 응답")
 public record MyPageSummaryResponse(
-        ProfileResponse profile,
+        UserBlock user,
         StatsResponse stats,
-        PreferenceSummaryResponse preferences,
-        List<String> allergyCodes,
-        List<PersonalizedIngredientResponse> personalizedIngredients,
-        List<MenuRowResponse> menuRows
+        CountsResponse counts,
+        List<PersonalizedIngredientResponse> personalized
 ) {
 
-    public record ProfileResponse(
+    @Schema(description = "프로필 블록 — FE ProfileBlock 가 읽는다")
+    public record UserBlock(
             @Schema(example = "1") Long id,
             @Schema(example = "제철요리사") String nickname,
-            @Schema(example = "https://example.com/profile.png") String profileImageUrl
+            @Schema(example = "https://example.com/profile.png") String photoUrl
     ) {
     }
 
+    @Schema(description = "상단 통계 3종 — 절약액/주문/리뷰")
     public record StatsResponse(
-            @Schema(example = "12000") BigDecimal monthlySaving,
-            @Schema(example = "3") long favoriteCount,
-            @Schema(example = "2") long activeAlertCount,
-            @Schema(example = "0") long recentOrderCount
+            @Schema(example = "12000") BigDecimal savedAmount,
+            @Schema(example = "7") long orderCount,
+            @Schema(example = "3") long reviewCount
     ) {
     }
 
-    public record PreferenceSummaryResponse(
-            @Schema(example = "2") Integer householdSize,
-            @Schema(example = "true") Boolean spicyAvoid,
-            @Schema(example = "LOW_PRICE") String priority
+    @Schema(description = "메뉴 리스트 배지 카운트")
+    public record CountsResponse(
+            @Schema(example = "7") long orders,
+            @Schema(example = "12") long favorites,
+            @Schema(example = "4") long priceAlerts,
+            @Schema(example = "3") long reviews
     ) {
     }
 
+    @Schema(description = "개인화 제철 추천 — FE IngredientCard 형태")
     public record PersonalizedIngredientResponse(
             @Schema(example = "1") Long id,
             @Schema(example = "봄동") String name,
             @Schema(example = "채소") String category,
             @Schema(example = "https://example.com/bomdong.png") String imageUrl,
-            List<String> tags
-    ) {
-    }
-
-    public record MenuRowResponse(
-            @Schema(example = "favorites") String key,
-            @Schema(example = "찜한 콘텐츠") String label,
-            @Schema(example = "3") long count
+            @Schema(example = "4500", nullable = true) BigDecimal currentPrice,
+            @Schema(example = "봉", nullable = true) String unit,
+            @Schema(example = "-15%", nullable = true) String priceChangeLabel,
+            @Schema(example = "DOWN", nullable = true) String trendDirection
     ) {
     }
 }

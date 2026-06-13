@@ -43,7 +43,7 @@ class ReelControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.length()").value(1))
                 .andExpect(jsonPath("$.data[0].creatorName").value("쿠킹맘"))
-                .andExpect(jsonPath("$.data[0].ingredientTags[0]").value("봄동"));
+                .andExpect(jsonPath("$.data[0].ingredients[0]").value("봄동"));
         mvc.perform(get("/api/v1/reels/{id}", reel.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.title").value("봄동 비빔밥 1분"));
@@ -65,7 +65,7 @@ class ReelControllerTest {
                 .andExpect(jsonPath("$.data.length()").value(1));
         mvc.perform(post("/api/v1/reels/{id}/view-events", reel.getId()).header("Authorization", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.viewCount").value(1));
+                .andExpect(jsonPath("$.data.views").value(1));
         mvc.perform(delete("/api/v1/reels/{id}/likes", reel.getId()).header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.liked").value(false));

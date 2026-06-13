@@ -176,11 +176,13 @@ class IngredientControllerTest {
         mockMvc.perform(get("/api/v1/ingredients/{ingredientId}", ingredient.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.seasonMonths").isArray())
-                .andExpect(jsonPath("$.data.nutrition.calories").value(18))
-                .andExpect(jsonPath("$.data.nutrition.carbohydrate").value(4.10))
-                .andExpect(jsonPath("$.data.nutrition.vitamins[0].name").value("비타민C"))
+                .andExpect(jsonPath("$.data.nutrition").isArray())
+                .andExpect(jsonPath("$.data.nutrition[0].label").value("칼로리"))
+                .andExpect(jsonPath("$.data.nutrition[0].value").value("18kcal"))
+                .andExpect(jsonPath("$.data.nutrition[1].label").value("비타민C"))
+                .andExpect(jsonPath("$.data.nutrition[1].value").value("15mg"))
                 .andExpect(jsonPath("$.data.careTips[0]").value("표면이 단단한 것을 고릅니다."))
-                .andExpect(jsonPath("$.data.storageTips[0].storageType").value("냉장"))
+                .andExpect(jsonPath("$.data.storageTips[0]").value("신문지에 싸서 보관합니다."))
                 .andExpect(jsonPath("$.data.compareStoreCount").value(1));
     }
 

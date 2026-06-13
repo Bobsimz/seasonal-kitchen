@@ -24,6 +24,7 @@ public record CartResponse(
     public record Item(
             @Schema(description = "장바구니 항목 ID") Long cartItemId,
             @Schema(description = "식재료명") String ingredientName,
+            @Schema(description = "상품 대표 이미지 URL(없으면 농가 사진, 둘 다 없으면 null)", nullable = true) String imageUrl,
             @Schema(description = "수량") int qty,
             @Schema(description = "단가(옵션 선택 시 옵션 단가)") BigDecimal unitPrice,
             @Schema(description = "단위") String unit,

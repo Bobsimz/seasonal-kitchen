@@ -25,7 +25,7 @@ public record ProducerOfferResponse(
         @Schema(description = "재고 수량(미설정 시 null)", example = "120", nullable = true) Integer stockQuantity,
         @Schema(description = "보관방법", example = "냉장 보관", nullable = true) String storageMethod,
         @Schema(description = "보관 안내 설명", nullable = true) String storageNote,
-        @Schema(description = "농가 대표 사진 URL(농가 직거래/비교 화면 아바타)", nullable = true) String producerPhotoUrl,
+        @Schema(description = "농가 대표 사진 URL(농가 직거래/비교 화면 아바타)", nullable = true) String photoUrl,
         @Schema(description = "농가 평점(0~5)", example = "4.8", nullable = true) BigDecimal rating,
         @Schema(description = "농가 리뷰 수", example = "128") int reviewCount,
         @Schema(description = "명예농가 여부", example = "true") boolean honorary,

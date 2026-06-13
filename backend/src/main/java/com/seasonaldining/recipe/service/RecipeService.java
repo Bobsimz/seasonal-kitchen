@@ -90,6 +90,7 @@ public class RecipeService {
                 .map(recipeIngredient -> toIngredientResponse(recipeIngredient, ingredients.get(recipeIngredient.getIngredientId())))
                 .toList();
 
+        List<RecipeDetailResponse.RelatedReelResponse> relatedReels = relatedReels(recipe.getId());
         return new RecipeDetailResponse(
                 recipe.getId(),
                 recipe.getTitle(),
@@ -106,7 +107,8 @@ public class RecipeService {
                 List.of(recipe.getDifficulty(), recipe.getMinutes() + "분"),
                 null,
                 0,
-                relatedReels(recipe.getId())
+                relatedReels.stream().map(RecipeDetailResponse.RelatedReelResponse::id).toList(),
+                relatedReels
         );
     }
 
@@ -116,20 +118,46 @@ public class RecipeService {
     }
 
     private RecipeIngredientResponse toIngredientResponse(RecipeIngredient recipeIngredient, Ingredient ingredient) {
+        String name = ingredient == null ? null : ingredient.getName();
+        String imageUrl = ingredient == null ? null : ingredient.getImageUrl();
+        java.math.BigDecimal price = latestPrice(recipeIngredient.getIngredientId());
         return new RecipeIngredientResponse(
                 recipeIngredient.getIngredientId(),
+<<<<<<< HEAD
                 ingredient != null ? ingredient.getName() : recipeIngredient.getName(),
                 recipeIngredient.getQuantity(),
                 recipeIngredient.getUnit(),
                 recipeIngredient.isOptional(),
                 ingredient == null ? null : ingredient.getImageUrl(),
                 ingredient == null ? null : latestPrice(recipeIngredient.getIngredientId()),
+=======
+                name,
+                amountLabel(recipeIngredient.getQuantity(), recipeIngredient.getUnit()),
+                imageUrl,
+                price,
+                name,
+                recipeIngredient.getQuantity(),
+                recipeIngredient.getUnit(),
+                recipeIngredient.isOptional(),
+                imageUrl,
+                price,
+>>>>>>> 46903ee (feat: 백엔드 프론트 동기화)
                 null
         );
     }
 
+    /** 수량 라벨(표시용): "1 개" 형태. 수량 없으면 "적당량". */
+    private String amountLabel(java.math.BigDecimal quantity, String unit) {
+        if (quantity == null) {
+            return "적당량";
+        }
+        String q = quantity.stripTrailingZeros().toPlainString();
+        return (unit == null || unit.isBlank()) ? q : q + " " + unit;
+    }
+
     private RecipeStepResponse toStepResponse(RecipeStep recipeStep) {
         return new RecipeStepResponse(
+                recipeStep.getStepNumber(),
                 recipeStep.getStepNumber(),
                 recipeStep.getDescription(),
                 recipeStep.getMinutes(),
@@ -154,7 +182,7 @@ public class RecipeService {
         );
     }
 
-    private RecipeCardResponse toCardResponse(Recipe recipe) {
+    public RecipeCardResponse toCardResponse(Recipe recipe) {
         return new RecipeCardResponse(
                 recipe.getId(),
                 recipe.getTitle(),
@@ -167,8 +195,26 @@ public class RecipeService {
                 0,
                 null,
                 List.of(recipe.getDifficulty(), recipe.getMinutes() + "분"),
-                false
+                false,
+                mainIngredientNames(recipe.getId())
         );
+    }
+
+    /** 레시피의 주요 재료명 목록(프론트 카드 mainIngredients용). */
+    private List<String> mainIngredientNames(Long recipeId) {
+        List<RecipeIngredient> recipeIngredients = recipeIngredientRepository.findByRecipeIdOrderByIdAsc(recipeId);
+        if (recipeIngredients.isEmpty()) {
+            return List.of();
+        }
+        Map<Long, Ingredient> ingredients = ingredientRepository.findAllById(
+                        recipeIngredients.stream().map(RecipeIngredient::getIngredientId).toList()
+                ).stream()
+                .collect(Collectors.toMap(Ingredient::getId, Function.identity()));
+        return recipeIngredients.stream()
+                .map(ri -> ingredients.get(ri.getIngredientId()))
+                .filter(Objects::nonNull)
+                .map(Ingredient::getName)
+                .toList();
     }
 
     private java.math.BigDecimal latestPrice(Long ingredientId) {

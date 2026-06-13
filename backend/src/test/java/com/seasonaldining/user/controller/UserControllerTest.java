@@ -194,14 +194,16 @@ class UserControllerTest {
         mockMvc.perform(get("/api/v1/users/me/summary")
                         .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(user.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.profile.id").value(user.getId()))
-                .andExpect(jsonPath("$.data.profile.nickname").value("사용자"))
-                .andExpect(jsonPath("$.data.stats.favoriteCount").value(1))
-                .andExpect(jsonPath("$.data.stats.activeAlertCount").value(1))
-                .andExpect(jsonPath("$.data.preferences.householdSize").value(2))
-                .andExpect(jsonPath("$.data.allergyCodes[0]").value("EGG"))
-                .andExpect(jsonPath("$.data.personalizedIngredients[0].name").value("봄동"))
-                .andExpect(jsonPath("$.data.menuRows.length()").value(2));
+                .andExpect(jsonPath("$.data.user.id").value(user.getId()))
+                .andExpect(jsonPath("$.data.user.nickname").value("사용자"))
+                .andExpect(jsonPath("$.data.user.photoUrl").value("https://example.com/profile.png"))
+                .andExpect(jsonPath("$.data.counts.favorites").value(1))
+                .andExpect(jsonPath("$.data.counts.priceAlerts").value(1))
+                .andExpect(jsonPath("$.data.counts.orders").value(0))
+                .andExpect(jsonPath("$.data.counts.reviews").value(0))
+                .andExpect(jsonPath("$.data.stats.orderCount").value(0))
+                .andExpect(jsonPath("$.data.stats.reviewCount").value(0))
+                .andExpect(jsonPath("$.data.personalized[0].name").value("봄동"));
     }
 
     @Test
@@ -211,10 +213,11 @@ class UserControllerTest {
         mockMvc.perform(get("/api/v1/users/me/summary")
                         .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(user.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.stats.favoriteCount").value(0))
-                .andExpect(jsonPath("$.data.stats.activeAlertCount").value(0))
-                .andExpect(jsonPath("$.data.allergyCodes.length()").value(0))
-                .andExpect(jsonPath("$.data.personalizedIngredients.length()").value(0));
+                .andExpect(jsonPath("$.data.counts.favorites").value(0))
+                .andExpect(jsonPath("$.data.counts.priceAlerts").value(0))
+                .andExpect(jsonPath("$.data.counts.orders").value(0))
+                .andExpect(jsonPath("$.data.counts.reviews").value(0))
+                .andExpect(jsonPath("$.data.personalized.length()").value(0));
     }
 
     @Test
@@ -225,17 +228,32 @@ class UserControllerTest {
     }
 
     @Test
-    void preferenceValidationFailure() throws Exception {
-        User user = userRepository.save(new User("user@example.com", "사용자", null, "ACTIVE"));
+    void preferenceAcceptsFrontendSurveyBody() throws Exception {
+        // 가입 설문(FE)이 보내는 사람-라벨 바디 — 모두 선택값. 2xx 로 받고 best-effort 저장한다.
+        User user = userRepository.save(new User("survey@example.com", "설문", null, "ACTIVE"));
 
         mockMvc.perform(put("/api/v1/users/me/preferences")
                         .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(user.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"householdSize":0,"budget":-1,"spicyAvoid":true,"priority":""}
+                                {"household":"2인","lifestyles":["신선한","저렴한"],"spicyAvoid":false,"allergens":["난류","우유"]}
                                 """))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error.code").value("COMMON_VALIDATION_FAILED"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.householdSize").value(2))
+                .andExpect(jsonPath("$.data.priority").value("신선한"))
+                .andExpect(jsonPath("$.data.allergyCodes.length()").value(2));
+    }
+
+    @Test
+    void preferenceToleratesEmptyBody() throws Exception {
+        // 빈/누락 바디도 검증 400 없이 통과해야 한다(설문 건너뛰기 등).
+        User user = userRepository.save(new User("empty-pref@example.com", "빈설문", null, "ACTIVE"));
+
+        mockMvc.perform(put("/api/v1/users/me/preferences")
+                        .header("Authorization", "Bearer " + jwtTokenProvider.createAccessToken(user.getId()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isOk());
     }
 
     private record UpdateRequest(String nickname, String profileImageUrl) {

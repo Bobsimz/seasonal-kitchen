@@ -5,9 +5,13 @@ import com.seasonaldining.common.exception.ErrorCode;
 import com.seasonaldining.favorite.repository.FavoriteRepository;
 import com.seasonaldining.ingredient.entity.Ingredient;
 import com.seasonaldining.ingredient.repository.IngredientRepository;
+import com.seasonaldining.order.repository.OrderRepository;
+import com.seasonaldining.price.entity.PriceSnapshot;
 import com.seasonaldining.price.repository.PriceAlertRepository;
+import com.seasonaldining.price.repository.PriceSnapshotRepository;
 import com.seasonaldining.producer.entity.Producer;
 import com.seasonaldining.producer.repository.ProducerRepository;
+import com.seasonaldining.producer.repository.ProducerReviewRepository;
 import com.seasonaldining.user.dto.request.UpdateUserProfileRequest;
 import com.seasonaldining.user.dto.request.UpdateUserPreferenceRequest;
 import com.seasonaldining.user.dto.response.MyPageSummaryResponse;
@@ -36,6 +40,9 @@ public class UserService {
     private final PriceAlertRepository priceAlertRepository;
     private final IngredientRepository ingredientRepository;
     private final ProducerRepository producerRepository;
+    private final OrderRepository orderRepository;
+    private final ProducerReviewRepository producerReviewRepository;
+    private final PriceSnapshotRepository priceSnapshotRepository;
 
     public UserService(
             UserRepository userRepository,
@@ -44,7 +51,10 @@ public class UserService {
             FavoriteRepository favoriteRepository,
             PriceAlertRepository priceAlertRepository,
             IngredientRepository ingredientRepository,
-            ProducerRepository producerRepository
+            ProducerRepository producerRepository,
+            OrderRepository orderRepository,
+            ProducerReviewRepository producerReviewRepository,
+            PriceSnapshotRepository priceSnapshotRepository
     ) {
         this.userRepository = userRepository;
         this.userPreferenceRepository = userPreferenceRepository;
@@ -53,24 +63,38 @@ public class UserService {
         this.priceAlertRepository = priceAlertRepository;
         this.ingredientRepository = ingredientRepository;
         this.producerRepository = producerRepository;
+        this.orderRepository = orderRepository;
+        this.producerReviewRepository = producerReviewRepository;
+        this.priceSnapshotRepository = priceSnapshotRepository;
     }
 
     @Transactional
     public UserPreferenceResponse updatePreference(Long userId, UpdateUserPreferenceRequest request) {
         getUserOrThrow(userId);
+        // 모든 필드 선택값 — 보낸 만큼만 저장하고 누락분은 기존값/안전한 기본값으로 유지한다.
+        // entity 의 householdSize 는 not-null primitive 이므로 null 이면 기본 1, priority 는 빈 문자열.
+        Integer householdSize = request.resolvedHouseholdSize();
+        String priority = request.resolvedPriority();
         UserPreference preference = userPreferenceRepository.findById(userId)
                 .orElseGet(() -> new UserPreference(
                         userId,
-                        request.householdSize(),
+                        householdSize != null ? householdSize : 1,
                         request.budget(),
-                        request.spicyAvoid(),
-                        request.priority()
+                        request.spicyAvoid() != null && request.spicyAvoid(),
+                        priority != null ? priority : ""
                 ));
-        preference.update(request.householdSize(), request.budget(), request.spicyAvoid(), request.priority());
+        preference.update(
+                householdSize != null ? householdSize : preference.getHouseholdSize(),
+                request.budget() != null ? request.budget() : preference.getBudget(),
+                request.spicyAvoid() != null ? request.spicyAvoid() : preference.isSpicyAvoid(),
+                priority != null ? priority : preference.getPriority()
+        );
         UserPreference savedPreference = userPreferenceRepository.save(preference);
-        if (request.allergyCodes() != null) {
+        List<String> allergyCodes = request.resolvedAllergyCodes();
+        if (allergyCodes != null) {
             userAllergyRepository.deleteByUserId(userId);
-            userAllergyRepository.saveAll(request.allergyCodes().stream()
+            userAllergyRepository.saveAll(allergyCodes.stream()
+                    .filter(code -> code != null && !code.isBlank())
                     .distinct()
                     .map(code -> new UserAllergy(userId, code))
                     .toList());
@@ -93,30 +117,22 @@ public class UserService {
     @Transactional(readOnly = true)
     public MyPageSummaryResponse getSummary(Long userId) {
         User user = getUserOrThrow(userId);
-        UserPreference preference = userPreferenceRepository.findById(userId).orElse(null);
         long favoriteCount = favoriteRepository.countByUserId(userId);
         long activeAlertCount = priceAlertRepository.countByUserIdAndActiveTrue(userId);
-        List<MyPageSummaryResponse.PersonalizedIngredientResponse> personalizedIngredients =
+        long orderCount = orderRepository.countByUserId(userId);
+        long reviewCount = producerReviewRepository.countByUserId(userId);
+
+        List<MyPageSummaryResponse.PersonalizedIngredientResponse> personalized =
                 ingredientRepository.findByActiveTrue(PageRequest.of(0, 4)).getContent().stream()
                         .map(this::toPersonalizedIngredientResponse)
                         .toList();
 
         return new MyPageSummaryResponse(
-                new MyPageSummaryResponse.ProfileResponse(user.getId(), user.getNickname(), user.getProfileImageUrl()),
-                new MyPageSummaryResponse.StatsResponse(BigDecimal.ZERO, favoriteCount, activeAlertCount, 0),
-                preference == null
-                        ? new MyPageSummaryResponse.PreferenceSummaryResponse(null, null, null)
-                        : new MyPageSummaryResponse.PreferenceSummaryResponse(
-                        preference.getHouseholdSize(),
-                        preference.isSpicyAvoid(),
-                        preference.getPriority()
-                ),
-                allergyCodes(userId),
-                personalizedIngredients,
-                List.of(
-                        new MyPageSummaryResponse.MenuRowResponse("favorites", "찜한 콘텐츠", favoriteCount),
-                        new MyPageSummaryResponse.MenuRowResponse("priceAlerts", "가격 알림", activeAlertCount)
-                )
+                new MyPageSummaryResponse.UserBlock(user.getId(), user.getNickname(), user.getProfileImageUrl()),
+                // savedAmount: best-effort — 산정 소스가 없어 0으로 둔다(FE 가 허용).
+                new MyPageSummaryResponse.StatsResponse(BigDecimal.ZERO, orderCount, reviewCount),
+                new MyPageSummaryResponse.CountsResponse(orderCount, favoriteCount, activeAlertCount, reviewCount),
+                personalized
         );
     }
 
@@ -157,12 +173,21 @@ public class UserService {
     }
 
     private MyPageSummaryResponse.PersonalizedIngredientResponse toPersonalizedIngredientResponse(Ingredient ingredient) {
+        // 최신 시세 스냅샷에서 현재가/단위/추세를 best-effort 로 채운다. 없으면 가격 필드는 null.
+        PriceSnapshot latest = priceSnapshotRepository
+                .findFirstByIngredientIdOrderByObservedDateDescIdDesc(ingredient.getId())
+                .orElse(null);
+        BigDecimal currentPrice = latest != null ? latest.getPrice() : null;
+        String unit = latest != null ? latest.getUnit() : ingredient.getBaseUnit();
         return new MyPageSummaryResponse.PersonalizedIngredientResponse(
                 ingredient.getId(),
                 ingredient.getName(),
                 ingredient.getCategory(),
                 ingredient.getImageUrl(),
-                List.of("추천", ingredient.getCategory())
+                currentPrice,
+                unit,
+                null,
+                null
         );
     }
 }

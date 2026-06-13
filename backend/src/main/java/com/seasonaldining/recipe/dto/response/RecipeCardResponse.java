@@ -15,11 +15,11 @@ public record RecipeCardResponse(
         @Schema(description = "난이도", example = "EASY")
         String difficulty,
         @Schema(description = "조리 시간(분)", example = "30")
-        int minutes,
+        int cookMinutes,
         @Schema(description = "인분", example = "2")
         int servings,
         @Schema(description = "좋아요 수", example = "84000")
-        long likeCount,
+        long likes,
         @Schema(description = "조회 수", example = "1240000")
         long viewCount,
         @Schema(description = "크리에이터 이름", example = "쿠킹맘", nullable = true)
@@ -27,6 +27,8 @@ public record RecipeCardResponse(
         @Schema(description = "태그 목록")
         List<String> tags,
         @Schema(description = "제철 레시피 여부", example = "false")
-        boolean seasonal
+        boolean seasonal,
+        @Schema(description = "주요 재료명 목록")
+        List<String> mainIngredients
 ) {
 }

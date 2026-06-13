@@ -18,19 +18,21 @@ public record RecipeDetailResponse(
         @Schema(description = "난이도", example = "EASY")
         String difficulty,
         @Schema(description = "조리 시간(분)", example = "30")
-        int minutes,
+        int cookMinutes,
         @Schema(description = "인분", example = "2")
         int servings,
         @Schema(description = "레시피 재료 목록")
         List<RecipeIngredientResponse> ingredients,
         @Schema(description = "예상 총 재료비", example = "7800", nullable = true)
-        BigDecimal estimatedTotal,
+        BigDecimal estimatedCost,
         @Schema(description = "태그 목록")
         List<String> tags,
         @Schema(description = "크리에이터 이름", example = "쿠킹맘", nullable = true)
         String creatorName,
         @Schema(description = "좋아요 수", example = "84000")
-        long likeCount,
+        long likes,
+        @Schema(description = "관련 릴스 ID 목록")
+        List<Long> relatedReelIds,
         @Schema(description = "관련 릴스 목록")
         List<RelatedReelResponse> relatedReels
 ) {

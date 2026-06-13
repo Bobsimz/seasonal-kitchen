@@ -24,22 +24,24 @@ public interface ProducerOfferRepository extends JpaRepository<ProducerOffer, Lo
      * q는 상품명(title)·식재료명·농가명 부분일치. category는 정확일치, region은 부분일치, style은 정확일치.
      * 모든 필터는 null이면 무시. status=HIDDEN(소프트 삭제)은 제외.
      */
+    // 주의: :q / :region 은 cast(... as string)로 명시 타입을 준다. Postgres에서 untyped null 파라미터를
+    // concat/lower 에 넣으면 bytea 로 추론돼 "function lower(bytea) does not exist" 오류가 발생한다.
     @Query(value = "select o from ProducerOffer o, com.seasonaldining.producer.entity.Producer p " +
             "where o.producerId = p.id and o.status = 'ACTIVE' " +
-            "and (:q is null or lower(o.title) like lower(concat('%', :q, '%')) " +
-            "     or lower(o.ingredientName) like lower(concat('%', :q, '%')) " +
-            "     or lower(p.name) like lower(concat('%', :q, '%'))) " +
+            "and (:q is null or lower(o.title) like lower(concat('%', cast(:q as string), '%')) " +
+            "     or lower(o.ingredientName) like lower(concat('%', cast(:q as string), '%')) " +
+            "     or lower(p.name) like lower(concat('%', cast(:q as string), '%'))) " +
             "and (:category is null or o.category = :category) " +
-            "and (:region is null or lower(p.region) like lower(concat('%', :region, '%'))) " +
+            "and (:region is null or lower(p.region) like lower(concat('%', cast(:region as string), '%'))) " +
             "and (:style is null or p.style = :style) " +
             "order by o.id desc",
             countQuery = "select count(o) from ProducerOffer o, com.seasonaldining.producer.entity.Producer p " +
             "where o.producerId = p.id and o.status = 'ACTIVE' " +
-            "and (:q is null or lower(o.title) like lower(concat('%', :q, '%')) " +
-            "     or lower(o.ingredientName) like lower(concat('%', :q, '%')) " +
-            "     or lower(p.name) like lower(concat('%', :q, '%'))) " +
+            "and (:q is null or lower(o.title) like lower(concat('%', cast(:q as string), '%')) " +
+            "     or lower(o.ingredientName) like lower(concat('%', cast(:q as string), '%')) " +
+            "     or lower(p.name) like lower(concat('%', cast(:q as string), '%'))) " +
             "and (:category is null or o.category = :category) " +
-            "and (:region is null or lower(p.region) like lower(concat('%', :region, '%'))) " +
+            "and (:region is null or lower(p.region) like lower(concat('%', cast(:region as string), '%'))) " +
             "and (:style is null or p.style = :style)")
     Page<ProducerOffer> searchProducts(@Param("q") String q, @Param("category") String category,
                                        @Param("region") String region, @Param("style") String style,

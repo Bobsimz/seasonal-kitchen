@@ -130,10 +130,8 @@ class ProducerSelfRegistrationTest {
     }
 
     @Test
-    void getMyProducer_whenNoneRegistered_throwsNotFound() {
-        assertThatThrownBy(() -> producerService.getMyProducer(userId2))
-                .isInstanceOf(BusinessException.class)
-                .satisfies(e -> assertThat(((BusinessException) e).getErrorCode())
-                        .isEqualTo(ErrorCode.PRODUCER_NOT_FOUND));
+    void getMyProducer_whenNoneRegistered_returnsNull() {
+        // 미등록 사용자는 404가 아니라 200 + null 로 응답한다(프론트 셀러 페이지가 등록 CTA를 보이도록).
+        assertThat(producerService.getMyProducer(userId2)).isNull();
     }
 }

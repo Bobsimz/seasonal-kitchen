@@ -51,11 +51,11 @@ public class HomeService {
                                 reel.recipeId(),
                                 reel.title(),
                                 reel.thumbnailUrl(),
-                                reel.viewCount(),
-                                reel.likeCount(),
+                                reel.views(),
+                                reel.likes(),
                                 reel.creatorName(),
                                 reel.durationSeconds(),
-                                reel.ingredientTags()
+                                reel.ingredients()
                         ))
                         .toList(),
                 searchService.trending(),
@@ -65,22 +65,17 @@ public class HomeService {
 
     /** 식재료 카드 → 홈 히어로 카드. 가격/추세 라벨은 표시용 문자열로 미리 만들어 내려준다. */
     private static HomeResponse.HeroResponse toHero(IngredientCardResponse card) {
-        IngredientCardResponse.PriceSummaryResponse price = card.price();
-
+        // 카드의 flat 가격 필드로부터 표시용 라벨을 만든다(예: "4,500원/봉").
         String priceLabel = null;
-        if (price != null && price.currentPrice() != null) {
-            priceLabel = String.format("%,d원", price.currentPrice().longValue());
-            if (price.unit() != null && !price.unit().isBlank()) {
-                priceLabel += "/" + price.unit();
+        if (card.currentPrice() != null) {
+            priceLabel = String.format("%,d원", card.currentPrice().longValue());
+            if (card.unit() != null && !card.unit().isBlank()) {
+                priceLabel += "/" + card.unit();
             }
         }
 
-        String trendLabel = null;
-        if (price != null && price.weekChangeRate() != null) {
-            int sign = price.weekChangeRate().signum();
-            String arrow = sign < 0 ? "▼" : sign > 0 ? "▲" : "−";
-            trendLabel = arrow + " " + price.weekChangeRate().abs().stripTrailingZeros().toPlainString() + "%";
-        }
+        // 추세 라벨은 카드의 변동 라벨(예: "-15%")을 그대로 사용한다.
+        String trendLabel = card.priceChangeLabel();
 
         return new HomeResponse.HeroResponse(
                 card.name(),
