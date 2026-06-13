@@ -16,12 +16,14 @@ export function AppHeader({ title, back = false, onBack, right, transparent = fa
       className={cn(
         // 데스크탑(sm+)에서는 둥근 프레임 상단 코너에서 살짝 내려오도록 위쪽 패딩을 더한다.
         'sticky top-0 z-30 flex min-h-14 items-center gap-1 px-2 sm:pt-3',
-        transparent ? 'bg-transparent text-white' : 'border-b border-line-soft bg-white/95 text-ink backdrop-blur-xl',
+        // 투명 헤더는 히어로 위에 얹히므로, 헤더 영역의 탭이 아래 콘텐츠(예: 찜 하트)로 통과되도록
+        // 컨테이너는 pointer-events-none, 실제 버튼만 pointer-events-auto 로 되살린다.
+        transparent ? 'pointer-events-none bg-transparent text-white' : 'border-b border-line-soft bg-white/95 text-ink backdrop-blur-xl',
         className,
       )}
     >
       {back ? (
-        <button onClick={handleBack} aria-label="뒤로" className="tap grid h-10 w-10 shrink-0 place-items-center">
+        <button onClick={handleBack} aria-label="뒤로" className="tap pointer-events-auto grid h-10 w-10 shrink-0 place-items-center">
           <ChevronLeft size={24} className={transparent ? 'text-white' : 'text-ink'} />
         </button>
       ) : (
@@ -36,7 +38,7 @@ export function AppHeader({ title, back = false, onBack, right, transparent = fa
       >
         {title}
       </h1>
-      {right && <div className="flex shrink-0 items-center gap-0.5 pr-1">{right}</div>}
+      {right && <div className="pointer-events-auto flex shrink-0 items-center gap-0.5 pr-1">{right}</div>}
     </header>
   );
 }
