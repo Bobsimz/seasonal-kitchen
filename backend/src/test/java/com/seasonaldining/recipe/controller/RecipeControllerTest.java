@@ -130,6 +130,24 @@ class RecipeControllerTest {
     }
 
     @Test
+    void recipeDetailShowsNonAgriculturalIngredientsAsTextWithoutLink() throws Exception {
+        Ingredient ingredient = ingredientRepository.save(new Ingredient("무", "채소", null, "1개", true));
+        Recipe recipe = recipeRepository.save(new Recipe("무조림", "간단한 반찬", null, "EASY", 30, 2, "PUBLISHED"));
+        // 농산물 — ingredient_id 연결 (상세 링크 대상)
+        recipeIngredientRepository.save(new RecipeIngredient(recipe.getId(), ingredient.getId(), new BigDecimal("1.00"), "개", false));
+        // 비농산물(양념) — ingredient_id 없이 자유 텍스트 이름만
+        recipeIngredientRepository.save(new RecipeIngredient(recipe.getId(), null, "간장", new BigDecimal("3.00"), "스푼", false));
+
+        mockMvc.perform(get("/api/v1/recipes/{recipeId}", recipe.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.ingredients.length()").value(2))
+                .andExpect(jsonPath("$.data.ingredients[0].ingredientId").value(ingredient.getId()))
+                .andExpect(jsonPath("$.data.ingredients[0].ingredientName").value("무"))
+                .andExpect(jsonPath("$.data.ingredients[1].ingredientId").doesNotExist())
+                .andExpect(jsonPath("$.data.ingredients[1].ingredientName").value("간장"));
+    }
+
+    @Test
     void recipeDetailNotFound() throws Exception {
         mockMvc.perform(get("/api/v1/recipes/{recipeId}", 99999L))
                 .andExpect(status().isNotFound())

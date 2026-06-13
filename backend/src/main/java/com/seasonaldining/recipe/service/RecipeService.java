@@ -3,6 +3,7 @@ package com.seasonaldining.recipe.service;
 import com.seasonaldining.common.exception.BusinessException;
 import com.seasonaldining.common.exception.ErrorCode;
 import com.seasonaldining.common.response.ListResponse;
+import com.seasonaldining.common.storage.MediaUrlResolver;
 import com.seasonaldining.ingredient.entity.Ingredient;
 import com.seasonaldining.ingredient.repository.IngredientRepository;
 import com.seasonaldining.price.entity.PriceSnapshot;
@@ -46,6 +47,7 @@ public class RecipeService {
     private final ReelRepository reelRepository;
     private final CreatorRepository creatorRepository;
     private final ReelReactionRepository reelReactionRepository;
+    private final MediaUrlResolver mediaUrls;
 
     public RecipeService(
             RecipeRepository recipeRepository,
@@ -55,7 +57,8 @@ public class RecipeService {
             PriceSnapshotRepository priceSnapshotRepository,
             ReelRepository reelRepository,
             CreatorRepository creatorRepository,
-            ReelReactionRepository reelReactionRepository
+            ReelReactionRepository reelReactionRepository,
+            MediaUrlResolver mediaUrls
     ) {
         this.recipeRepository = recipeRepository;
         this.recipeIngredientRepository = recipeIngredientRepository;
@@ -65,6 +68,7 @@ public class RecipeService {
         this.reelRepository = reelRepository;
         this.creatorRepository = creatorRepository;
         this.reelReactionRepository = reelReactionRepository;
+        this.mediaUrls = mediaUrls;
     }
 
     public List<RecipeStepResponse> getRecipeSteps(Long recipeId) {
@@ -78,7 +82,7 @@ public class RecipeService {
         Recipe recipe = getPublishedRecipeOrThrow(recipeId);
         List<RecipeIngredient> recipeIngredients = recipeIngredientRepository.findByRecipeIdOrderByIdAsc(recipeId);
         Map<Long, Ingredient> ingredients = ingredientRepository.findAllById(
-                        recipeIngredients.stream().map(RecipeIngredient::getIngredientId).toList()
+                        recipeIngredients.stream().map(RecipeIngredient::getIngredientId).filter(Objects::nonNull).toList()
                 ).stream()
                 .collect(Collectors.toMap(Ingredient::getId, Function.identity()));
 
@@ -90,7 +94,7 @@ public class RecipeService {
                 recipe.getId(),
                 recipe.getTitle(),
                 recipe.getDescription(),
-                recipe.getImageUrl(),
+                mediaUrls.resolve(recipe.getImageUrl()),
                 recipe.getDifficulty(),
                 recipe.getMinutes(),
                 recipe.getServings(),
@@ -114,12 +118,12 @@ public class RecipeService {
     private RecipeIngredientResponse toIngredientResponse(RecipeIngredient recipeIngredient, Ingredient ingredient) {
         return new RecipeIngredientResponse(
                 recipeIngredient.getIngredientId(),
-                ingredient == null ? null : ingredient.getName(),
+                ingredient != null ? ingredient.getName() : recipeIngredient.getName(),
                 recipeIngredient.getQuantity(),
                 recipeIngredient.getUnit(),
                 recipeIngredient.isOptional(),
                 ingredient == null ? null : ingredient.getImageUrl(),
-                latestPrice(recipeIngredient.getIngredientId()),
+                ingredient == null ? null : latestPrice(recipeIngredient.getIngredientId()),
                 null
         );
     }
@@ -155,7 +159,7 @@ public class RecipeService {
                 recipe.getId(),
                 recipe.getTitle(),
                 recipe.getDescription(),
-                recipe.getImageUrl(),
+                mediaUrls.resolve(recipe.getImageUrl()),
                 recipe.getDifficulty(),
                 recipe.getMinutes(),
                 recipe.getServings(),
@@ -177,7 +181,7 @@ public class RecipeService {
                 .map(reel -> new RecipeDetailResponse.RelatedReelResponse(
                         reel.getId(),
                         reel.getTitle(),
-                        reel.getThumbnailUrl(),
+                        mediaUrls.resolve(reel.getThumbnailUrl()),
                         creatorRepository.findById(reel.getCreatorId()).map(c -> c.getDisplayName()).orElse(null),
                         reelReactionRepository.countByReelIdAndReactionType(reel.getId(), ReelReaction.LIKE),
                         reel.getDurationSeconds(),
