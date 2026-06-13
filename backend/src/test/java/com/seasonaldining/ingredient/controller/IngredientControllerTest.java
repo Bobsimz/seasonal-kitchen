@@ -16,6 +16,7 @@ import com.seasonaldining.recipe.entity.RecipeIngredient;
 import com.seasonaldining.recipe.repository.IngredientSubstituteRepository;
 import com.seasonaldining.recipe.repository.RecipeIngredientRepository;
 import com.seasonaldining.recipe.repository.RecipeRepository;
+import com.seasonaldining.common.storage.MediaUrlResolver;
 import com.seasonaldining.store.entity.Store;
 import com.seasonaldining.store.entity.StoreOffer;
 import com.seasonaldining.store.repository.StoreOfferRepository;
@@ -78,6 +79,9 @@ class IngredientControllerTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private MediaUrlResolver mediaUrls;
+
     @BeforeEach
     void setUp() {
         UserDataCleaner.clean(jdbcTemplate);
@@ -139,6 +143,24 @@ class IngredientControllerTest {
                 .andExpect(jsonPath("$.data.id").value(ingredient.getId()))
                 .andExpect(jsonPath("$.data.name").value("무"))
                 .andExpect(jsonPath("$.data.baseUnit").value("1개"));
+    }
+
+    @Test
+    void relatedRecipesResolveImageUrlToPublicBase() throws Exception {
+        // recipes.image_url 은 상대키(dishes/{id}.jpg)로 저장되므로, 관련 레시피 카드도
+        // RecipeService 와 동일하게 MediaUrlResolver 로 CloudFront(public-base-url)를 붙여 내려줘야 한다.
+        Ingredient ingredient = ingredientRepository.save(new Ingredient("무", "채소", null, "1개", true));
+        Recipe recipe = recipeRepository.save(
+                new Recipe("무조림", "달콤 짭짤한 무조림", "dishes/777.jpg", "EASY", 30, 2, "PUBLISHED"));
+        recipeIngredientRepository.save(
+                new RecipeIngredient(recipe.getId(), ingredient.getId(), new BigDecimal("1"), "개", false));
+
+        mockMvc.perform(get("/api/v1/ingredients/{ingredientId}/recipes", ingredient.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data[0].id").value(recipe.getId()))
+                .andExpect(jsonPath("$.data[0].imageUrl").value(mediaUrls.resolve("dishes/777.jpg")));
     }
 
     @Test

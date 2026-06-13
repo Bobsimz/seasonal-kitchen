@@ -3,6 +3,7 @@ package com.seasonaldining.ingredient.service;
 import com.seasonaldining.common.exception.BusinessException;
 import com.seasonaldining.common.exception.ErrorCode;
 import com.seasonaldining.common.response.ListResponse;
+import com.seasonaldining.common.storage.MediaUrlResolver;
 import com.seasonaldining.ingredient.dto.response.IngredientCardResponse;
 import com.seasonaldining.ingredient.dto.response.IngredientDetailResponse;
 import com.seasonaldining.ingredient.dto.response.IngredientOfferResponse;
@@ -55,6 +56,7 @@ public class IngredientService {
     private final StoreRepository storeRepository;
     private final RecipeIngredientRepository recipeIngredientRepository;
     private final RecipeRepository recipeRepository;
+    private final MediaUrlResolver mediaUrls;
 
     public IngredientService(
             IngredientRepository ingredientRepository,
@@ -66,7 +68,8 @@ public class IngredientService {
             StoreOfferRepository storeOfferRepository,
             StoreRepository storeRepository,
             RecipeIngredientRepository recipeIngredientRepository,
-            RecipeRepository recipeRepository
+            RecipeRepository recipeRepository,
+            MediaUrlResolver mediaUrls
     ) {
         this.ingredientRepository = ingredientRepository;
         this.priceSnapshotRepository = priceSnapshotRepository;
@@ -78,6 +81,7 @@ public class IngredientService {
         this.storeRepository = storeRepository;
         this.recipeIngredientRepository = recipeIngredientRepository;
         this.recipeRepository = recipeRepository;
+        this.mediaUrls = mediaUrls;
     }
 
     public List<IngredientSubstituteResponse> getSubstitutes(Long ingredientId) {
@@ -192,7 +196,7 @@ public class IngredientService {
                 .filter(recipe -> "PUBLISHED".equals(recipe.getStatus()))
                 .collect(Collectors.toMap(Recipe::getId, Function.identity()));
         return recipeIds.stream().map(recipes::get).filter(Objects::nonNull)
-                .map(recipe -> new RecipeCardResponse(recipe.getId(), recipe.getTitle(), recipe.getDescription(), recipe.getImageUrl(), recipe.getDifficulty(), recipe.getMinutes(), recipe.getServings(), 0, 0, null, List.of(recipe.getDifficulty(), recipe.getMinutes() + "분"), false, List.of()))
+                .map(recipe -> new RecipeCardResponse(recipe.getId(), recipe.getTitle(), recipe.getDescription(), mediaUrls.resolve(recipe.getImageUrl()), recipe.getDifficulty(), recipe.getMinutes(), recipe.getServings(), 0, 0, null, List.of(recipe.getDifficulty(), recipe.getMinutes() + "분"), false, List.of()))
                 .toList();
     }
 
