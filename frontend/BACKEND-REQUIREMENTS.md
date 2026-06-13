@@ -140,8 +140,8 @@ UI에 카카오/Apple/구글 버튼이 있으나 비활성(준비 중)입니다.
 | 상태 | 우선 | 대상 | 설명 |
 | --- | --- | --- | --- |
 | ✅ 기구현 | — | `GET /products/{id}` `options[]` | 옵션(규격/variant)은 `offer_options` 테이블 + `ProductDetailResponse.options(OptionResponse{id,quantity,unit,price})`로 **이미 구현됨**. 프론트는 그대로 소비(라벨=`${quantity}${unit}`). 옵션 없는 상품은 `options=[]` → 프론트가 기준가 단일 옵션으로 폴백. |
-| ✅ 신규 | P1 | `GET /products/{id}` `detailSections[]` | **구현됨 (2026-06-13)**: `ProductDetailResponse.detailSections`(`{heading, body}`, sort_order asc). 새 테이블 `offer_detail_sections(offer_id, heading, body, sort_order)` (V31). 데이터 없으면 `[]` → 프론트 `description` 폴백. ※ 판매자 작성(offer 등록/수정 시 섹션 입력)은 후속 — 현재는 읽기 계약 + 테이블만(시드/DB로 주입 가능). |
-| ✅ 보강 | P1 | `POST /cart/items` `offerOptionId` | **구현됨 (2026-06-13)**: 요청 `{offerId, qty, offerOptionId?}`. `offerOptionId` 있으면 해당 옵션 단가/단위/라벨(`수량+단위`, 예 `3kg`)로 라인 생성, 같은 offer라도 옵션 다르면 별도 라인(병합 키 `cart_id+offer_id+offer_option_id`, V32). 응답 `CartResponse.Item`에 `offerOptionId`·`optionLabel` 추가. 옵션이 그 offer 소속 아니면 `OFFER_OPTION_NOT_FOUND`. |
+| ✅ 신규 | P1 | `GET /products/{id}` `detailSections[]` | **구현됨 (2026-06-13)**: `ProductDetailResponse.detailSections`(`{imageUrl?, heading, body}`, sort_order asc). 새 테이블 `offer_detail_sections(offer_id, image_url, heading, body, sort_order)` (V34). `imageUrl`은 **nullable**(섹션별 상세 이미지 — 없으면 텍스트만 렌더). 데이터 없으면 `[]` → 프론트 `description` 폴백. ※ 판매자 작성(offer 등록/수정 시 섹션 입력)은 후속 — 현재는 읽기 계약 + 테이블만(시드/DB로 주입 가능). |
+| ✅ 보강 | P1 | `POST /cart/items` `offerOptionId` | **구현됨 (2026-06-13)**: 요청 `{offerId, qty, offerOptionId?}`. `offerOptionId` 있으면 해당 옵션 단가/단위/라벨(`수량+단위`, 예 `3kg`)로 라인 생성, 같은 offer라도 옵션 다르면 별도 라인(병합 키 `cart_id+offer_id+offer_option_id`, V35). 응답 `CartResponse.Item`에 `offerOptionId`·`optionLabel` 추가. 옵션이 그 offer 소속 아니면 `OFFER_OPTION_NOT_FOUND`. |
 | ⬜ 선택 | P2 | `favorites` `targetType=PRODUCT` | 상품(=offer) 찜. 현재 데모 스토어로 동작(§3의 PRODUCT·OFFER "추후"와 연결). 실제 구현 시 `targetType=PRODUCT, targetId=offerId` 저장 + 요약(상품명/첫사진/가격·단위) 반환. |
 
 - 프론트 임시 대응: `endpoints.getProduct(id)` → 연결/오류 시 `mock.productDetail(id)` 폴백(옵션 3종 + detailSections 3종 생성). 장바구니는 `addCartItem(offerId, qty, option)`로 옵션 단가/라벨을 데모 스토어 라인에 스냅샷.

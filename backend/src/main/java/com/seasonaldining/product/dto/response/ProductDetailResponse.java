@@ -45,6 +45,7 @@ public record ProductDetailResponse(
 
     @Schema(description = "상품 상세정보 섹션")
     public record DetailSectionResponse(
+            @Schema(description = "섹션 이미지 URL(없으면 텍스트만 렌더)", nullable = true) String imageUrl,
             @Schema(description = "섹션 제목", example = "재배 환경") String heading,
             @Schema(description = "섹션 본문", example = "해남 황토밭에서 무농약으로 재배했습니다.") String body
     ) {}

@@ -105,7 +105,7 @@ public class ProductService {
                         .stream().map(RecipeIngredient::getRecipeId).distinct().toList();
         List<ProductDetailResponse.DetailSectionResponse> detailSections =
                 offerDetailSectionRepository.findByOfferIdOrderBySortOrderAsc(id).stream()
-                        .map(s -> new ProductDetailResponse.DetailSectionResponse(s.getHeading(), s.getBody()))
+                        .map(s -> new ProductDetailResponse.DetailSectionResponse(s.getImageUrl(), s.getHeading(), s.getBody()))
                         .toList();
 
         return new ProductDetailResponse(

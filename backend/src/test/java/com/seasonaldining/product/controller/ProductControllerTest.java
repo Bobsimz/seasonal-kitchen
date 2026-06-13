@@ -128,14 +128,17 @@ class ProductControllerTest {
     @Test
     void getProduct_includesDetailSections_orderedBySortOrder() throws Exception {
         jdbc.update("INSERT INTO offer_detail_sections (offer_id, heading, body, sort_order) VALUES (?, '보관법', '냉장 5일', 1)", OFFER_IN_STOCK);
-        jdbc.update("INSERT INTO offer_detail_sections (offer_id, heading, body, sort_order) VALUES (?, '재배 환경', '해남 황토밭 무농약', 0)", OFFER_IN_STOCK);
+        jdbc.update("INSERT INTO offer_detail_sections (offer_id, image_url, heading, body, sort_order) VALUES (?, 'https://img/farm.png', '재배 환경', '해남 황토밭 무농약', 0)", OFFER_IN_STOCK);
 
         mvc.perform(get("/api/v1/products/" + OFFER_IN_STOCK)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.detailSections.length()").value(2))
-                // sort_order asc → 재배 환경(0)이 먼저
+                // sort_order asc → 재배 환경(0)이 먼저, 섹션 이미지 포함
                 .andExpect(jsonPath("$.data.detailSections[0].heading").value("재배 환경"))
                 .andExpect(jsonPath("$.data.detailSections[0].body").value("해남 황토밭 무농약"))
-                .andExpect(jsonPath("$.data.detailSections[1].heading").value("보관법"));
+                .andExpect(jsonPath("$.data.detailSections[0].imageUrl").value("https://img/farm.png"))
+                // 이미지 없는 섹션은 imageUrl=null
+                .andExpect(jsonPath("$.data.detailSections[1].heading").value("보관법"))
+                .andExpect(jsonPath("$.data.detailSections[1].imageUrl").value(org.hamcrest.Matchers.nullValue()));
     }
 
     @Test

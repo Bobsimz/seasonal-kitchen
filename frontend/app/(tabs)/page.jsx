@@ -52,7 +52,7 @@ export default function HomePage() {
           {/* 제철 식재료 */}
           <Section title="지금 제철 식재료" action={<MoreLink href="/info" />}>
             <div className="flex gap-3 overflow-x-auto phone-scroll px-4 pb-1">
-              {data.seasonalIngredients.map((i) => (
+              {data.ingredients.map((i) => (
                 <IngredientCard key={i.id} ingredient={i} />
               ))}
             </div>
@@ -61,7 +61,7 @@ export default function HomePage() {
           {/* 인기 레시피 */}
           <Section title="요즘 뜨는 레시피" action={<MoreLink href="/info?tab=recipe" />}>
             <div className="flex gap-3 overflow-x-auto phone-scroll px-4 pb-1">
-              {data.trendingRecipes.map((r) => (
+              {data.recipes.map((r) => (
                 <RecipeCard key={r.id} recipe={r} width={168} className="shrink-0" />
               ))}
             </div>
@@ -70,7 +70,7 @@ export default function HomePage() {
           {/* 레시피 릴스 */}
           <Section title="레시피 릴스" action={<MoreLink href="/reels" />}>
             <div className="flex gap-3 overflow-x-auto phone-scroll px-4 pb-1">
-              {data.trendingReels.map((r) => (
+              {data.reels.map((r) => (
                 <ReelThumb key={r.id} reel={r} />
               ))}
             </div>

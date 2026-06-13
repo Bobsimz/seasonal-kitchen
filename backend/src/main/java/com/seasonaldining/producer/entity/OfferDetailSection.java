@@ -12,6 +12,8 @@ public class OfferDetailSection {
     private Long id;
     @Column(name = "offer_id", nullable = false)
     private Long offerId;
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
     @Column(nullable = false, length = 120)
     private String heading;
     @Column(nullable = false, length = 4000)
@@ -21,9 +23,10 @@ public class OfferDetailSection {
 
     protected OfferDetailSection() {}
 
-    public static OfferDetailSection of(Long offerId, String heading, String body, int sortOrder) {
+    public static OfferDetailSection of(Long offerId, String imageUrl, String heading, String body, int sortOrder) {
         OfferDetailSection s = new OfferDetailSection();
         s.offerId = offerId;
+        s.imageUrl = imageUrl;
         s.heading = heading;
         s.body = body;
         s.sortOrder = sortOrder;
@@ -32,6 +35,7 @@ public class OfferDetailSection {
 
     public Long getId() { return id; }
     public Long getOfferId() { return offerId; }
+    public String getImageUrl() { return imageUrl; }
     public String getHeading() { return heading; }
     public String getBody() { return body; }
     public int getSortOrder() { return sortOrder; }

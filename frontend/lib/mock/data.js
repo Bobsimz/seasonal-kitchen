@@ -291,15 +291,18 @@ export function productDetail(offerId) {
   const offer = producerOffers(Math.floor(id / 100)).find((o) => o.id === id);
   if (!offer) return null;
   const { unit, price, ingredientName, region, producerName, freshnessLabel } = offer;
+  const producerPhoto = getProducer(offer.producerId)?.photoUrl;
   const options = [
     { id: id * 10 + 1, quantity: 1, unit, price },
     { id: id * 10 + 2, quantity: 3, unit, price: round10(price * 3 * 0.95) },
     { id: id * 10 + 3, quantity: 5, unit, price: round10(price * 5 * 0.9) },
   ];
+  // detailSections — heading/body + (선택) imageUrl. 네이버식 상세처럼 일부 섹션에 이미지를 넣는다.
   const detailSections = [
     {
       heading: '산지 이야기',
       body: `${region} ${producerName} 농가에서 정성껏 기른 ${ingredientName}입니다. ${freshnessLabel} 기준으로 수확해 가장 신선한 상태로 산지직송합니다.`,
+      imageUrl: producerPhoto || vegImg(ingredientName) || FOOD_IMG[id % FOOD_IMG.length],
     },
     {
       heading: '보관 방법',
@@ -308,6 +311,7 @@ export function productDetail(offerId) {
     {
       heading: '이렇게 드세요',
       body: `${ingredientName}은(는) 데치거나 무침, 국·전골 등 다양하게 활용할 수 있어요. 제철 ${ingredientName}의 향과 식감을 그대로 즐겨보세요.`,
+      imageUrl: vegImg(ingredientName) || FOOD_IMG[id % FOOD_IMG.length],
     },
   ];
   return {
@@ -445,9 +449,9 @@ export function home() {
     unreadNotificationCount: 2,
     hero,
     heroes,
-    seasonalIngredients,
-    trendingRecipes: recipes.slice(0, 6),
-    trendingReels: reels,
+    ingredients: seasonalIngredients,
+    recipes: recipes.slice(0, 6),
+    reels,
     trendingKeywords: ['봄동', '무생채', '배추전', '시금치 페스토', '깍두기'],
   };
 }

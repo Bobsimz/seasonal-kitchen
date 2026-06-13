@@ -4,7 +4,8 @@ import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/cn';
 
-// 하단에서 올라오는 바텀시트. 모바일 프레임 내부(absolute inset-0)에 갇힙니다.
+// 하단에서 올라오는 바텀시트. fixed inset-0 — 모바일 프레임(MobileShell)의 translateZ 컨테이닝 블록 기준으로
+// 고정되어 프레임 안에 갇힌다. (absolute 로 두면 스크롤 컨테이너 main 의 콘텐츠 원점에 묶여 스크롤만큼 떠 보임)
 export function Sheet({ open, onClose, title, children, className }) {
   // ESC 로 닫기 (열려 있을 때만 리스너 부착).
   useEffect(() => {
@@ -19,7 +20,7 @@ export function Sheet({ open, onClose, title, children, className }) {
   return (
     <AnimatePresence>
       {open && (
-        <div className="absolute inset-0 z-[120] flex flex-col justify-end">
+        <div className="fixed inset-0 z-[120] flex flex-col justify-end">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

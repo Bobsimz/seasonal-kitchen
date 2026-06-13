@@ -2,6 +2,7 @@ package com.seasonaldining.reel.service;
 
 import com.seasonaldining.common.exception.BusinessException;
 import com.seasonaldining.common.exception.ErrorCode;
+import com.seasonaldining.common.storage.MediaUrlResolver;
 import com.seasonaldining.reel.dto.response.*;
 import com.seasonaldining.reel.entity.*;
 import com.seasonaldining.reel.repository.*;
@@ -19,12 +20,14 @@ public class ReelService {
     private final CreatorRepository creators;
     private final ReelReactionRepository reactions;
     private final ReelCommentRepository comments;
+    private final MediaUrlResolver mediaUrls;
 
-    public ReelService(ReelRepository reels, CreatorRepository creators, ReelReactionRepository reactions, ReelCommentRepository comments) {
+    public ReelService(ReelRepository reels, CreatorRepository creators, ReelReactionRepository reactions, ReelCommentRepository comments, MediaUrlResolver mediaUrls) {
         this.reels = reels;
         this.creators = creators;
         this.reactions = reactions;
         this.comments = comments;
+        this.mediaUrls = mediaUrls;
     }
 
     @Transactional(readOnly = true)
@@ -93,9 +96,9 @@ public class ReelService {
                 reel.getRecipeId(),
                 reel.getCreatorId(),
                 creator == null ? null : creator.getDisplayName(),
-                creator == null ? null : creator.getAvatarUrl(),
-                reel.getVideoUrl(),
-                reel.getThumbnailUrl(),
+                creator == null ? null : mediaUrls.resolve(creator.getAvatarUrl()),
+                mediaUrls.resolve(reel.getVideoUrl()),
+                mediaUrls.resolve(reel.getThumbnailUrl()),
                 reel.getTitle(),
                 reel.getDescription(),
                 tags(reel.getIngredientTags()),
