@@ -17,6 +17,7 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     Optional<Ingredient> findByIdAndActiveTrue(Long id);
     List<Ingredient> findTop20ByActiveTrueAndNameContainingIgnoreCaseOrderByIdDesc(String name);
     List<Ingredient> findByIdInAndActiveTrue(List<Long> ids);
+    List<Ingredient> findByNameInAndActiveTrue(List<String> names);
 
     /** 컬럼 정렬(name 등)용 — 활성 + 선택적 카테고리 필터. 정렬은 Pageable 로 전달. */
     @Query("""

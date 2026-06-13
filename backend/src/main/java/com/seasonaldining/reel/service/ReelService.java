@@ -3,6 +3,8 @@ package com.seasonaldining.reel.service;
 import com.seasonaldining.common.exception.BusinessException;
 import com.seasonaldining.common.exception.ErrorCode;
 import com.seasonaldining.common.storage.MediaUrlResolver;
+import com.seasonaldining.ingredient.entity.Ingredient;
+import com.seasonaldining.ingredient.repository.IngredientRepository;
 import com.seasonaldining.reel.dto.response.*;
 import com.seasonaldining.reel.entity.*;
 import com.seasonaldining.reel.repository.*;
@@ -24,14 +26,16 @@ public class ReelService {
     private final ReelReactionRepository reactions;
     private final ReelCommentRepository comments;
     private final UserRepository users;
+    private final IngredientRepository ingredients;
     private final MediaUrlResolver mediaUrls;
 
-    public ReelService(ReelRepository reels, CreatorRepository creators, ReelReactionRepository reactions, ReelCommentRepository comments, UserRepository users, MediaUrlResolver mediaUrls) {
+    public ReelService(ReelRepository reels, CreatorRepository creators, ReelReactionRepository reactions, ReelCommentRepository comments, UserRepository users, IngredientRepository ingredients, MediaUrlResolver mediaUrls) {
         this.reels = reels;
         this.creators = creators;
         this.reactions = reactions;
         this.comments = comments;
         this.users = users;
+        this.ingredients = ingredients;
         this.mediaUrls = mediaUrls;
     }
 
@@ -132,6 +136,7 @@ public class ReelService {
         long commentCount = reel.getCommentCount() + comments.countByReelIdAndStatus(reel.getId(), ACTIVE);
         boolean liked = userId != null && reactions.existsByReelIdAndUserIdAndReactionType(reel.getId(), userId, ReelReaction.LIKE);
         boolean saved = userId != null && reactions.existsByReelIdAndUserIdAndReactionType(reel.getId(), userId, ReelReaction.SAVE);
+        List<String> tagNames = tags(reel.getIngredientTags());
         return new ReelResponse(
                 reel.getId(),
                 reel.getRecipeId(),
@@ -142,7 +147,8 @@ public class ReelService {
                 mediaUrls.resolve(reel.getThumbnailUrl()),
                 reel.getTitle(),
                 reel.getDescription(),
-                tags(reel.getIngredientTags()),
+                tagNames,
+                ingredientRefs(tagNames),
                 likeCount,
                 commentCount,
                 saveCount,
@@ -152,6 +158,20 @@ public class ReelService {
                 saved,
                 reel.getPublishedAt()
         );
+    }
+
+    /**
+     * 재료 태그 이름을 카탈로그 식재료 id와 매칭해 바로가기 항목으로 만든다.
+     * 매칭되는 활성 식재료가 있으면 id를 채우고(상세 링크 가능), 없으면 id=null(프론트는 검색 폴백).
+     * 태그 이름 순서를 유지한다.
+     */
+    private List<ReelResponse.IngredientRef> ingredientRefs(List<String> tagNames) {
+        if (tagNames.isEmpty()) return List.of();
+        Map<String, Long> nameToId = ingredients.findByNameInAndActiveTrue(tagNames).stream()
+                .collect(Collectors.toMap(Ingredient::getName, Ingredient::getId, (a, b) -> a));
+        return tagNames.stream()
+                .map(name -> new ReelResponse.IngredientRef(nameToId.get(name), name))
+                .toList();
     }
 
     private List<String> tags(String raw) {

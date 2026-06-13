@@ -226,16 +226,16 @@ function ReelItem({ reel, onOpenComments }) {
           {reel.views != null && <span> · {compact(reel.views)} 조회</span>}
         </p>
 
-        {/* 재료 칩 — 식재료 상세로 */}
-        {reel.ingredients?.length > 0 && (
+        {/* 재료 칩 — 카탈로그 매칭 시 식재료 상세로 바로, 아니면 검색 폴백 */}
+        {(reel.ingredientRefs?.length > 0 || reel.ingredients?.length > 0) && (
           <div className="mt-2.5 flex flex-wrap gap-1.5">
-            {reel.ingredients.map((ing) => (
+            {(reel.ingredientRefs || reel.ingredients.map((name) => ({ id: null, name }))).map((ing) => (
               <Link
-                key={ing}
-                href={`/search?q=${encodeURIComponent(ing)}`}
+                key={ing.name}
+                href={ing.id != null ? `/ingredients/${ing.id}` : `/search?q=${encodeURIComponent(ing.name)}`}
                 className="tap inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 py-1.5 pl-3 pr-2 backdrop-blur-xl"
               >
-                <span className="text-[12px] font-bold text-white">{ing}</span>
+                <span className="text-[12px] font-bold text-white">{ing.name}</span>
                 <ChevronRight size={11} className="text-white/80" />
               </Link>
             ))}
