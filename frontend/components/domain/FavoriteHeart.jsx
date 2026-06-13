@@ -21,6 +21,7 @@ export function FavoriteHeart({
   className,
   iconClassName,
   fillClassName = 'fill-hot text-hot',
+  label,
   nextHref,
   stop = true,
 }) {
@@ -67,6 +68,7 @@ export function FavoriteHeart({
       className={cn('tap disabled:opacity-50', className)}
     >
       <Heart size={size} className={cn(iconClassName, isFav && fillClassName)} />
+      {label ? <span>{label}</span> : null}
     </button>
   );
 }
