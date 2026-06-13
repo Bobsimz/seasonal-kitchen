@@ -312,7 +312,7 @@ public class GeminiService {
         if (original == null) {
             return image.getBytes();
         }
-        int maxDim = 200;
+        int maxDim = 768; // 식별 신뢰도를 위해 충분한 해상도 (Gemini Vision 타일 크기) — 200px는 너무 작아 식별 실패가 잦았음
         int w = original.getWidth();
         int h = original.getHeight();
         BufferedImage target = original;
@@ -337,7 +337,7 @@ public class GeminiService {
         ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
         ImageWriteParam params = writer.getDefaultWriteParam();
         params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        params.setCompressionQuality(0.3f);
+        params.setCompressionQuality(0.6f);
         writer.setOutput(ImageIO.createImageOutputStream(baos));
         writer.write(null, new IIOImage(target, null, null), params);
         writer.dispose();

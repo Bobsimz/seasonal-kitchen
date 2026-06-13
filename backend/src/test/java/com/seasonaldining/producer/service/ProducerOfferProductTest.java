@@ -59,7 +59,7 @@ class ProducerOfferProductTest {
                 List.of("https://img/1.png", "https://img/2.png"),
                 List.of("산지직송", "무료배송"), null,
                 List.of("무농약", "유기농(유기농산물)"), 120, "냉장 보관",
-                "신문지에 싸서 냉장 보관하면 2주까지 신선해요.", null, null, null));
+                "신문지에 싸서 냉장 보관하면 2주까지 신선해요.", null, null, null, null));
 
         assertThat(o.title()).isEqualTo("햇 봄동 1.5kg 산지직송");
         assertThat(o.description()).contains("새벽 수확");
@@ -78,7 +78,7 @@ class ProducerOfferProductTest {
         ProducerOfferResponse o = producerService.addMyOffer(userId, new CreateOfferRequest(
                 null, "봄동", new BigDecimal("4500"), "봉", null,
                 null, null, null, null, null, null,
-                List.of("무농약"), null, "실온 보관", null, null, null, null));
+                List.of("무농약"), null, "실온 보관", null, null, null, null, null));
 
         assertThat(o.title()).isNull();
         assertThat(o.photoUrls()).isEmpty();
@@ -96,7 +96,7 @@ class ProducerOfferProductTest {
                 "해남 무", null, "뿌리채소", null, null,
                 List.of(new OptionInput(new BigDecimal("1.5"), "kg", new BigDecimal("6900")),
                         new OptionInput(null, "단", new BigDecimal("4500"))),
-                List.of("GAP(우수관리)"), 50, "서늘한 그늘", null, null, null, null));
+                List.of("GAP(우수관리)"), 50, "서늘한 그늘", null, null, null, null, null));
 
         assertThat(o.options()).hasSize(2);
         assertThat(o.options().get(0).unit()).isEqualTo("kg");
@@ -114,7 +114,7 @@ class ProducerOfferProductTest {
                 "햇 봄동 1.5kg", "설명", "잎채소",
                 List.of("https://img/a.png"), List.of("콜드체인"),
                 List.of(new OptionInput(new BigDecimal("3"), "kg", new BigDecimal("12000"))),
-                List.of("친환경"), 30, "냉장 보관", "흙은 털지 말고 보관하세요.", null, null, null));
+                List.of("친환경"), 30, "냉장 보관", "흙은 털지 말고 보관하세요.", null, null, null, null));
 
         List<ProducerOfferResponse> offers = producerService.getProducerOffers(me.id());
         assertThat(offers).anySatisfy(o -> {

@@ -107,7 +107,7 @@ public class ProducerService {
             throw new BusinessException(ErrorCode.PRODUCER_ALREADY_REGISTERED);
         }
         Producer saved = producerRepository.save(Producer.register(
-                userId, req.name(), req.region(), req.tagline(),
+                userId, req.name(), req.region(), req.tagline(), req.photoUrl(),
                 req.style(), req.priceLevel(), req.freshnessLevel(),
                 req.representativeName(), req.contact(),
                 req.certificationImageUrl(), req.agreedToTerms()));

@@ -48,10 +48,11 @@ public class Producer {
     /**
      * 마이페이지 자가등록용 팩토리. 판매자 등록 화면에서 받는 값으로 채우고,
      * 화면에서 안 받는 값(대표자/연락처/인증서류/약관동의)은 선택 입력이라 null 허용.
+     * photoUrl(대표 사진)도 선택 입력 — blank면 null로 정규화한다.
      * style/priceLevel/freshnessLevel은 미입력 시 기본값(VALUE/3/4)으로 채운다.
      * rating/review_count=0, honorary=false.
      */
-    public static Producer register(Long userId, String name, String region, String tagline,
+    public static Producer register(Long userId, String name, String region, String tagline, String photoUrl,
                                     String style, Integer priceLevel, Integer freshnessLevel,
                                     String representativeName, String contact,
                                     String certificationImageUrl, Boolean agreedToTerms) {
@@ -60,6 +61,7 @@ public class Producer {
         p.name = name;
         p.region = region;
         p.tagline = (tagline != null && !tagline.isBlank()) ? tagline.trim() : null;
+        p.photoUrl = (photoUrl != null && !photoUrl.isBlank()) ? photoUrl.trim() : null;
         p.style = (style != null && !style.isBlank()) ? style.trim().toUpperCase() : "VALUE";
         p.priceLevel = priceLevel != null ? priceLevel : 3;
         p.freshnessLevel = freshnessLevel != null ? freshnessLevel : 4;

@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Sprout, ChevronRight, Plus, Check, X } from 'lucide-react';
+import { Sprout, ChevronRight, Plus, Check, X, Camera } from 'lucide-react';
 import { useMyProducer, useRegisterProducer } from '@/lib/queries';
 import { useAuth } from '@/lib/auth';
+import { endpoints } from '@/lib/endpoints';
 import { AppHeader, BottomBar } from '@/components/layout';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -19,6 +20,24 @@ const STYLE_OPTIONS = ['VALUE', 'ORGANIC', 'PREMIUM'];
 const SPECIALTY_PRESET = ['무', '봄동', '배추', '시금치', '감귤', '대파', '고구마', '브로콜리'];
 const BADGE_PRESET = ['산지직송', '당일수확', '유기농 인증', '무농약', '대량 할인'];
 const LEVEL_LABELS = ['저렴', '보통', '적정', '높음', '프리미엄'];
+
+// 위저드 단계 — 주제별 3단계
+const STEPS = [
+  { title: '기본 정보', subtitle: '농가 이름과 지역, 대표 사진을 알려주세요' },
+  { title: '판매 스타일 · 등급', subtitle: '판매 방식과 가격·신선도 수준을 골라주세요' },
+  { title: '주력 품목 · 배지', subtitle: '무엇을 파는지와 농가 특징을 더해주세요' },
+];
+
+// 단계 진행바 — 현재 단계까지 채워진다
+function StepBar({ current, total }) {
+  return (
+    <div className="flex gap-1">
+      {Array.from({ length: total }).map((_, i) => (
+        <span key={i} className={cn('h-1 flex-1 rounded-full transition-colors', i <= current ? 'bg-brand' : 'bg-line')} />
+      ))}
+    </div>
+  );
+}
 
 // 입력 라벨 + 텍스트 인풋
 function FormField({ label, value, onChange, placeholder, required }) {
@@ -148,6 +167,50 @@ function ToggleChip({ active, children, onClick, icon: Icon }) {
   );
 }
 
+// 농가 대표 사진(선택) — 한 장만. 선택 즉시 업로드하고 미리보기를 보여준다.
+function PhotoUpload({ photo, onPick, onRemove }) {
+  const inputRef = useRef(null);
+  return (
+    <FieldGroup label="농가 대표 사진" hint="선택 · 한 장">
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp,image/gif"
+        className="hidden"
+        onChange={onPick}
+      />
+      {photo ? (
+        <div className="relative inline-block">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={photo.preview} alt="" className="h-[96px] w-[96px] rounded-2xl object-cover" />
+          {photo.uploading ? (
+            <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/20">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={onRemove}
+              className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-white shadow"
+            >
+              <X size={10} />
+            </button>
+          )}
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          className="tap flex h-[96px] w-[96px] flex-col items-center justify-center gap-1 rounded-2xl border-[1.5px] border-dashed border-brand bg-brand-bg text-brand-dark"
+        >
+          <Camera size={26} />
+          <span className="text-[10.5px] font-bold">사진 선택</span>
+        </button>
+      )}
+    </FieldGroup>
+  );
+}
+
 export default function SellerRegisterPage() {
   const router = useRouter();
   const toast = useToast();
@@ -165,12 +228,38 @@ export default function SellerRegisterPage() {
   });
   const [specialties, setSpecialties] = useState([]);
   const [badges, setBadges] = useState([]);
+  const [photo, setPhoto] = useState(null); // { preview, url, uploading } | null
+  const [step, setStep] = useState(0);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const toggle = (list, setList, value) =>
     setList(list.includes(value) ? list.filter((x) => x !== value) : [...list, value]);
 
-  const canSubmit = form.name.trim() && form.region.trim();
+  // 대표 사진 선택 → 즉시 업로드. 실패 시 미리보기를 제거한다.
+  const onPhotoChange = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setPhoto({ preview: URL.createObjectURL(file), url: null, uploading: true });
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const result = await endpoints.uploadImage(fd);
+      setPhoto((p) => (p ? { ...p, url: result?.url ?? null, uploading: false } : p));
+    } catch {
+      setPhoto(null);
+      toast.show('사진 업로드에 실패했어요', { type: 'error' });
+    }
+  };
+
+  // 사진을 골랐지만 아직 업로드 중이면 등록을 막아 반쪽 URL 전송을 방지한다.
+  const canSubmit = form.name.trim() && form.region.trim() && !photo?.uploading;
+
+  // 1단계(기본 정보)에만 필수값이 있다 — 충족 전엔 다음으로 못 넘어간다.
+  const isLast = step === STEPS.length - 1;
+  const canAdvance = step === 0 ? Boolean(canSubmit) : true;
+  const next = () => setStep((s) => Math.min(STEPS.length - 1, s + 1));
+  const prev = () => setStep((s) => Math.max(0, s - 1));
 
   const onSubmit = async () => {
     if (!isAuthenticated) {
@@ -188,6 +277,7 @@ export default function SellerRegisterPage() {
         name: form.name.trim(),
         region: form.region.trim(),
         tagline: form.tagline.trim(),
+        photoUrl: photo?.url || undefined,
         specialties,
         badges,
       });
@@ -228,105 +318,140 @@ export default function SellerRegisterPage() {
       {!isLoading && !error && !myProducer && (
         <>
           <div className="animate-fade-up pb-28">
-            {/* 안내 카드 */}
+            {/* 진행바 + 단계 헤더 */}
             <div className="px-4 pt-3.5">
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-brand-dark p-5 text-white">
-                <Sprout size={88} className="absolute -right-3 -top-3 opacity-15" />
-                <div className="text-[12px] font-extrabold tracking-wide text-white/90">농가 신청</div>
-                <div className="mt-1 text-[18px] font-extrabold leading-snug tracking-tight">
-                  내 농가 상품을
-                  <br />
-                  직접 판매해보세요
+              <StepBar current={step} total={STEPS.length} />
+              {step === 0 && (
+                <div className="relative mt-4 overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-brand-dark p-5 text-white">
+                  <Sprout size={88} className="absolute -right-3 -top-3 opacity-15" />
+                  <div className="text-[12px] font-extrabold tracking-wide text-white/90">농가 신청</div>
+                  <div className="mt-1 text-[18px] font-extrabold leading-snug tracking-tight">
+                    내 농가 상품을
+                    <br />
+                    직접 판매해보세요
+                  </div>
+                  <p className="mt-1.5 text-[11.5px] leading-relaxed text-white/90">
+                    등록 후 상품 탭에서 바로 판매 상품을 올릴 수 있어요
+                  </p>
                 </div>
-                <p className="mt-1.5 text-[11.5px] leading-relaxed text-white/90">
-                  등록 후 상품 탭에서 바로 판매 상품을 올릴 수 있어요
-                </p>
+              )}
+              <div className="mt-4">
+                <h2 className="font-display text-[18px] font-bold tracking-tight text-ink">{STEPS[step].title}</h2>
+                <p className="mt-1 text-[12.5px] text-ink-mid">{STEPS[step].subtitle}</p>
               </div>
             </div>
 
-            {/* 입력 폼 */}
-            <div className="space-y-5 px-4 pt-5">
-              <FormField
-                label="농가명"
-                value={form.name}
-                onChange={(v) => set('name', v)}
-                placeholder="예) 해남 송지농원"
-                required
-              />
-              <FormField
-                label="지역"
-                value={form.region}
-                onChange={(v) => set('region', v)}
-                placeholder="예) 전남 해남"
-                required
-              />
-              <FormField
-                label="한줄 소개"
-                value={form.tagline}
-                onChange={(v) => set('tagline', v)}
-                placeholder="예) 30년 무 농사, 햇무만 보냅니다"
-              />
+            {/* 단계별 입력 폼 */}
+            <div key={step} className="animate-fade-up space-y-5 px-4 pt-5">
+              {/* 1단계 — 기본 정보 */}
+              {step === 0 && (
+                <>
+                  <FormField
+                    label="농가명"
+                    value={form.name}
+                    onChange={(v) => set('name', v)}
+                    placeholder="예) 해남 송지농원"
+                    required
+                  />
+                  <FormField
+                    label="지역"
+                    value={form.region}
+                    onChange={(v) => set('region', v)}
+                    placeholder="예) 전남 해남"
+                    required
+                  />
+                  <FormField
+                    label="한줄 소개"
+                    value={form.tagline}
+                    onChange={(v) => set('tagline', v)}
+                    placeholder="예) 30년 무 농사, 햇무만 보냅니다"
+                  />
+                  <PhotoUpload
+                    photo={photo}
+                    onPick={onPhotoChange}
+                    onRemove={() => setPhoto(null)}
+                  />
+                </>
+              )}
 
-              {/* 판매 스타일 */}
-              <FieldGroup label="판매 스타일">
-                <div className="flex gap-2">
-                  {STYLE_OPTIONS.map((s) => {
-                    const meta = styleMeta(s);
-                    const on = form.style === s;
-                    return (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => set('style', s)}
-                        className={cn(
-                          'tap flex-1 rounded-2xl border px-2 py-3 text-[12.5px] font-bold leading-tight',
-                          on ? 'border-brand bg-brand-bg text-brand-dark' : 'border-line bg-white text-ink-mid',
-                        )}
-                      >
-                        {meta.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </FieldGroup>
+              {/* 2단계 — 판매 스타일 · 등급 */}
+              {step === 1 && (
+                <>
+                  <FieldGroup label="판매 스타일">
+                    <div className="flex gap-2">
+                      {STYLE_OPTIONS.map((s) => {
+                        const meta = styleMeta(s);
+                        const on = form.style === s;
+                        return (
+                          <button
+                            key={s}
+                            type="button"
+                            onClick={() => set('style', s)}
+                            className={cn(
+                              'tap flex-1 rounded-2xl border px-2 py-3 text-[12.5px] font-bold leading-tight',
+                              on ? 'border-brand bg-brand-bg text-brand-dark' : 'border-line bg-white text-ink-mid',
+                            )}
+                          >
+                            {meta.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </FieldGroup>
 
-              {/* 가격대 */}
-              <FieldGroup label="가격대" hint="1 저렴 · 5 프리미엄">
-                <LevelPills value={form.priceLevel} onChange={(v) => set('priceLevel', v)} />
-              </FieldGroup>
+                  <FieldGroup label="가격대" hint="1 저렴 · 5 프리미엄">
+                    <LevelPills value={form.priceLevel} onChange={(v) => set('priceLevel', v)} />
+                  </FieldGroup>
 
-              {/* 신선도 */}
-              <FieldGroup label="신선도" hint="1 보통 · 5 최상">
-                <LevelPills value={form.freshnessLevel} onChange={(v) => set('freshnessLevel', v)} />
-              </FieldGroup>
+                  <FieldGroup label="신선도" hint="1 보통 · 5 최상">
+                    <LevelPills value={form.freshnessLevel} onChange={(v) => set('freshnessLevel', v)} />
+                  </FieldGroup>
+                </>
+              )}
 
-              {/* 주력 품목 — 직접 입력 */}
-              <FieldGroup label="주력 품목" hint={specialties.length ? `${specialties.length}개 입력` : '직접 입력 후 추가'}>
-                <TagInput items={specialties} setItems={setSpecialties} placeholder="예) 무, 봄동, 시금치" />
-              </FieldGroup>
+              {/* 3단계 — 주력 품목 · 배지 */}
+              {step === 2 && (
+                <>
+                  <FieldGroup label="주력 품목" hint={specialties.length ? `${specialties.length}개 입력` : '직접 입력 후 추가'}>
+                    <TagInput items={specialties} setItems={setSpecialties} placeholder="예) 무, 봄동, 시금치" />
+                  </FieldGroup>
 
-              {/* 배지 */}
-              <FieldGroup label="배지" hint="농가를 알리는 특징">
-                <div className="flex flex-wrap gap-2">
-                  {BADGE_PRESET.map((b) => (
-                    <ToggleChip
-                      key={b}
-                      active={badges.includes(b)}
-                      onClick={() => toggle(badges, setBadges, b)}
-                      icon={badges.includes(b) ? Check : Plus}
-                    >
-                      {b}
-                    </ToggleChip>
-                  ))}
-                </div>
-              </FieldGroup>
+                  <FieldGroup label="배지" hint="농가를 알리는 특징">
+                    <div className="flex flex-wrap gap-2">
+                      {BADGE_PRESET.map((b) => (
+                        <ToggleChip
+                          key={b}
+                          active={badges.includes(b)}
+                          onClick={() => toggle(badges, setBadges, b)}
+                          icon={badges.includes(b) ? Check : Plus}
+                        >
+                          {b}
+                        </ToggleChip>
+                      ))}
+                    </div>
+                  </FieldGroup>
+                </>
+              )}
             </div>
           </div>
 
           <BottomBar>
-            <Button block size="lg" loading={register.isPending} disabled={!canSubmit} onClick={onSubmit}>
-              등록하기
-            </Button>
+            <div className="flex w-full gap-2">
+              {step > 0 && (
+                <Button variant="outline" size="lg" className="flex-1" onClick={prev}>
+                  이전
+                </Button>
+              )}
+              <Button
+                size="lg"
+                className="flex-1"
+                loading={register.isPending}
+                disabled={isLast ? !canSubmit : !canAdvance}
+                onClick={isLast ? onSubmit : next}
+              >
+                {isLast ? '등록하기' : '다음'}
+              </Button>
+            </div>
           </BottomBar>
         </>
       )}

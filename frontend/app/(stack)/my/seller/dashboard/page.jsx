@@ -17,7 +17,7 @@ export default function SellerDashboardPage() {
 
   return (
     <>
-      <AppHeader title="농가 센터" back />
+      <AppHeader title="농가 운영" back />
 
       {isLoading && <LoadingScreen />}
       {error && <ErrorState onRetry={refetch} />}

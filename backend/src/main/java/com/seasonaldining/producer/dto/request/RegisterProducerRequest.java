@@ -19,6 +19,9 @@ public record RegisterProducerRequest(
         @Schema(description = "한줄 소개(선택)", example = "30년 무 농사, 햇무만 보냅니다", nullable = true)
         @Size(max = 300) String tagline,
 
+        @Schema(description = "농가 대표 사진 이미지 URL(선택)", example = "https://cdn/farm.png", nullable = true)
+        @Size(max = 500) String photoUrl,
+
         @Schema(description = "판매 스타일 VALUE(실속)|ORGANIC(유기농)|PREMIUM(프리미엄), 미지정 시 VALUE", example = "ORGANIC", nullable = true)
         @Size(max = 20) String style,
 
@@ -52,7 +55,7 @@ public record RegisterProducerRequest(
      */
     public RegisterProducerRequest(String name, String representativeName, String region, String contact,
                                    List<String> specialties, String certificationImageUrl, Boolean agreedToTerms) {
-        this(name, region, null, null, null, null, specialties, null,
+        this(name, region, null, null, null, null, null, specialties, null,
                 representativeName, contact, certificationImageUrl, agreedToTerms);
     }
 }
