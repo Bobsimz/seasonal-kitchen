@@ -10,9 +10,10 @@ import org.springframework.web.client.RestClient;
 public class GeminiConfig {
 
     @Bean
-    public RestClient geminiRestClient() {
+    public RestClient geminiRestClient(GeminiProperties properties) {
         return RestClient.builder()
-                .baseUrl("https://generativelanguage.googleapis.com")
+                .baseUrl("https://gms.ssafy.io")
+                .defaultHeader("x-goog-api-key", properties.key())
                 .build();
     }
 }

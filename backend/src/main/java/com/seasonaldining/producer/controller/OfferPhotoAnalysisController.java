@@ -1,12 +1,15 @@
 package com.seasonaldining.producer.controller;
 
 import com.seasonaldining.common.response.ApiResponse;
+import com.seasonaldining.producer.dto.request.GenerateDescriptionRequest;
 import com.seasonaldining.producer.dto.request.OfferImageGenerationRequest;
+import com.seasonaldining.producer.dto.response.GenerateDescriptionResponse;
 import com.seasonaldining.producer.dto.response.OfferImageGenerationResponse;
 import com.seasonaldining.producer.dto.response.OfferPhotoAnalysisResponse;
 import com.seasonaldining.producer.service.GeminiService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,5 +46,15 @@ public class OfferPhotoAnalysisController {
     public ApiResponse<OfferImageGenerationResponse> generateImage(
             @RequestBody OfferImageGenerationRequest request) {
         return ApiResponse.success(geminiService.generateOfferImage(request), null);
+    }
+
+    @PostMapping("/generate-description")
+    @Operation(
+            summary = "소구문장 AI 생성",
+            description = "농가명·식재료명·선택된 소구 키워드를 바탕으로 상품 소개 문구를 생성합니다. 인증 필요."
+    )
+    public ApiResponse<GenerateDescriptionResponse> generateDescription(
+            @Valid @RequestBody GenerateDescriptionRequest request) {
+        return ApiResponse.success(geminiService.generateDescription(request), null);
     }
 }

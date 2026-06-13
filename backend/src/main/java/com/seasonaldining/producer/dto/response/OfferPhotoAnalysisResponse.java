@@ -25,7 +25,10 @@ public record OfferPhotoAnalysisResponse(
         String storageTip,
 
         @Schema(description = "상품 소구포인트 3개", nullable = true)
-        List<Checkpoint> checkpoints
+        List<Checkpoint> checkpoints,
+
+        @Schema(description = "이렇게 드세요! 추천 레시피", nullable = true)
+        Recipe recipe
 ) {
     @Schema(description = "소구포인트 항목")
     public record Checkpoint(
@@ -34,5 +37,14 @@ public record OfferPhotoAnalysisResponse(
 
             @Schema(description = "소구 문장 (1문장)", example = "갓 수확한 아삭한 식감이 그대로 살아있어요.")
             String sentence
+    ) {}
+
+    @Schema(description = "추천 레시피")
+    public record Recipe(
+            @Schema(description = "레시피 제목", example = "봄동 겉절이")
+            String title,
+
+            @Schema(description = "조리 단계 (3~4 문장)", example = "[\"봄동을 씻어 물기를 제거합니다.\", \"양념장을 만들어 버무립니다.\"]")
+            List<String> steps
     ) {}
 }

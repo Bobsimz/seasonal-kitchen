@@ -14,7 +14,11 @@ gemini:
             { "keyword": "핵심 키워드 단어 1개", "sentence": "해당 키워드를 살린 소구 문장 1개" },
             { "keyword": "핵심 키워드 단어 1개", "sentence": "해당 키워드를 살린 소구 문장 1개" },
             { "keyword": "핵심 키워드 단어 1개", "sentence": "해당 키워드를 살린 소구 문장 1개" }
-          ]
+          ],
+          "recipe": {
+            "title": "이 식재료로 만드는 대표 요리 이름 1개",
+            "steps": ["1단계 조리 설명", "2단계 조리 설명", "3단계 조리 설명"]
+          }
         }
 
         판단 기준:
@@ -27,6 +31,7 @@ gemini:
         - checkpoints: 상품의 매력을 부각하는 소구포인트 정확히 3개.
                        keyword는 단어 1개(예: 아삭함, 당도, 신선도),
                        sentence는 해당 키워드를 살린 판매 문구 1문장
+        - recipe: 해당 식재료를 활용한 대표 레시피 1개. steps는 3~4단계로 간결하게.
 
         농산물이 아니거나 식별 불가능한 경우:
         {
@@ -35,5 +40,20 @@ gemini:
           "category": null,
           "storageMethod": null,
           "storageTip": null,
-          "checkpoints": null
+          "checkpoints": null,
+          "recipe": null
         }
+    generate-description:
+      user-template: |
+        아래 농산물 정보를 바탕으로 상품 소개 문구를 작성하고, 반드시 다음 JSON 형식만 반환하세요.
+        다른 필드명, 코드 블록, 추가 텍스트는 절대 사용하지 마세요.
+
+        출력 형식(정확히 이 구조만 사용):
+        {"description": "여기에 소개 문구 작성"}
+
+        작성 기준:
+        - 농가명을 첫 문장에 포함하여 신뢰감을 줄 것
+        - 선택된 키워드를 자연스럽게 녹여 상품의 매력을 부각할 것
+        - 소비자가 구매하고 싶어지는 따뜻하고 진솔한 문체
+        - 전체 2~3문장, 150자 이내
+        - 반드시 "description" 키 하나만 사용할 것
