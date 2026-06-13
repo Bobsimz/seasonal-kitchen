@@ -27,3 +27,5 @@ spring:
 app:
   demo-seed:
     enabled: ${DEMO_SEED_ENABLED:false}
+  uploads:
+    storage: s3

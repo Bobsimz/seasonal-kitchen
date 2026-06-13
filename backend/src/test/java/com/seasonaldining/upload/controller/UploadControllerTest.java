@@ -78,4 +78,43 @@ class UploadControllerTest {
         mvc.perform(multipart("/api/v1/uploads").file(file))
                 .andExpect(status().isUnauthorized());
     }
+
+    // ── /batch ──────────────────────────────────────────────────
+
+    @Test
+    void uploadBatch_multipleImages_returnsUrlList() throws Exception {
+        MockMultipartFile f1 = new MockMultipartFile("files", "a.png", "image/png", new byte[]{1, 2, 3});
+        MockMultipartFile f2 = new MockMultipartFile("files", "b.jpg", "image/jpeg", new byte[]{4, 5, 6});
+        mvc.perform(multipart("/api/v1/uploads/batch").file(f1).file(f2).header("Authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data.length()").value(2))
+                .andExpect(jsonPath("$.data[0].url").exists())
+                .andExpect(jsonPath("$.data[1].url").exists());
+    }
+
+    @Test
+    void uploadBatch_tooManyFiles_isRejected() throws Exception {
+        MockMultipartFile[] files = new MockMultipartFile[11];
+        for (int i = 0; i < 11; i++) {
+            files[i] = new MockMultipartFile("files", "img" + i + ".png", "image/png", new byte[]{1, 2});
+        }
+        var req = multipart("/api/v1/uploads/batch")
+                .file(files[0]).file(files[1]).file(files[2]).file(files[3]).file(files[4])
+                .file(files[5]).file(files[6]).file(files[7]).file(files[8]).file(files[9])
+                .file(files[10])
+                .header("Authorization", token);
+        mvc.perform(req)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.code").value("TOO_MANY_FILES"));
+    }
+
+    @Test
+    void uploadBatch_containsInvalidType_isRejected() throws Exception {
+        MockMultipartFile valid = new MockMultipartFile("files", "ok.png", "image/png", new byte[]{1, 2, 3});
+        MockMultipartFile invalid = new MockMultipartFile("files", "bad.txt", "text/plain", "hi".getBytes());
+        mvc.perform(multipart("/api/v1/uploads/batch").file(valid).file(invalid).header("Authorization", token))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.code").value("INVALID_FILE_TYPE"));
+    }
 }

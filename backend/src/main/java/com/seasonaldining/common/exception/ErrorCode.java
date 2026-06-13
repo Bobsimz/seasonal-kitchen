@@ -39,6 +39,7 @@ public enum ErrorCode {
     EMPTY_FILE(HttpStatus.BAD_REQUEST, "EMPTY_FILE", "빈 파일은 업로드할 수 없습니다."),
     INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "INVALID_FILE_TYPE", "이미지 파일만 업로드할 수 있습니다."),
     FILE_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE, "FILE_TOO_LARGE", "허용된 파일 크기를 초과했습니다."),
+    TOO_MANY_FILES(HttpStatus.BAD_REQUEST, "TOO_MANY_FILES", "한 번에 최대 10장까지 업로드할 수 있습니다."),
     FILE_STORAGE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "FILE_STORAGE_FAILED", "파일 저장에 실패했습니다.");
 
     private final HttpStatus status;

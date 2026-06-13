@@ -36,6 +36,8 @@ services:
       SPRING_PROFILES_ACTIVE: supabase
       REDIS_HOST: redis
       REDIS_PORT: "6379"
+      UPLOADS_STORAGE: s3
+      UPLOADS_PUBLIC_BASE_URL: "https://${S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com"
     expose:
       - "8080"
     depends_on:

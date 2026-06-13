@@ -59,7 +59,8 @@ export async function apiFetch(
     }
   }
 
-  const headers = { 'Content-Type': 'application/json' };
+  const isFormData = body instanceof FormData;
+  const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
   let attachedToken = null;
   if (auth) {
     attachedToken = getToken();
@@ -71,7 +72,7 @@ export async function apiFetch(
     res = await fetch(url.toString(), {
       method,
       headers,
-      body: body != null ? JSON.stringify(body) : undefined,
+      body: isFormData ? body : body != null ? JSON.stringify(body) : undefined,
       signal,
     });
   } catch (e) {

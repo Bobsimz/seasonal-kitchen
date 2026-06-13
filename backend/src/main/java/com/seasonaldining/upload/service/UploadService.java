@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,6 +19,7 @@ import java.util.Set;
 public class UploadService {
 
     private static final String KEY_PREFIX = "images";
+    static final int MAX_FILES = 10;
     // image/* 전체 허용 대신 안전한 래스터 포맷만 whitelist. (SVG는 스크립트/외부참조 위험으로 제외)
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
             "image/png", "image/jpeg", "image/webp", "image/gif");
@@ -43,5 +45,15 @@ public class UploadService {
             throw new BusinessException(ErrorCode.FILE_TOO_LARGE);
         }
         return new UploadResponse(fileStorage.store(file, KEY_PREFIX));
+    }
+
+    public List<UploadResponse> uploadAll(List<MultipartFile> files) {
+        if (files == null || files.isEmpty()) {
+            throw new BusinessException(ErrorCode.EMPTY_FILE);
+        }
+        if (files.size() > MAX_FILES) {
+            throw new BusinessException(ErrorCode.TOO_MANY_FILES);
+        }
+        return files.stream().map(this::upload).toList();
     }
 }

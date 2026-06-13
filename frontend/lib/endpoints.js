@@ -103,6 +103,14 @@ export const endpoints = {
   addMyOffer: (body) => withFallback(() => api.post('/producers/me/offers', body, { auth: true }), () => demoStore.addMyOffer(body)),
   listMyOffers: () => withFallback(() => Promise.reject(new ApiError({ code: 'NETWORK_ERROR', status: 0 })), () => demoStore.listMyOffers()),
 
+  // AI 상품 생성
+  analyzeOfferPhoto: (formData) => api.post('/producers/me/offers/analyze-photo', formData, { auth: true }),
+  generateDescription: (body) => api.post('/producers/me/offers/generate-description', body, { auth: true }),
+
+  // ── Uploads ────────────────────────────────────────────
+  uploadImage: (formData) => api.post('/uploads', formData, { auth: true }),
+  uploadImages: (formData) => api.post('/uploads/batch', formData, { auth: true }),
+
   // ── Cart / Orders ──────────────────────────────────────
   getCart: () => withFallback(() => api.get('/cart', { auth: true }), () => demoStore.getCart()),
   // 실 백엔드 계약은 { offerId, qty, offerOptionId? }. 선택 옵션의 id 만 보낸다(없으면 null).
